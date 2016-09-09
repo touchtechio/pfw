@@ -31,11 +31,15 @@ int moviePlaying = 0;
 
 boolean DEBUG[]= {true};  // determines whether to data on screen
 
+
 float stressMovieVal[] = {0.5, 8.0, 16.0, 26.0}; // times in the movie to jump to
 float stressLow, stressHigh, stressMed, stressCrazy;
 float stressType[] = {stressLow, stressHigh, stressMed, stressCrazy};
 String oscAddr[] = {"/Stress/s2/1/1", "/Stress/s2/2/1", "/Stress/s2/1/2", "/Stress/s2/2/2"};
+int zone[] = {1, 2, 3, 4, 5};
+String oscZoneAddr[] = {"/Zones/s2/1/1", "/Zones/s2/2/1", "/Zones/s2/1/2", "/Zones/s2/2/2"};
 
+int currentZone = 4;
 
 void setup() {
   // Keystone will only work with P3D or OPENGL renderers, 
@@ -47,10 +51,8 @@ void setup() {
   ks = new Keystone(this);
   surface = ks.createCornerPinSurface(cornerPinX, cornerPinY, 20);
 
-  // We need an offscreen buffer to draw the surface we
-  // want projected
-  // note that we're matching the resolution of the
-  // CornerPinSurface.
+  // We need an offscreen buffer to draw the surface we want projected
+  // note that we're matching the resolution of the CornerPinSurface.
   // (The offscreen buffer can be P2D or P3D)
   offscreen = createGraphics(cornerPinX, cornerPinY, P3D);
 
@@ -61,8 +63,7 @@ void setup() {
   // netAddress("device IP", outgoing port)
   myRemoteLocation = new NetAddress("10.175.88.79", 9000);
 
-  myMovie = new Movie(this, movieNames[moviePlaying]);
-  myMovie.loop();
+  setupCurrentZone();
 }
 
 void movieEvent(Movie m) {
@@ -120,6 +121,19 @@ void oscEvent(OscMessage theOscMessage) {
       }
     }
   }
+
+  for (int i = 0; i < oscZoneAddr.length; i++) {
+    if (theOscMessage.checkAddrPattern(oscZoneAddr[i])==true) {
+      float value = theOscMessage.get(0).floatValue();
+      if (value == 1.0) {
+        currentZone = zone[i];
+        setupZone(zone[i]);
+        return;
+      } else {
+        // nothing
+      }
+    }
+  }
 }
 
 void keyPressed() {
@@ -142,26 +156,47 @@ void keyPressed() {
     break;
 
     /// stress level keys
-  case '1':
+  case 'q':
     myMovie.jump(stressMovieVal[0]);
-    //return;
+    break;
+
+  case 'w':
+    myMovie.jump(stressMovieVal[1]);
+    break;
+
+  case 'e':
+    myMovie.jump(stressMovieVal[2]);
+    break;
+
+  case'r':
+    myMovie.jump(stressMovieVal[3]);
+    break;
+
+    /// stress level keys
+  case '1':
+    tearDown();
+    setupZone1();
     break;
 
   case '2':
-    myMovie.jump(stressMovieVal[1]);
-
-    //return;
+    tearDown();
+    setupZone2();
     break;
 
   case '3':
-    myMovie.jump(stressMovieVal[2]);
-    return;
-    //break;
+   tearDown();
+    setupZone2();
+    break;
 
   case'4':
-    myMovie.jump(stressMovieVal[3]);
-    return;
-    //break;
+   tearDown();
+    setupZone4();
+    break;
+
+  case'5':
+   tearDown();
+    setupZone5();
+    break;
   }
 }
 
@@ -185,4 +220,59 @@ void displayStressData() {
   offscreen.text(frameCount % 35, (textXPer + 0.2) * movX, (textYPer + 0.09) * movY);
   offscreen.text(frameCount % 100, (textXPer + 0.2) * movX, (textYPer + 0.14) * movY);
   offscreen.text(frameCount % 150, (textXPer + 0.2) * movX, (textYPer + 0.19) * movY);
+}
+
+void setupCurrentZone() {
+  setupZone(currentZone);
+  return;
+}
+
+void setupZone(int zone) {
+  switch (zone) {
+  case 1:
+    setupZone1();
+    return;
+  case 2:
+    setupZone2();
+    return;
+  case 3:
+    setupZone3();
+    return;
+  case 4:
+    setupZone4();
+    return;
+  case 5:
+    setupZone5();
+    return;
+  }
+  println("ERR: setup a non-existant Zone: " + zone);
+}
+
+
+void tearDown() {
+  if (DEBUG[0]) println("tearing down zone.");
+  return;
+}
+
+void setupZone1() {
+  if (DEBUG[0]) println("build zone 1");
+  return;
+}
+void setupZone2() {
+  if (DEBUG[0]) println("build zone 2");
+  return;
+}
+void setupZone3() {
+  if (DEBUG[0]) println("build zone 3");
+  return;
+}
+void setupZone4() {
+  if (DEBUG[0]) println("build zone 4");
+  myMovie = new Movie(this, movieNames[moviePlaying]);
+  myMovie.loop();
+  return;
+}
+void setupZone5() {
+  if (DEBUG[0]) println("build zone 5");
+  return;
 }

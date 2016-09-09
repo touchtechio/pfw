@@ -31,10 +31,6 @@ Oscillator[] oscillators = new Oscillator[1];
 
 ///
 import processing.video.*;
-float firstValue;
-float secondValue;
-float point1X = cos(PI/9.0);
-float point1Y = sin(PI/9.0);
 
 /// OSC
 import oscP5.*;
