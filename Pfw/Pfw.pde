@@ -3,6 +3,11 @@ this sketch runs a movie that correlates to levels of stress
  Use OSC buttons or keypress 1,2,3,4 to jump to different states
  */
 
+/// OSC
+import oscP5.*;
+import netP5.*;
+OscP5 oscP5;
+
 import deadpixel.keystone.*;
 Keystone ks;
 CornerPinSurface surface;
@@ -25,15 +30,119 @@ float stressLow, stressHigh, stressMed, stressCrazy;
 float stressType[] = {stressLow, stressHigh, stressMed, stressCrazy};
 String oscAddr[] = {"/Stress/s2/1/1", "/Stress/s2/2/1", "/Stress/s2/1/2", "/Stress/s2/2/2"};
 
-/// OSC
-import oscP5.*;
-import netP5.*;
-OscP5 oscP5;
-NetAddress myRemoteLocation;
+
 
 boolean DEBUG = true; // determines whether to data on screen
 
 PFont font;
+
+
+int currentZone = 5;
+
+
+void tearDown() {
+  if (DEBUG) println("tearing down zone.");
+  myMovie.stop();
+  return;
+}
+void setupZone1() {
+  if (DEBUG) println("build zone 1");
+  currentZone = 1;
+  return;
+}
+void setupZone2() {
+  if (DEBUG) println("build zone 2");
+  currentZone = 2;
+  return;
+}
+void setupZone3() {
+  if (DEBUG) println("build zone 3");
+    myMovie = new Movie(this, "rose_viz3.mp4");
+  myMovie.loop();
+  currentZone = 3;
+  return;
+}
+
+int videoScale = 13;
+int xstart;
+int ystart;
+int xend;
+int yend;
+int centerPtX;
+int centerPtY;
+int pixelW;
+void setupZone4() {
+  if (DEBUG) println("build zone 4");
+  currentZone = 4;
+  return;
+}
+void setupZone5() {
+  if (DEBUG) println("build zone 5");
+  currentZone = 5;
+
+  myMovie = new Movie(this, "rope3.mp4");
+  myMovie.loop();
+  return;
+}
+
+void  setupCurrentZone() {
+  setupZone(currentZone);
+  return;
+}
+
+
+void setupZone(int zone) {
+  switch (zone) {
+  case 1:
+    setupZone1();
+    return;
+  case 2:
+    setupZone2();
+    return;
+  case 3:
+    setupZone3();
+    return;
+  case 4:
+    setupZone4();
+    return;
+  case 5:
+    setupZone5();
+    return;
+  }
+  
+  println("ERR: setup a non-existant Zone: " + zone);
+}
+
+
+void  drawCurrentZone() {
+  drawZone(currentZone);
+  return;
+}
+
+
+void drawZone(int zone) {
+  switch (zone) {
+  case 1:
+    drawZone1();
+    return;
+  case 2:
+    drawZone2();
+    return;
+  case 3:
+    drawZone3();
+    return;
+  case 4:
+    drawZone4();
+    return;
+  case 5:
+    drawZone5();
+    return;
+  }
+  
+  println("ERR: setup a non-existant Zone: " + zone);
+}
+
+
 
 void setup() {
   // Keystone will only work with P3D or OPENGL renderers, 
@@ -56,11 +165,11 @@ void setup() {
 
   // start oscP5, listening for incoming messages at port 12000
   oscP5 = new OscP5(this, 12000);
-  // netAddress("device IP", outgoing port)
-  myRemoteLocation = new NetAddress("10.175.88.79", 9000);
 
-  myMovie = new Movie(this, movieNames[moviePlaying]);
-  myMovie.loop();
+
+  setupCurrentZone();
+  return;
+
 }
 
 void movieEvent(Movie m) {
@@ -70,38 +179,124 @@ void movieEvent(Movie m) {
 void draw() {
   background(0);
 
-  // Convert the mouse coordinate into surface coordinates
-  // this will allow you to use mouse events inside the surface from your screen. 
-  //PVector surfaceMouse = surface.getTransformedMouse();
-
   // Draw the scene, offscreen
   offscreen.beginDraw();
   offscreen.background(0);
-  offscreen.stroke(255);
-
-  //// show or hide mouse to move keystone points around
-  //offscreen.strokeWeight(5);
-  //offscreen.ellipse(surfaceMouse.x, surfaceMouse.y, 75, 75);
-  // offscreen.ellipse(mouseX, mouseY, 75, 75);
-
+  
   /// play movie file
   offscreen.image(myMovie, 0, 0, 1280, 720);
-  //movieScrubber();
-  if (DEBUG) { 
+  
+  println("framRate " + frameRate);
+  
+  
+  // do stuff specific for each zone here
+  drawCurrentZone();
+  
+  
+   
+  offscreen.endDraw();
+
+  // render the scene, transformed using the corner pin surface
+  surface.render(offscreen);
+  return;
+}
+
+void drawZone5() {
+  
+
+  offscreen.stroke(255);
+
+  if (true) { 
     println("framRate " + frameRate);
-    //println("time " + myMovie.time());
     offscreen.textSize(15);
-    // offscreen.text("frameRate " + (int)frameRate, .7 * movX, 0.1 * movY);
     offscreen.text("time " + myMovie.time(), .7 * movX, 0.1 * movY);
     displayStressData();
-    //println("time "+myMovie.time()); // if want to see timestamp of while movie plays
   }
 
   offscreen.translate(cornerPinX/2, cornerPinY/2);
-  offscreen.endDraw();
-  // render the scene, transformed using the corner pin surface
-  surface.render(offscreen);
+  
+  
+  
+ return;
 }
+   
+    
+void drawZone4() {
+  
+}
+
+void drawZone3() {
+    
+
+  //// for fixed starting point (center), the square scales up and down
+  pixelW = updateScatterScaleUpAndDown() * videoScale;
+
+  centerPtX = 1280/2;
+  centerPtY = 780/2;
+
+  xstart = constrain(centerPtX - pixelW/2, 0, myMovie.width); 
+  ystart = constrain(centerPtY - pixelW/2, 0, myMovie.height);
+  xend = constrain(centerPtX + pixelW/2, 0, myMovie.width);
+  yend = constrain(centerPtY + pixelW/2, 0, myMovie.height);
+
+
+  //// Either a using a pixel effect or a flat square
+
+  drawSquare();
+  if (DEBUG) {
+    println("framRate " + frameRate);
+    offscreen.fill(255);
+    offscreen.textSize(15);
+    offscreen.text("frameRate " + (int)frameRate, .7 * movX, 0.1 * movY);
+    displayStressData();
+    //println("time "+myMovie.time()); // if want to see timestamp of while movie plays
+  }
+  
+ return; 
+}
+// replace framCount with bioSensing data;
+int updateScatterScaleUpAndDown () {
+  //int scale = ((int)millis() % 21);
+  int scale = (frameCount % 80);
+
+  if (scale < 40) {
+    return (40 - scale);
+  }
+  return (scale - 39);
+}
+void drawSquare() {
+  for (int i = xstart; i < xend; i +=videoScale) {
+    // Begin loop for rows
+    for (int j = ystart; j < yend; j +=videoScale) {
+
+      // Looking up the appropriate color in the pixel array
+      int loc = i + j * myMovie.width;
+      color c = myMovie.pixels[loc];
+      //fill(c);
+      offscreen.noStroke();
+      offscreen.fill(125, 244, 38);
+    }
+  }
+  offscreen.rectMode(CENTER);
+
+  offscreen.rect(centerPtX + 170, centerPtY + 90, pixelW, pixelW ); // right
+  offscreen.rect(centerPtX - 280, centerPtY + 80, pixelW, pixelW); // left
+  offscreen.rect(centerPtX + 40, centerPtY - 210, pixelW * 0.8, pixelW * 0.8); // top
+}
+
+// end Zone 3
+
+
+void drawZone2() {
+  
+}
+
+void drawZone1() {
+  
+}
+
+
+
 
 void oscEvent(OscMessage theOscMessage) {
   print(" typetag:" + theOscMessage.typetag());
@@ -149,20 +344,38 @@ void keyPressed() {
   case '2':
     myMovie.jump(stressMovieVal[1]);
 
-    //return;
-    break;
+    return;
 
   case '3':
     float stress3 = 21.0;
     myMovie.jump(stress3);
     stress3 -= 0.1;
     return;
-    //break;
 
   case'4':
     myMovie.jump(stressMovieVal[3]);
     return;
-    //break;
+
+  case'y':
+    tearDown();
+    setupZone1();
+    return;
+  case'u':
+    tearDown();
+    setupZone2();
+    return;
+  case'i':
+    tearDown();
+    setupZone3();
+    return;
+  case'o':
+    tearDown();
+    setupZone4();
+    return;
+  case'p':
+    tearDown();
+    setupZone5();
+    return;
   }
 }
 
@@ -187,8 +400,9 @@ void displayStressData() {
   offscreen.text(frameCount % 100, (textXPer + 0.2) * movX, (textYPer + 0.14) * movY);
   offscreen.text(frameCount % 150, (textXPer + 0.2) * movX, (textYPer + 0.19) * movY);
 }
+
 void movieScrubber() {
   float mousePosRatio = mouseX/ (float)width;
   myMovie.jump(mousePosRatio* myMovie.duration());
-  //println(mousePosRatio* myMovie.duration());
+  return;
 }
