@@ -45,6 +45,7 @@ void setup() {
   // Keystone will only work with P3D or OPENGL renderers, 
   // since it relies on texture mapping to deform
   size(1280, 720, P3D);
+  
 
   font = createFont("HelveticaNeue", 15);
 
@@ -89,7 +90,7 @@ void draw() {
 
   /// play movie file
   offscreen.image(myMovie, 0, 0, 1280, 720);
-
+ // myMovie.speed(5.0);
   if (DEBUG[0]) {
     println("framRate " + frameRate);
     offscreen.textSize(15);

@@ -6,8 +6,12 @@ int cornerPinX = 1280;
 int cornerPinY = 720;
 
 import processing.video.*;
-Movie myMovie;
-Movie myMovie2;
+
+Movie myMovie, myMovie2, myMovie3, myMovie4, myMovie5;
+String movieNames[] = {"dancing2.mp4", "dancing3.mp4", "dancing2.mp4", "dancing3.mp4", "dancing3.mp4"};
+Movie movies[] = {myMovie, myMovie2, myMovie3, myMovie4, myMovie5};
+int moviePlaying = 0;
+
 int videoScale = 10;
 int cols, rows;
 
@@ -28,27 +32,21 @@ PFont font;
 
 float scaleNumber;
 
+int currentZone = 2;
+
 void setup() {
   size(1280, 720, P3D);
-  
+
   font = createFont("HelveticaNeueu", 15);
-  
+
   ks = new Keystone(this);
   surface = ks.createCornerPinSurface(cornerPinX, cornerPinY, 20);
   offscreen = createGraphics(cornerPinX, cornerPinY, P3D);
   //ks.load();
-  
-  myMovie = new Movie(this, "dancing2.mp4");
-  myMovie2 = new Movie(this, "dancing3.mp4");
-  
-  myMovie.loop();
-  myMovie2.loop();
-
-  // changes speed of pixels appearing
-  frameRate(10);
+  setupCurrentZone();
   //myMovie.speed(2.0); 
-  movX = myMovie.width;
-  movY = myMovie.height;
+  movX = 1280;
+  movY = 720;
 
   // BlackPixels(color tempC, int tempScale)
   blackPixels = new BlackPixels(color(0), 40);
@@ -62,46 +60,11 @@ void movieEvent(Movie m) {
 
 void draw() {
   //// scale of pixels here. To replace with biosensing data
-  
+
   // videoScale = updateFlatScaleUpAndDown();
-  background(100);
+
   offscreen.beginDraw();
-  offscreen.background(10, 0, 200);
-  //offscreen.imageMode(CENTER);
-  //offscreen.image(hotel,0,0, 1280, 780);
-  //pixelMan.loadPixels();
-  
-  offscreen.pushMatrix();
-  offscreen.translate(100, 0);
-  drawGridBrightness();
-  offscreen.popMatrix();
-  offscreen.pushMatrix();
-  offscreen.translate(200, 0);
-  drawGridBrightness2();
-  offscreen.popMatrix();
-  
-  //movieScrubber();
-  //blackPixels.display(updateScatterScaleUpAndDown());
-  //purplePixels.display(updateScatterScaleUpAndDown());
-
-  myMovie.loadPixels();
-  myMovie2.loadPixels();
-
-  //scrubIndicator();
-  //drawMoviePixels();
-  
-
-
-  updatePixels();
-  
-  if (DEBUG) {
-    println("framRate " + frameRate);
-    offscreen.fill(255);
-    offscreen.textSize(15);
-    offscreen.text("frameRate " + (int)frameRate, .7 * movX, 0.1 * movY);
-    displayStressData();
-    //println("time "+myMovie.time()); // if want to see timestamp of while movie plays
-  }
+  drawZone2();
   offscreen.translate(cornerPinX/2, cornerPinY/2);
   offscreen.endDraw();
   surface.render(offscreen);
@@ -128,21 +91,23 @@ void drawMoviePixels() {
   }
 }
 
-void drawGridBrightness() {
+
+void drawGridBrightness(int state) {
+  movies[state].loadPixels();
   // Begin loop for columns
-  for (int i = 0; i < myMovie.width; i +=videoScale) {
+  for (int i = 0; i < movX; i +=videoScale) {
     // Begin loop for rows
-    for (int j = 0; j < myMovie.height; j +=videoScale) {
+    for (int j = 0; j < movY; j +=videoScale) {
 
       // Reversing x to mirror the image
       // In order to mirror the image, the column is reversed with the following formula:
       // mirrored column = width - column - 1
       //int loc = (myMovie.width - i - 1) + j*myMovie.width;
       // int loc = i + j * myMovie.width;
-      int loc = i + j * myMovie.width;
+      int loc = i + j * movies[state].width;
 
       // Each rect is colored white with a size determined by brightness
-      color c = myMovie.pixels[loc];
+      color c = movies[state].pixels[loc];
 
       // A rectangle size is calculated as a function of the pixel's brightness. 
       // A bright pixel is a large rectangle, and a dark pixel is a small one.
@@ -153,8 +118,8 @@ void drawGridBrightness() {
       // draw growing purple pixel
       // chromakey
       //if (sz>2) {
-      if(brightness(c) <50) {
-       // offscreen.rect(i - pixelMan.width/2, j - pixelMan.height/2, videoScale, videoScale);
+      if (brightness(c) <50) {
+        // offscreen.rect(i - pixelMan.width/2, j - pixelMan.height/2, videoScale, videoScale);
         if (0==(int) random(2) % 2 ) {
           // defines percentage of image to be colored
           //if (0==(int) random(updateScaleUpAndDown () ) % (updateScaleUpAndDown () + 1) ) {
@@ -173,61 +138,7 @@ void drawGridBrightness() {
           // this can be blank
           offscreen.fill(0);
           offscreen.rect(i + videoScale/2, j + videoScale/2, videoScale, videoScale);
-         // offscreen.rect(i + videoScale/2, j + videoScale/2, 0, 0);
-          //offscreen.rect(i - pixelMan.width/2, j - pixelMan.height/2, 0, 0);
-        }
-        offscreen.noStroke();
-      }
-    }
-  }
-}
-
-void drawGridBrightness2() {
-  // Begin loop for columns
-  for (int i = 0; i < myMovie2.width; i +=videoScale) {
-    // Begin loop for rows
-    for (int j = 0; j < myMovie2.height; j +=videoScale) {
-
-      // Reversing x to mirror the image
-      // In order to mirror the image, the column is reversed with the following formula:
-      // mirrored column = width - column - 1
-      //int loc = (myMovie.width - i - 1) + j*myMovie.width;
-      // int loc = i + j * myMovie.width;
-      int loc = i + j * myMovie2.width;
-
-      // Each rect is colored white with a size determined by brightness
-      color c = myMovie2.pixels[loc];
-
-      // A rectangle size is calculated as a function of the pixel's brightness. 
-      // A bright pixel is a large rectangle, and a dark pixel is a small one.
-      float sz = (brightness(c)/255)*videoScale; 
-
-      //offscreen.rectMode(CENTER);
-
-      // draw growing purple pixel
-      // chromakey
-      //if (sz>2) {
-      if(brightness(c) <50) {
-       // offscreen.rect(i - pixelMan.width/2, j - pixelMan.height/2, videoScale, videoScale);
-        if (0==(int) random(2) % 2 ) {
-          // defines percentage of image to be colored
-          //if (0==(int) random(updateScaleUpAndDown () ) % (updateScaleUpAndDown () + 1) ) {
-          offscreen.fill(250, 98, 237);
-          offscreen.rect(i + videoScale/2, j + videoScale/2, videoScale, videoScale);
-          //offscreen.rect(i - pixelMan.width/2, j - pixelMan.height/2, videoScale, videoScale);
-          //} else if (1==(int) random(updateScaleUpAndDown ()) % updateScaleUpAndDown ()  ) {
-        } else if (1==(int) random(2) % 2 ) {
-          offscreen.fill(0);
-          offscreen.rect(i + videoScale/2, j + videoScale/2, videoScale, videoScale);
-          //offscreen.rect(i - pixelMan.width/2, j - pixelMan.height/2, videoScale, videoScale);
-        } else {
-          //offscreen.fill(0);
-          //offscreen.rect(i + videoScale/2, j + videoScale/2, videoScale, videoScale);
-          // clear
-          // this can be blank
-          offscreen.fill(0);
-          offscreen.rect(i + videoScale/2, j + videoScale/2, videoScale, videoScale);
-         // offscreen.rect(i + videoScale/2, j + videoScale/2, 0, 0);
+          // offscreen.rect(i + videoScale/2, j + videoScale/2, 0, 0);
           //offscreen.rect(i - pixelMan.width/2, j - pixelMan.height/2, 0, 0);
         }
         offscreen.noStroke();
@@ -273,6 +184,11 @@ void keyPressed() {
     // saves the layout
     ks.save();
     break;
+
+  case '1':
+    // saves the layout
+    movies[0].jump(10.0);
+    break;
   }
 }
 
@@ -290,4 +206,102 @@ void displayStressData() {
   offscreen.text(frameCount % 35, (textXPer + 0.2) * movX, (textYPer + 0.09) * movY);
   offscreen.text(frameCount % 100, (textXPer + 0.2) * movX, (textYPer + 0.14) * movY);
   offscreen.text(frameCount % 150, (textXPer + 0.2) * movX, (textYPer + 0.19) * movY);
+}
+
+void setupCurrentZone() {
+  setupZone(currentZone);
+  return;
+}
+
+void setupZone(int zone) {
+  switch (zone) {
+  case 1:
+    setupZone1();
+    return;
+  case 2:
+    setupZone2();
+    return;
+  case 3:
+    setupZone3();
+    return;
+  case 4:
+    setupZone4();
+    return;
+  case 5:
+    setupZone5();
+    return;
+  }
+  println("ERR: setup a non-existant Zone: " + zone);
+}
+
+void tearDown() {
+  if (DEBUG) println("tearing down zone.");
+  return;
+}
+
+void setupZone1() {
+  if (DEBUG) println("build zone 1");
+  return;
+}
+void setupZone2() {
+  if (DEBUG) println("build zone 2");
+  for (int i = 0; i < movies.length; i ++) {
+    movies[i] = new Movie(this, movieNames[i]);
+    movies[i].loop();
+  }
+
+  // changes speed of pixels appearing
+  frameRate(10);
+  return;
+}
+void setupZone3() {
+  if (DEBUG) println("build zone 3");
+  return;
+}
+void setupZone4() {
+  if (DEBUG) println("build zone 4");
+  //myMovie = new Movie(this, movieNames[moviePlaying]);
+  //myMovie.loop();
+  return;
+}
+void setupZone5() {
+  if (DEBUG) println("build zone 5");
+  return;
+}
+
+void drawZone2() {
+
+  offscreen.background(25);
+
+  offscreen.pushMatrix();
+  offscreen.translate(-100, 0);
+  drawGridBrightness(0);
+  offscreen.popMatrix();
+  offscreen.pushMatrix();
+  offscreen.translate(100, 0);
+  drawGridBrightness(1);
+  offscreen.popMatrix();
+  offscreen.pushMatrix();
+  offscreen.translate(100, 0);
+  drawGridBrightness(2);
+  offscreen.popMatrix();
+  offscreen.pushMatrix();
+  offscreen.translate(300, 0);
+  drawGridBrightness(3);
+  offscreen.popMatrix();
+  offscreen.pushMatrix();
+  offscreen.translate(500, 0);
+  drawGridBrightness(4);
+  offscreen.popMatrix();
+
+  updatePixels();
+
+  if (DEBUG) {
+    println("framRate " + frameRate);
+    offscreen.fill(255);
+    offscreen.textSize(15);
+    offscreen.text("frameRate " + (int)frameRate, .7 * movX, 0.1 * movY);
+    displayStressData();
+    //println("time "+myMovie.time()); // if want to see timestamp of while movie plays
+  }
 }
