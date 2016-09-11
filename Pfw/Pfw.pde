@@ -19,6 +19,10 @@ import processing.video.*;
 Movie myMovie;
 Movie myMovie2;
 String movieNames[] = {"", "", "", "danger3.mp4", "rope3.mp4"};
+
+Zone1 zone1 = new Zone1(myMovie);
+
+
 Movie Movies[] = {myMovie};
 int moviePlaying = 0;
 int movX = 1280;
@@ -38,6 +42,7 @@ float speed = 1.0;
 
 
 
+
 boolean DEBUG = true; // determines whether to data on screen
 
 PFont font;
@@ -49,12 +54,33 @@ int currentZone = 5;
 void tearDown() {
   if (DEBUG) println("tearing down zone.");
   myMovie.stop();
+  
+  if (myMovie2 != null) {
+    myMovie2.stop();
+  }
+  
+  frameRate(60);
+  
   return;
 }
+
+
+int stressVal;
+
+
 void setupZone1() {
+  
+  
   if (DEBUG) println("build zone 1");
+  
+  myMovie = new Movie(this, "rose4.mp4"); 
+  myMovie.loop();
+ 
+  zone1.start();
+  
   currentZone = 1;
   return;
+  
 }
 void setupZone2() {
   if (DEBUG) println("build zone 2");
@@ -344,6 +370,7 @@ void drawZone2() {
 }
 
 void drawZone1() {
+  zone1.draw();
 }
 
 
