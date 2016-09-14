@@ -8,31 +8,29 @@ int cornerPinY = 720;
 import processing.video.*;
 
 Movie myMovie, myMovie2, myMovie3, myMovie4, myMovie5;
-String movieNames[] = {"dancing2.mp4", "dancing3.mp4", "dancing2.mp4", "dancing3.mp4", "dancing3.mp4"};
+String movieNames[] = {"dance5.mp4", "dance2.mp4", "dance3.mp4", "dance4.mp4", "dance1.mp4"};
 Movie movies[] = {myMovie, myMovie2, myMovie3, myMovie4, myMovie5};
 int moviePlaying = 0;
 
-int videoScale = 10;
+int videoScale = 8;
 int cols, rows;
 
 int movX;
 int movY;
-PImage pixelMan;
-PImage hotel;
-
-BlackPixels blackPixels;
-BlackPixels purplePixels;
 
 float textXPer = 0.7;
 float textYPer = 0.7;
 
-boolean DEBUG = true;  // determines whether to data on screen
+boolean DEBUG = false;  // determines whether to data on screen
 
 PFont font;
 
 float scaleNumber;
 
 int currentZone = 2;
+int lastDancerCount = -1;
+float stressVal = 10;
+int dancers;
 
 void setup() {
   size(1280, 720, P3D);
@@ -47,10 +45,6 @@ void setup() {
   //myMovie.speed(2.0); 
   movX = 1280;
   movY = 720;
-
-  // BlackPixels(color tempC, int tempScale)
-  blackPixels = new BlackPixels(color(0), 40);
-  purplePixels = new BlackPixels(color(250, 98, 237), 40);
 }
 
 
@@ -69,28 +63,6 @@ void draw() {
   offscreen.endDraw();
   surface.render(offscreen);
 }
-
-void drawMoviePixels() {
-  // Begin loop for columns
-  for (int i = 0; i < myMovie.width; i +=videoScale) {
-    // Begin loop for rows
-    for (int j = 0; j < myMovie.height; j +=videoScale) {
-
-      // Looking up the appropriate color in the pixel array
-      int loc = i + j * myMovie.width;
-      color c = myMovie.pixels[loc];
-      offscreen.fill(c);
-      offscreen.noStroke();
-      //stroke(0);
-      // to make the black parts transparent, only draw colors that are not black
-      // 24-bit color has 16777216 colors (2^8)^3
-      if (c > -16777216) {
-        offscreen.rect(i - myMovie.width/2, j - myMovie.height/2, videoScale, videoScale);
-      }
-    }
-  }
-}
-
 
 void drawGridBrightness(int state) {
   movies[state].loadPixels();
@@ -123,7 +95,7 @@ void drawGridBrightness(int state) {
         if (0==(int) random(2) % 2 ) {
           // defines percentage of image to be colored
           //if (0==(int) random(updateScaleUpAndDown () ) % (updateScaleUpAndDown () + 1) ) {
-          offscreen.fill(250, 98, 237);
+          offscreen.fill(250, 98 + state * 30, 237/(state+1));
           offscreen.rect(i + videoScale/2, j + videoScale/2, videoScale, videoScale);
           //offscreen.rect(i - pixelMan.width/2, j - pixelMan.height/2, videoScale, videoScale);
           //} else if (1==(int) random(updateScaleUpAndDown ()) % updateScaleUpAndDown ()  ) {
@@ -185,9 +157,24 @@ void keyPressed() {
     ks.save();
     break;
 
-  case '1':
-    // saves the layout
-    movies[0].jump(10.0);
+  case 'q':
+    stressVal = 10;
+    break;
+
+  case 'w':
+    stressVal = 30;
+    break;
+
+  case 'e':
+    stressVal = 50;
+    break;
+
+  case 'r':
+    stressVal = 70;
+    break;
+
+  case 't':
+    stressVal = 90;
     break;
   }
 }
@@ -247,7 +234,7 @@ void setupZone2() {
   if (DEBUG) println("build zone 2");
   for (int i = 0; i < movies.length; i ++) {
     movies[i] = new Movie(this, movieNames[i]);
-    movies[i].loop();
+    //movies[i].loop();
   }
 
   // changes speed of pixels appearing
@@ -273,26 +260,47 @@ void drawZone2() {
 
   offscreen.background(25);
 
-  offscreen.pushMatrix();
-  offscreen.translate(-100, 0);
-  drawGridBrightness(0);
-  offscreen.popMatrix();
-  offscreen.pushMatrix();
-  offscreen.translate(100, 0);
-  drawGridBrightness(1);
-  offscreen.popMatrix();
-  offscreen.pushMatrix();
-  offscreen.translate(100, 0);
-  drawGridBrightness(2);
-  offscreen.popMatrix();
-  offscreen.pushMatrix();
-  offscreen.translate(300, 0);
-  drawGridBrightness(3);
-  offscreen.popMatrix();
-  offscreen.pushMatrix();
-  offscreen.translate(500, 0);
-  drawGridBrightness(4);
-  offscreen.popMatrix();
+  // handle all on screen dancers with this code
+  //
+  dancers = onScreenDancerCount();
+
+  // handle new dancers
+  //
+  for (int i = 0; i <= dancers; i++) {
+
+    if (lastDancerCount < i) {
+      movies[i].jump(0);
+      movies[i].loop();
+      println("movieNumber " + i);
+    }
+  }
+
+  // handle old dancers
+  //
+  for (int i = 0; i <= lastDancerCount; i++) {
+    if (dancers < i) {
+      movies[i].jump(35);
+      movies[i].noLoop();
+      println("movieNoLoop "+i);
+      // movies[j].play();
+      //drawGridBrightness(j);
+      //lastDancerCount = dancers;
+    }
+  }
+
+
+  for (int i = 0; i < 5; i++) {
+    offscreen.pushMatrix();
+    offscreen.translate(250 - i * 150, 0);
+    if (movies[i].playbin.isPlaying()) {
+      drawGridBrightness(i);
+    }
+    offscreen.popMatrix();
+  }
+
+  lastDancerCount = dancers;
+  // println("dancers     "+dancers);
+  // println("lastdancercount "+lastDancerCount);
 
   updatePixels();
 
@@ -304,4 +312,9 @@ void drawZone2() {
     displayStressData();
     //println("time "+myMovie.time()); // if want to see timestamp of while movie plays
   }
+}
+
+int onScreenDancerCount() {
+  // maps number of dancers from 1-5 based on stress values
+  return (int) map(stressVal, 0, 100, 0, 5);
 }
