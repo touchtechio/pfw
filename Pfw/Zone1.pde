@@ -95,12 +95,15 @@ class Zone1 {
       // circle with line points
       offscreen.line(sin(theta * i)*r, cos(theta * i) * r, sin(theta * i)*r2, cos(theta *i) * r2);
       offscreen.rotate(0.3 * sin(thetaText * 5));
+     
+     // draw triangle indicator
       offscreen.line(r * 1.15, 15, r * 1.15, - 15);
-      offscreen.beginShape();
+      offscreen.beginShape(); 
       offscreen.vertex(r * 1.15, -8);
       offscreen.vertex(r * 1.1, 0);
       offscreen.vertex(r * 1.15, 8);
       offscreen.endShape();
+      
       offscreen.text("Chalayan", r * 1.2, 3);
       offscreen.line(r * 1.3, -20, r * 1.3, - 28);
       offscreen.line(r * 1.3, 20, r * 1.3, 28);

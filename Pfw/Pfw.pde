@@ -34,10 +34,10 @@ float lastStressVal;
 float stressVal;
 
 float stressMovieVal[][] = 
-{ {0.0, 5.0, 10.0, 22.0},
-  {0,0,0,0},
-  {0,0,0,0},
-  {0.5, 8.0, 16.0, 26.0},
+  { {0.0, 5.0, 10.0, 22.0}, 
+  {0, 0, 0, 0}, 
+  {0, 0, 0, 0}, 
+  {0.5, 8.0, 16.0, 26.0}, 
   {2.1, 8.0, 13, 22.0}}; // times in the movie to jump to
 float stressLow, stressHigh, stressMed, stressCrazy;
 float stressType[] = {stressLow, stressHigh, stressMed, stressCrazy};
@@ -91,14 +91,13 @@ void setupZone2() {
   currentZone = 2;
   lastStressVal = 0;
   stressVal = 10;
-  
+
   // changes speed of pixels appearing
   videoScale = 8;
   if (DEBUG) println("build zone 2");
   for (int i = 0; i < movies.length; i ++) {
     movies[i] = new Movie(this, movieNames[i]);
     println("movies "+ movieNames[i]);
-    
   }
   frameRate(10);
   return;
@@ -133,7 +132,7 @@ void setupZone4() {
 void setupZone5() {
   if (DEBUG) println("build zone 5");
   currentZone = 5;
-  
+
   lastStressVal = 0;
   //myMovie = new Movie(this, movieNames[currentZone-1]);
   myMovie = new Movie(this, "rope3.mp4");
@@ -232,8 +231,8 @@ void draw() {
   offscreen.background(0);
 
   /// play movie file
-  if(currentZone!= 2) {
-  offscreen.image(myMovie, 0, 0, 1280, 720);
+  if (currentZone!= 2) {
+    offscreen.image(myMovie, 0, 0, 1280, 720);
   }
 
   //println("framRate " + frameRate);
@@ -257,14 +256,17 @@ int stressIntensityVal() {
 void drawZone5() {
 
   offscreen.stroke(255);
-  
+
   int intensity = stressIntensityVal();
   if (stressVal != lastStressVal) {
     myMovie.jump(stressMovieVal[currentZone-1][intensity]);
+  } else {
+
+    myMovie.jump(stressMovieVal[currentZone-1][intensity] + updateMovieScrub());
   }
-  
+
   lastStressVal = stressVal;
-  
+
   if (true) { 
     //println("framRate " + frameRate);
     offscreen.textSize(15);
@@ -274,9 +276,25 @@ void drawZone5() {
   return;
 }
 
+float updateMovieScrub () {
+  frameRate(10);
+  //for (int i = 0; i < 20; i++) {
+  return 5 * sin(frameCount%20);
+
+
+/*
+  //int scale = ((int)millis() % 21);
+ int scale = (frameCount % 10);
+ 
+ if (scale < 10) {
+ return (10 - scale);
+ }
+ return (scale - 9);
+ */
+}
 
 void drawZone4() {
-  
+
   offscreen.stroke(255);
 
   if (true) { 
@@ -325,6 +343,8 @@ int updateScatterScaleUpAndDown () {
   }
   return (scale - 39);
 }
+// replace framCount with bioSensing data;
+
 void drawSquare() {
   for (int i = xstart; i < xend; i +=videoScale) {
     // Begin loop for rows
@@ -466,7 +486,7 @@ void keyPressed() {
     break;
 
     /// Zone 4 and 5 stress level keys
-  
+
   case 'v':
     myMovie.jump(stressMovieVal[currentZone - 1][0]);
     //return;
@@ -505,11 +525,11 @@ void keyPressed() {
     tearDown();
     setupZone5();
     break;
-    
-  ///Zone2 stress level keys
+
+    ///Zone2 stress level keys
   case 'q':
     stressVal = 10;
-    if(currentZone == 1) {
+    if (currentZone == 1) {
       myMovie.jump(stressMovieVal[currentZone - 1][3]);
     }
     break;
@@ -537,7 +557,6 @@ void keyPressed() {
   case 'u':
     stressVal = 90;
     break;
-  
   }
 }
 
