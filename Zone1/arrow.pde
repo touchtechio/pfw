@@ -27,7 +27,7 @@ class TargetArrow {
     offscreen.fill(255);
     offscreen.textSize(13);
     
-    offscreen.text(data, 8, 15);
+    offscreen.text("intel", 8, 15);
     //offscreen.text(myMovie.time(), 8, 15);
   }
 }

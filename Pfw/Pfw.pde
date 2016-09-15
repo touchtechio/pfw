@@ -16,32 +16,33 @@ int cornerPinX = 1280;
 int cornerPinY = 720;
 
 import processing.video.*;
-Movie myMovie;
-Movie myMovie2;
-String movieNames[] = {"", "", "", "danger3.mp4", "rope3.mp4"};
+Movie myMovie, myMovie2, myMovie3, myMovie4, myMovie5, myMovie6, myMovie7;
+//String movieNames[] = {"", "", "", "danger3.mp4", "rope3.mp4"};
+String movieNames[] = {"dance1.mp4", "dance2.mp4", "dance3.mp4", "dance4.mp4", "dance5.mp4", "dance6.mp4", "dance7.mp4"};
+Movie movies[] = {myMovie, myMovie2, myMovie3, myMovie4, myMovie5, myMovie6, myMovie7};
+int moviePlaying = 0;
 
 Zone1 zone1 = new Zone1(myMovie);
 
-
-Movie Movies[] = {myMovie};
-int moviePlaying = 0;
 int movX = 1280;
 int movY = 720;
 float textXPer = 0.7;
 float textYPer = 0.7;
+int videoScale = 0;
+float speed;
 
-float stressMovieVal[] = {2.1, 8.0, 13, 22.0}; // times in the movie to jump to
+float stressMovieVal[][] = 
+{ {0.0, 5.0, 10.0, 22.0},
+  {0,0,0,0},
+  {0,0,0,0},
+  {0.5, 8.0, 16.0, 26.0},
+  {2.1, 8.0, 13, 22.0}}; // times in the movie to jump to
 float stressLow, stressHigh, stressMed, stressCrazy;
 float stressType[] = {stressLow, stressHigh, stressMed, stressCrazy};
 String oscAddr[] = {"/Stress/s2/1/1", "/Stress/s2/2/1", "/Stress/s2/1/2", "/Stress/s2/2/2"};
 
 int zone[] = {1, 2, 3, 4, 5};
 String oscZoneAddr[] = {"/Zones/s2/1/1", "/Zones/s2/2/1", "/Zones/s2/1/2", "/Zones/s2/2/2"};
-
-float speed = 1.0;
-
-
-
 
 boolean DEBUG = true; // determines whether to data on screen
 
@@ -54,56 +55,52 @@ int currentZone = 5;
 void tearDown() {
   if (DEBUG) println("tearing down zone.");
   myMovie.stop();
-  
-  if (myMovie2 != null) {
-    myMovie2.stop();
+
+  for (int i = 1; i< movies.length; i++) {
+    if (movies[i] != null) {
+      movies[i].stop();
+      println("tear "+ i);
+    }
   }
-  
-  frameRate(60);
-  
+  //frameRate(60);
+
   return;
 }
 
-
-int stressVal;
-
+float stressVal;
 
 void setupZone1() {
-  
-  
+
+
   if (DEBUG) println("build zone 1");
-  
-  myMovie = new Movie(this, "rose4.mp4"); 
+
+  myMovie = new Movie(this, "rose5.mp4"); 
   myMovie.loop();
- 
+
   zone1.start();
-  
+
   currentZone = 1;
   return;
-  
 }
-void setupZone2() {
-  if (DEBUG) println("build zone 2");
-  currentZone = 2;
-  myMovie = new Movie(this, "dancing2.mp4");
-  myMovie2 = new Movie(this, "dancing3.mp4");
-  
-  myMovie.loop();
-  myMovie2.loop();
 
+int lastDancerCount = -1;
+int dancers;
+void setupZone2() {
+  currentZone = 2;
+  stressVal = 10;
   // changes speed of pixels appearing
+  videoScale = 8;
+  if (DEBUG) println("build zone 2");
+  for (int i = 0; i < movies.length; i ++) {
+    movies[i] = new Movie(this, movieNames[i]);
+    println("movies "+ movieNames[i]);
+    
+  }
   frameRate(10);
   return;
 }
-void setupZone3() {
-  if (DEBUG) println("build zone 3");
-  myMovie = new Movie(this, "rose_viz3.mp4");
-  myMovie.loop();
-  currentZone = 3;
-  return;
-}
 
-int videoScale = 13;
+
 int xstart;
 int ystart;
 int xend;
@@ -111,11 +108,21 @@ int yend;
 int centerPtX;
 int centerPtY;
 int pixelW;
+
+void setupZone3() {
+  if (DEBUG) println("build zone 3");
+  myMovie = new Movie(this, "rose_viz3.mp4");
+  myMovie.loop();
+  currentZone = 3;
+  videoScale = 13;
+  return;
+}
+
 void setupZone4() {
   if (DEBUG) println("build zone 4");
   currentZone = 4;
-  
-  myMovie = new Movie(this, movieNames[currentZone-1]);
+
+  myMovie = new Movie(this, "danger3.mp4");
   myMovie.loop();
   return;
 }
@@ -123,7 +130,8 @@ void setupZone5() {
   if (DEBUG) println("build zone 5");
   currentZone = 5;
 
-  myMovie = new Movie(this, movieNames[currentZone-1]);
+  //myMovie = new Movie(this, movieNames[currentZone-1]);
+  myMovie = new Movie(this, "rope3.mp4");
   myMovie.loop();
   return;
 }
@@ -196,12 +204,6 @@ void setup() {
 
   ks = new Keystone(this);
   surface = ks.createCornerPinSurface(cornerPinX, cornerPinY, 20);
-
-  // We need an offscreen buffer to draw the surface we
-  // want projected
-  // note that we're matching the resolution of the
-  // CornerPinSurface.
-  // (The offscreen buffer can be P2D or P3D)
   offscreen = createGraphics(cornerPinX, cornerPinY, P3D);
 
   ks.load();
@@ -225,14 +227,14 @@ void draw() {
   offscreen.background(0);
 
   /// play movie file
+  if(currentZone!= 2) {
   offscreen.image(myMovie, 0, 0, 1280, 720);
+  }
 
-  println("framRate " + frameRate);
-
+  //println("framRate " + frameRate);
 
   // do stuff specific for each zone here
   drawCurrentZone();
-
 
   offscreen.translate(cornerPinX/2, cornerPinY/2);
   offscreen.endDraw();
@@ -244,11 +246,10 @@ void draw() {
 
 void drawZone5() {
 
-
   offscreen.stroke(255);
 
   if (true) { 
-    println("framRate " + frameRate);
+    //println("framRate " + frameRate);
     offscreen.textSize(15);
     offscreen.text("time " + myMovie.time(), .7 * movX, 0.1 * movY);
     displayStressData();
@@ -258,10 +259,10 @@ void drawZone5() {
 
 
 void drawZone4() {
-   offscreen.stroke(255);
+  offscreen.stroke(255);
 
   if (true) { 
-    println("framRate " + frameRate);
+    //println("framRate " + frameRate);
     offscreen.textSize(15);
     offscreen.text("time " + myMovie.time(), .7 * movX, 0.1 * movY);
     displayStressData();
@@ -269,7 +270,6 @@ void drawZone4() {
 }
 
 void drawZone3() {
-
 
   //// for fixed starting point (center), the square scales up and down
   pixelW = updateScatterScaleUpAndDown() * videoScale;
@@ -287,7 +287,7 @@ void drawZone3() {
 
   drawSquare();
   if (DEBUG) {
-    println("framRate " + frameRate);
+    //println("framRate " + frameRate);
     offscreen.fill(255);
     offscreen.textSize(15);
     offscreen.text("frameRate " + (int)frameRate, .7 * movX, 0.1 * movY);
@@ -329,44 +329,66 @@ void drawSquare() {
 
 // end Zone 3
 
+// start Zone 2
 
 void drawZone2() {
-    offscreen.background(10, 0, 200);
-  //offscreen.imageMode(CENTER);
-  //offscreen.image(hotel,0,0, 1280, 780);
-  //pixelMan.loadPixels();
-  
-  offscreen.pushMatrix();
-  offscreen.translate(100, 0);
-  drawGridBrightness();
-  offscreen.popMatrix();
-  offscreen.pushMatrix();
-  offscreen.translate(200, 0);
-  drawGridBrightness2();
-  offscreen.popMatrix();
-  
-  //movieScrubber();
-  //blackPixels.display(updateScatterScaleUpAndDown());
-  //purplePixels.display(updateScatterScaleUpAndDown());
 
-  myMovie.loadPixels();
-  myMovie2.loadPixels();
+  offscreen.background(25);
 
-  //scrubIndicator();
-  //drawMoviePixels();
-  
+  // handle all on screen dancers with this code
+  //
+  dancers = onScreenDancerCount();
+  println("dancerNumber " + dancers);
+  // handle new dancers coming screen
+  //
+  for (int i = 0; i <= dancers; i++) {
 
+    if (lastDancerCount < i) {
+      movies[i].jump(0);
+      movies[i].loop();
+      println("movieNumber " + i);
+    }
+  }
+
+  // handle old dancers leaving screen
+  //
+  for (int i = 0; i <= lastDancerCount; i++) {
+    if (dancers < i) {
+      movies[i].jump(37);
+      movies[i].noLoop();
+      println("movieNoLoop "+i);
+    }
+  }
+
+
+  for (int i = 0; i < movies.length; i++) {
+    offscreen.pushMatrix();
+    //offscreen.translate(250 - i * 150, 0);
+    if (movies[i].playbin.isPlaying()) {
+      drawGridBrightness(i);
+    }
+    offscreen.popMatrix();
+  }
+
+  lastDancerCount = dancers;
+  // println("dancers     "+dancers);
+  // println("lastdancercount "+lastDancerCount);
 
   updatePixels();
-  
+
   if (DEBUG) {
-    println("framRate " + frameRate);
+    //println("framRate " + frameRate);
     offscreen.fill(255);
     offscreen.textSize(15);
     offscreen.text("frameRate " + (int)frameRate, .7 * movX, 0.1 * movY);
     displayStressData();
     //println("time "+myMovie.time()); // if want to see timestamp of while movie plays
   }
+}
+
+int onScreenDancerCount() {
+  // maps number of dancers from 1-5 based on stress values
+  return (int) map(stressVal, 0, 100, 0, 7);
 }
 
 void drawZone1() {
@@ -383,7 +405,8 @@ void oscEvent(OscMessage theOscMessage) {
     if (theOscMessage.checkAddrPattern(oscAddr[i])==true) {
       stressType[i] = theOscMessage.get(0).floatValue();
       if (stressType[i] == 1.0) {
-        myMovie.jump(stressMovieVal[i]);
+
+        myMovie.jump(stressMovieVal[currentZone - 1][i]);
         return;
       } else {
         // nothing
@@ -395,6 +418,7 @@ void oscEvent(OscMessage theOscMessage) {
     if (theOscMessage.checkAddrPattern(oscZoneAddr[i])==true) {
       float value = theOscMessage.get(0).floatValue();
       if (value == 1.0) {
+        tearDown();
         currentZone = zone[i];
         setupZone(zone[i]);
         return;
@@ -407,8 +431,8 @@ void oscEvent(OscMessage theOscMessage) {
 
 void keyPressed() {
   switch(key) {
-    
-  /// keystoning keys
+
+    /// keystoning keys
   case 'c':
     // enter/leave calibration mode, where surfaces can be warped 
     // and moved
@@ -423,25 +447,26 @@ void keyPressed() {
     ks.save();
     break;
 
-  /// stress level keys
-  case 'q':
-    myMovie.jump(stressMovieVal[0]);
+    /// Zone 4 and 5 stress level keys
+  
+  case 'v':
+    myMovie.jump(stressMovieVal[currentZone - 1][0]);
     //return;
     break;
-  case 'w':
-    myMovie.jump(stressMovieVal[1]);
+  case 'b':
+    myMovie.jump(stressMovieVal[currentZone - 1][1]);
     return;
-  case 'e':
-    myMovie.jump(stressMovieVal[1]);
+  case 'n':
+    myMovie.jump(stressMovieVal[currentZone - 1][2]);
     //float stress3 = 21.0;
     //myMovie.jump(stress3);
     //stress3 -= 0.1;
     break;
-  case 'r':
-    myMovie.jump(stressMovieVal[3]);
+  case 'm':
+    myMovie.jump(stressMovieVal[currentZone - 1][3]);
     break;
 
-  /// Zone switching
+    /// Zone switching
   case '1':
     tearDown();
     setupZone1();
@@ -462,6 +487,39 @@ void keyPressed() {
     tearDown();
     setupZone5();
     break;
+    
+  ///Zone2 stress level keys
+  case 'q':
+    stressVal = 10;
+    if(currentZone == 1) {
+      myMovie.jump(stressMovieVal[currentZone - 1][3]);
+    }
+    break;
+
+  case 'w':
+    stressVal = 25;
+    break;
+
+  case 'e':
+    stressVal = 35;
+    break;
+
+  case 'r':
+    stressVal = 45;
+    break;
+
+  case 't':
+    stressVal = 65;
+    break;
+
+  case 'y':
+    stressVal = 80;
+    break;
+
+  case 'u':
+    stressVal = 90;
+    break;
+  
   }
 }
 
@@ -493,37 +551,29 @@ void movieScrubber() {
   return;
 }
 
-void drawGridBrightness() {
+void drawGridBrightness(int state) {
+  movies[state].loadPixels();
   // Begin loop for columns
-  for (int i = 0; i < myMovie.width; i +=videoScale) {
+  for (int i = 0; i < movX; i +=videoScale) {
     // Begin loop for rows
-    for (int j = 0; j < myMovie.height; j +=videoScale) {
+    for (int j = 0; j < movY; j +=videoScale) {
 
-      // Reversing x to mirror the image
-      // In order to mirror the image, the column is reversed with the following formula:
-      // mirrored column = width - column - 1
-      //int loc = (myMovie.width - i - 1) + j*myMovie.width;
-      // int loc = i + j * myMovie.width;
-      int loc = i + j * myMovie.width;
+      int loc = i + j * movies[state].width;
 
       // Each rect is colored white with a size determined by brightness
-      color c = myMovie.pixels[loc];
+      color c = movies[state].pixels[loc];
 
       // A rectangle size is calculated as a function of the pixel's brightness. 
       // A bright pixel is a large rectangle, and a dark pixel is a small one.
       float sz = (brightness(c)/255)*videoScale; 
 
-      //offscreen.rectMode(CENTER);
-
-      // draw growing purple pixel
       // chromakey
-      //if (sz>2) {
-      if(brightness(c) <50) {
-       // offscreen.rect(i - pixelMan.width/2, j - pixelMan.height/2, videoScale, videoScale);
+      if (brightness(c) <50) {
+        // offscreen.rect(i - pixelMan.width/2, j - pixelMan.height/2, videoScale, videoScale);
         if (0==(int) random(2) % 2 ) {
           // defines percentage of image to be colored
           //if (0==(int) random(updateScaleUpAndDown () ) % (updateScaleUpAndDown () + 1) ) {
-          offscreen.fill(250, 98, 237);
+          offscreen.fill(250, 98 + state * 30, 237/(state+1));
           offscreen.rect(i + videoScale/2, j + videoScale/2, videoScale, videoScale);
           //offscreen.rect(i - pixelMan.width/2, j - pixelMan.height/2, videoScale, videoScale);
           //} else if (1==(int) random(updateScaleUpAndDown ()) % updateScaleUpAndDown ()  ) {
@@ -538,61 +588,7 @@ void drawGridBrightness() {
           // this can be blank
           offscreen.fill(0);
           offscreen.rect(i + videoScale/2, j + videoScale/2, videoScale, videoScale);
-         // offscreen.rect(i + videoScale/2, j + videoScale/2, 0, 0);
-          //offscreen.rect(i - pixelMan.width/2, j - pixelMan.height/2, 0, 0);
-        }
-        offscreen.noStroke();
-      }
-    }
-  }
-}
-
-void drawGridBrightness2() {
-  // Begin loop for columns
-  for (int i = 0; i < myMovie2.width; i +=videoScale) {
-    // Begin loop for rows
-    for (int j = 0; j < myMovie2.height; j +=videoScale) {
-
-      // Reversing x to mirror the image
-      // In order to mirror the image, the column is reversed with the following formula:
-      // mirrored column = width - column - 1
-      //int loc = (myMovie.width - i - 1) + j*myMovie.width;
-      // int loc = i + j * myMovie.width;
-      int loc = i + j * myMovie2.width;
-
-      // Each rect is colored white with a size determined by brightness
-      color c = myMovie2.pixels[loc];
-
-      // A rectangle size is calculated as a function of the pixel's brightness. 
-      // A bright pixel is a large rectangle, and a dark pixel is a small one.
-      float sz = (brightness(c)/255)*videoScale; 
-
-      //offscreen.rectMode(CENTER);
-
-      // draw growing purple pixel
-      // chromakey
-      //if (sz>2) {
-      if(brightness(c) <50) {
-       // offscreen.rect(i - pixelMan.width/2, j - pixelMan.height/2, videoScale, videoScale);
-        if (0==(int) random(2) % 2 ) {
-          // defines percentage of image to be colored
-          //if (0==(int) random(updateScaleUpAndDown () ) % (updateScaleUpAndDown () + 1) ) {
-          offscreen.fill(250, 98, 237);
-          offscreen.rect(i + videoScale/2, j + videoScale/2, videoScale, videoScale);
-          //offscreen.rect(i - pixelMan.width/2, j - pixelMan.height/2, videoScale, videoScale);
-          //} else if (1==(int) random(updateScaleUpAndDown ()) % updateScaleUpAndDown ()  ) {
-        } else if (1==(int) random(2) % 2 ) {
-          offscreen.fill(0);
-          offscreen.rect(i + videoScale/2, j + videoScale/2, videoScale, videoScale);
-          //offscreen.rect(i - pixelMan.width/2, j - pixelMan.height/2, videoScale, videoScale);
-        } else {
-          //offscreen.fill(0);
-          //offscreen.rect(i + videoScale/2, j + videoScale/2, videoScale, videoScale);
-          // clear
-          // this can be blank
-          offscreen.fill(0);
-          offscreen.rect(i + videoScale/2, j + videoScale/2, videoScale, videoScale);
-         // offscreen.rect(i + videoScale/2, j + videoScale/2, 0, 0);
+          // offscreen.rect(i + videoScale/2, j + videoScale/2, 0, 0);
           //offscreen.rect(i - pixelMan.width/2, j - pixelMan.height/2, 0, 0);
         }
         offscreen.noStroke();

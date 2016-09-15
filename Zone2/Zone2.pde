@@ -7,9 +7,9 @@ int cornerPinY = 720;
 
 import processing.video.*;
 
-Movie myMovie, myMovie2, myMovie3, myMovie4, myMovie5;
-String movieNames[] = {"dance5.mp4", "dance2.mp4", "dance3.mp4", "dance4.mp4", "dance1.mp4"};
-Movie movies[] = {myMovie, myMovie2, myMovie3, myMovie4, myMovie5};
+Movie myMovie, myMovie2, myMovie3, myMovie4, myMovie5, myMovie6, myMovie7;
+String movieNames[] = {"dance1.mp4", "dance2.mp4", "dance3.mp4", "dance4.mp4", "dance5.mp4", "dance6.mp4", "dance7.mp4"};
+Movie movies[] = {myMovie, myMovie2, myMovie3, myMovie4, myMovie5, myMovie6, myMovie7};
 int moviePlaying = 0;
 
 int videoScale = 8;
@@ -162,18 +162,26 @@ void keyPressed() {
     break;
 
   case 'w':
-    stressVal = 30;
+    stressVal = 25;
     break;
 
   case 'e':
-    stressVal = 50;
+    stressVal = 35;
     break;
 
   case 'r':
-    stressVal = 70;
+    stressVal = 45;
     break;
 
   case 't':
+    stressVal = 65;
+    break;
+
+  case 'y':
+    stressVal = 80;
+    break;
+
+  case 'u':
     stressVal = 90;
     break;
   }
@@ -264,7 +272,7 @@ void drawZone2() {
   //
   dancers = onScreenDancerCount();
 
-  // handle new dancers
+  // handle new dancers coming screen
   //
   for (int i = 0; i <= dancers; i++) {
 
@@ -275,23 +283,20 @@ void drawZone2() {
     }
   }
 
-  // handle old dancers
+  // handle old dancers leaving screen
   //
   for (int i = 0; i <= lastDancerCount; i++) {
     if (dancers < i) {
-      movies[i].jump(35);
+      movies[i].jump(37);
       movies[i].noLoop();
       println("movieNoLoop "+i);
-      // movies[j].play();
-      //drawGridBrightness(j);
-      //lastDancerCount = dancers;
     }
   }
 
 
-  for (int i = 0; i < 5; i++) {
+  for (int i = 0; i < movies.length; i++) {
     offscreen.pushMatrix();
-    offscreen.translate(250 - i * 150, 0);
+    //offscreen.translate(250 - i * 150, 0);
     if (movies[i].playbin.isPlaying()) {
       drawGridBrightness(i);
     }
@@ -316,5 +321,5 @@ void drawZone2() {
 
 int onScreenDancerCount() {
   // maps number of dancers from 1-5 based on stress values
-  return (int) map(stressVal, 0, 100, 0, 5);
+  return (int) map(stressVal, 0, 100, 0, 7);
 }

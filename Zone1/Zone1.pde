@@ -40,7 +40,7 @@ NetAddress myRemoteLocation;
 float stressVal;
 
 Movie myMovie;
-String movieNames[] = {"rose4.mp4"};
+String movieNames[] = {"rose5.mp4"};
 Movie Movies[] = {myMovie};
 int moviePlaying = 0;
 int movX = 1280;
@@ -80,7 +80,7 @@ float speed = 5.0;
 
 PFont font;
 
-boolean DEBUG = true;
+boolean DEBUG = false;
 
 void setup() {
   size(1280, 720, P3D);
@@ -157,8 +157,8 @@ void draw() {
   arrowPosY = crossPosY + 90 + updateArrowScaleUpAndDown (); // y pos moved up and down
 
   radialArrow();
-  
-    thetaText -= 0.01;
+
+  thetaText -= 0.01;
   //popMatrix();
   displayStressData();
 
@@ -234,13 +234,13 @@ void radialArrow() {
     // circle with line points
     offscreen.line(sin(theta * i)*r, cos(theta * i) * r, sin(theta * i)*r2, cos(theta *i) * r2);
     offscreen.rotate(0.3 * sin(thetaText * 5));
-    offscreen.line(r * 1.15, 15, r * 1.15,  - 15);
+    offscreen.line(r * 1.15, 15, r * 1.15, - 15);
     offscreen.beginShape();
     offscreen.vertex(r * 1.15, -8);
     offscreen.vertex(r * 1.1, 0);
     offscreen.vertex(r * 1.15, 8);
     offscreen.endShape();
-    offscreen.text("hello", r * 1.2, 3);
+    offscreen.text("Chalayan", r * 1.2, 3);
     offscreen.line(r * 1.3, -20, r * 1.3, - 28);
     offscreen.line(r * 1.3, 20, r * 1.3, 28);
     offscreen.popMatrix();

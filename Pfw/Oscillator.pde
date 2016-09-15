@@ -51,7 +51,8 @@ class Oscillator {
     // offscreen.ellipse(x,y,64,64); 
     rosePosX = x + roseStartX ; 
     rosePosY = y + roseStartY ;
-    offscreen.translate(0, 0, updateScatterScaleUpAndDown ()- 400);
+    offscreen.translate(0, 0, updateRoseZoom ()- 400);
+    println("roseZoom "+updateRoseZoom());
     //drawMoviePixels();
     
     offscreen.image(myMovie, rosePosX, rosePosY, 1280, 720);
@@ -66,5 +67,15 @@ class Oscillator {
       //println("dist " + dist(x, y, mouseX, mouseY));
       return;
     }
+  }
+  
+    int updateRoseZoom () {
+    //int scale = ((int)millis() % 21);
+    int scale = ( frameCount % 800);
+
+    if (scale < 400) {
+      return (400 - scale);
+    }
+    return (scale - 399);
   }
 }   

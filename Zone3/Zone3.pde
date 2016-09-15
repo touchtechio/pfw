@@ -56,6 +56,7 @@ void setup() {
   myMovie = new Movie(this, "rose_viz3.mp4");
   //myMovie2 = new Movie
   myMovie.loop();
+  videoScale = 13;
   //frameRate(10);
   //myMovie.speed(2.0);
 }
@@ -68,7 +69,7 @@ void movieEvent(Movie m) {
 void draw() {
 
   /// Change SquareSize
-  videoScale = 13;
+  
   //videoScale = updateFlatScaleUpAndDown();
   background(0);
 
