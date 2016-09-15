@@ -27,18 +27,15 @@ int circlePoints = 160;
 int textPoints = 75;
 float thetaText = TWO_PI / (float)textPoints ; // get the angle for each point
 
+boolean roseBloom = false;
+
 class Zone1 {
 
-  Movie myMovie;
 
   TargetArrow arrow;
   PImage crossHair;
 
-  Zone1(Movie movie) {
-    myMovie = movie;
-    return;
-  }
-
+ 
   void start() {
     if (DEBUG) println("start zone 1");
 
@@ -56,7 +53,7 @@ class Zone1 {
   void draw() {
 
     offscreen.pushMatrix();
-
+    checkRoseBloom(); //check to see if rose has bloomed, if it has move arrow
     //myMovie.loadPixels();
 
     for (int i = 0; i < oscillators.length; i++) {
@@ -64,14 +61,15 @@ class Zone1 {
       oscillators[i].display(0, 0);
     }
     offscreen.popMatrix();
+    
 
     //offscreen.image(myMovie, 0, 0);
     drawCrossHair();
     /// set position of arrow in relation to crosshair
-    
+
     arrowPosX = crossPosX - 70; // X pos fixed
     arrowPosY = crossPosY + 90 + updateArrowScaleUpAndDown (); // y pos moved up and down
-    
+
     /// draw the moving curved arrow to right of target;
     radialArrow();
 
@@ -151,6 +149,16 @@ class Zone1 {
     }
     return (scale - 99);
   }
-
-
+  
+   void checkRoseBloom() {
+    if (myMovie.time() > 20.5) {
+      if(!roseBloom) {
+      stressVal = 10;
+      println("bloom");
+      roseBloom = true;
+      }
+      return;
+    } else {
+    }
+  }
 }

@@ -22,7 +22,7 @@ String movieNames[] = {"dance1.mp4", "dance2.mp4", "dance3.mp4", "dance4.mp4", "
 Movie movies[] = {myMovie, myMovie2, myMovie3, myMovie4, myMovie5, myMovie6, myMovie7};
 int moviePlaying = 0;
 
-Zone1 zone1 = new Zone1(myMovie);
+Zone1 zone1 = new Zone1();
 
 int movX = 1280;
 int movY = 720;
@@ -30,6 +30,8 @@ float textXPer = 0.7;
 float textYPer = 0.7;
 int videoScale = 0;
 float speed;
+float lastStressVal;
+float stressVal;
 
 float stressMovieVal[][] = 
 { {0.0, 5.0, 10.0, 22.0},
@@ -62,12 +64,12 @@ void tearDown() {
       println("tear "+ i);
     }
   }
-  //frameRate(60);
+  frameRate(60);
 
   return;
 }
 
-float stressVal;
+
 
 void setupZone1() {
 
@@ -87,7 +89,9 @@ int lastDancerCount = -1;
 int dancers;
 void setupZone2() {
   currentZone = 2;
+  lastStressVal = 0;
   stressVal = 10;
+  
   // changes speed of pixels appearing
   videoScale = 8;
   if (DEBUG) println("build zone 2");
@@ -129,7 +133,8 @@ void setupZone4() {
 void setupZone5() {
   if (DEBUG) println("build zone 5");
   currentZone = 5;
-
+  
+  lastStressVal = 0;
   //myMovie = new Movie(this, movieNames[currentZone-1]);
   myMovie = new Movie(this, "rope3.mp4");
   myMovie.loop();
@@ -244,10 +249,22 @@ void draw() {
   return;
 }
 
+int stressIntensityVal() {
+  // maps number of dancers from 1-5 based on stress values
+  return (int) map(stressVal, 0, 100, 0, 4);
+}
+
 void drawZone5() {
 
   offscreen.stroke(255);
-
+  
+  int intensity = stressIntensityVal();
+  if (stressVal != lastStressVal) {
+    myMovie.jump(stressMovieVal[currentZone-1][intensity]);
+  }
+  
+  lastStressVal = stressVal;
+  
   if (true) { 
     //println("framRate " + frameRate);
     offscreen.textSize(15);
@@ -259,6 +276,7 @@ void drawZone5() {
 
 
 void drawZone4() {
+  
   offscreen.stroke(255);
 
   if (true) { 
@@ -497,7 +515,7 @@ void keyPressed() {
     break;
 
   case 'w':
-    stressVal = 25;
+    stressVal = 20;
     break;
 
   case 'e':
@@ -539,10 +557,12 @@ void displayStressData() {
   offscreen.text("brainwave frequency", textXPer * movX, (textYPer + 0.09) * movY);
   offscreen.text("respiratory rate", textXPer * movX, (textYPer + 0.14) * movY);
   offscreen.text("heart rate", textXPer * movX, (textYPer + 0.19) * movY);
+  offscreen.text("stress rate", textXPer * movX, (textYPer + 0.24) * movY);
   offscreen.textSize(20);
   offscreen.text(frameCount % 35, (textXPer + 0.2) * movX, (textYPer + 0.09) * movY);
   offscreen.text(frameCount % 100, (textXPer + 0.2) * movX, (textYPer + 0.14) * movY);
   offscreen.text(frameCount % 150, (textXPer + 0.2) * movX, (textYPer + 0.19) * movY);
+  offscreen.text((int) stressVal + (frameCount % 7), (textXPer + 0.2) * movX, (textYPer + 0.24) * movY);
 }
 
 void movieScrubber() {
@@ -551,6 +571,7 @@ void movieScrubber() {
   return;
 }
 
+/// used in Zone2
 void drawGridBrightness(int state) {
   movies[state].loadPixels();
   // Begin loop for columns
