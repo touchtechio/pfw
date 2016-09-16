@@ -40,7 +40,7 @@ class Oscillator {
 
   void display(float roseStartX, float roseStartY) {   
     // Map results of sine / cosine to width and height of window to give oscillator motion
-    
+
     //x = abs((sin(xtheta)) * movX * 0.4);   
     //y = abs((cos(ytheta)) * movY * 0.4);
     x = 0;
@@ -51,10 +51,12 @@ class Oscillator {
     // offscreen.ellipse(x,y,64,64); 
     rosePosX = x + roseStartX ; 
     rosePosY = y + roseStartY ;
-    offscreen.translate(random(stressVal/2), random(stressVal/2), updateRoseZoom ()- 400);
-//    println("roseZoom "+updateRoseZoom());
+    //offscreen.translate(stressVal * sin(updateRoseSpaz()),  stressVal/2 * cos(updateRoseSpaz()), updateRoseZoom ()- 400);
+    offscreen.translate( 0, 0, updateRoseZoom ()- 400);
+
+    //    println("roseZoom "+updateRoseZoom());
     //drawMoviePixels();
-    
+
     offscreen.image(myMovie, rosePosX, rosePosY, 1280, 720);
     //println( rosePosX ,  rosePosY );
     //println("mouse " + mouseX, mouseY);
@@ -68,14 +70,31 @@ class Oscillator {
       return;
     }
   }
-  
-    int updateRoseZoom () {
-    //int scale = ((int)millis() % 21);
-    int scale = ( frameCount % 800);
 
-    if (scale < 400) {
-      return (400 -  scale);
+  int updateRoseSpaz () {
+    //int scale = ((int)millis() % 21);
+    if (stressVal !=0) {
+      int spazRate = (int) 400;
+      int scale = ( frameCount % spazRate);
+
+      if (scale < spazRate/2) {
+        return ((int) spazRate/2 -  scale);
+      }
+      return (scale - (spazRate/2 - 1));
+    } else { 
+      return 0;
     }
-    return (scale - 399);
   }
-}   
+
+  int updateRoseZoom () {
+    //int scale = ((int)millis() % 21);
+
+    int zoomRate = 800;
+    int scale = ( frameCount % zoomRate);
+
+    if (scale < zoomRate/2) {
+      return ((int) zoomRate/2 -  scale);
+    }
+    return (scale - (zoomRate/2 - 1));
+  }
+}

@@ -26,6 +26,7 @@ float crossPosY;
 int circlePoints = 160;
 int textPoints = 75;
 float thetaText = TWO_PI / (float)textPoints ; // get the angle for each point
+float r;
 
 boolean roseBloom = false;
 
@@ -113,19 +114,23 @@ class Zone1 {
 
 
   void drawCrossHair() {
-    float r = 10 + stressVal; // radius distance to rose
-    circleX = sin(theta/12)* r; 
+     // radius distance to rose
+    r  = 10 + stressVal;
+    
+    /// changes the cross hair position to spaz out when stressed
+    float crossSpaz;
+    if (stressVal > 40) {
+      crossSpaz = random(r-10, r);
+    } else {crossSpaz = r;}
+    circleX = sin(theta/12)* crossSpaz; 
     circleY = cos(theta/12)* r;
     theta += TWO_PI/36; // angle increase around rose
-    //println("theta " + theta);
-
+   
     /// set position of crosshair to OSC Stress data but rotating around the rose;
     crossPosX = oscillators[0].rosePosX + 340 + circleX * 4; // check this out
     crossPosY = oscillators[0].rosePosY  + 230 + circleY * 3; // check this out
 
     offscreen.pushMatrix();
-    //offscreen.scale(0.5);
-    //offscreen.translate(-crossHair.width/2, -crossHair.height/2);
     offscreen.image(crossHair, crossPosX, crossPosY);//, 500, 320);
     offscreen.popMatrix();
 
