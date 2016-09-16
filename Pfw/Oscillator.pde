@@ -52,7 +52,7 @@ class Oscillator {
     rosePosX = x + roseStartX ; 
     rosePosY = y + roseStartY ;
     offscreen.translate(0, 0, updateRoseZoom ()- 400);
-    //println("roseZoom "+updateRoseZoom());
+//    println("roseZoom "+updateRoseZoom());
     //drawMoviePixels();
     
     offscreen.image(myMovie, rosePosX, rosePosY, 1280, 720);

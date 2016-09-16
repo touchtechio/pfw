@@ -35,7 +35,7 @@ class Zone1 {
   TargetArrow arrow;
   PImage crossHair;
 
- 
+
   void start() {
     if (DEBUG) println("start zone 1");
 
@@ -54,14 +54,13 @@ class Zone1 {
 
     offscreen.pushMatrix();
     checkRoseBloom(); //check to see if rose has bloomed, if it has move arrow
-    //myMovie.loadPixels();
-
+ 
     for (int i = 0; i < oscillators.length; i++) {
       oscillators[i].oscillate();
       oscillators[i].display(0, 0);
     }
     offscreen.popMatrix();
-    
+
 
     //offscreen.image(myMovie, 0, 0);
     drawCrossHair();
@@ -95,15 +94,15 @@ class Zone1 {
       // circle with line points
       offscreen.line(sin(theta * i)*r, cos(theta * i) * r, sin(theta * i)*r2, cos(theta *i) * r2);
       offscreen.rotate(0.3 * sin(thetaText * 5));
-     
-     // draw triangle indicator
+
+      // draw triangle indicator
       offscreen.line(r * 1.15, 15, r * 1.15, - 15);
       offscreen.beginShape(); 
       offscreen.vertex(r * 1.15, -8);
       offscreen.vertex(r * 1.1, 0);
       offscreen.vertex(r * 1.15, 8);
       offscreen.endShape();
-      
+
       offscreen.text("Chalayan", r * 1.2, 3);
       offscreen.line(r * 1.3, -20, r * 1.3, - 28);
       offscreen.line(r * 1.3, 20, r * 1.3, 28);
@@ -152,16 +151,18 @@ class Zone1 {
     }
     return (scale - 99);
   }
-  
-   void checkRoseBloom() {
+
+  void checkRoseBloom() {
     if (myMovie.time() > 20.5) {
-      if(!roseBloom) {
-      stressVal = 10;
-      println("bloom");
-      roseBloom = true;
+      if (!roseBloom) {
+        stressVal = 10;
+        println("bloom");
+        roseBloom = true;
       }
       return;
     } else {
     }
   }
+
+  
 }

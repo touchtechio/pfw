@@ -36,15 +36,19 @@ float lastStressVal;
 float stressVal;
 
 //glasses data
-int trueHR; 
-int trueStressVal;
+int trueHR = 0; 
+int trueStressVal = 0;
+boolean hasGlasses = false;
+boolean hasCalm = false;
+boolean noData = true;
+long beginStressManagement = 0L;
 
 float stressMovieVal[][] = 
-  { {0.0, 5.0, 10.0, 22.0}, 
+  {{40.0, 5.0, 10.0, 22.0}, 
   {0, 0, 0, 0}, 
   {0, 0, 0, 0}, 
   {0.5, 8.0, 16.0, 26.0}, 
-  {2.1, 8.0, 13, 22.0}}; // times in the movie to jump to
+  {2.1, 8.0, 13, 22.0, 52.0}}; // times in the movie to jump to
 float stressLow, stressHigh, stressMed, stressCrazy;
 float stressType[] = {stressLow, stressHigh, stressMed, stressCrazy};
 String oscAddr[] = {"/Stress/s2/1/1", "/Stress/s2/2/1", "/Stress/s2/1/2", "/Stress/s2/2/2"};
@@ -70,7 +74,7 @@ void tearDown() {
       println("tear "+ i);
     }
   }
-  frameRate(60);
+  frameRate(24);
 
   return;
 }
@@ -99,9 +103,9 @@ void setupZone2() {
   lastStressVal = 0;
   stressVal = 10;
   lastDancerCount = -1;
-  frameRate(10);
+  //frameRate(10);
   // changes speed of pixels appearing
-  videoScale = 8;
+  videoScale = 12;
   if (DEBUG) println("build zone 2");
   for (int i = 0; i < movies.length; i ++) {
     movies[i] = new Movie(this, movieNames[i]);
@@ -239,11 +243,6 @@ void draw() {
   offscreen.beginDraw();
   offscreen.background(0);
 
-  /// play movie file
-  if (currentZone!= 2) {
-    offscreen.image(myMovie, 0, 0, 1280, 720);
-  }
-
   //println("framRate " + frameRate);
 
   // do stuff specific for each zone here
@@ -263,18 +262,30 @@ int stressIntensityVal() {
 }
 
 void drawZone5() {
+  
+      offscreen.image(myMovie, 0, 0, 1280, 720);
+
 
   offscreen.stroke(255);
-  float theta = 0;
+  if (hasGlasses) {
+  gettingCalm(beginStressManagement);
+  }
+  println("truetrue");
+    
+  //float theta = 0;
   intensity = stressIntensityVal();
-  if (stressVal != lastStressVal) {
+  if (stressVal > lastStressVal) {
     myMovie.jump(stressMovieVal[currentZone-1][intensity]);
+  } else if (stressVal < lastStressVal || hasCalm) {
+    myMovie.jump(stressMovieVal[currentZone-1][4]);
+    hasCalm = false;
+    // myMovie
   } else {
-
     //myMovie.jump(stressMovieVal[currentZone-1][intensity] + updateMovieScrub());
   }
 
   lastStressVal = stressVal;
+  
 
   if (true) { 
     //println("framRate " + frameRate);
@@ -306,6 +317,9 @@ float updateMovieScrub () {
 }
 
 void drawZone4() {
+  
+      offscreen.image(myMovie, 0, 0, 1280, 720);
+
 
   offscreen.stroke(255);
   float theta = 0;
@@ -329,6 +343,9 @@ void drawZone4() {
 
 void drawZone3() {
   
+      offscreen.image(myMovie, 0, 0, 1280, 720);
+
+
   //// for fixed starting point (center), the square scales up and down
   greenPixel = (int) map(stressVal, 0, 100, 0, 350);
   pixelW = updateScatterScaleUpAndDown() + greenPixel;
@@ -384,7 +401,7 @@ void drawSquare() {
   offscreen.rectMode(CENTER);
 
   offscreen.rect(centerPtX + 170, centerPtY + 90, pixelW * 0.7, pixelW * 0.7); // right
-  offscreen.rect(centerPtX - 280, centerPtY + 60, pixelW , pixelW); // left
+  offscreen.rect(centerPtX - 280, centerPtY + 60, pixelW, pixelW); // left
   offscreen.rect(centerPtX + 40, centerPtY - 230, pixelW * 0.5, pixelW * 0.5); // top
 }
 
@@ -399,7 +416,7 @@ void drawZone2() {
   // handle all on screen dancers with this code
   //
   dancers = onScreenDancerCount();
- 
+
   // handle new dancers coming screen
   //
   for (int i = 0; i <= dancers; i++) {
@@ -458,21 +475,29 @@ void drawZone1() {
 void oscEvent(OscMessage theOscMessage) {
   print(" typetag:" + theOscMessage.typetag());
   print(" addrpattern: " +theOscMessage.addrPattern());
-  
-  if(theOscMessage.checkAddrPattern("/data")) {
+
+  if (theOscMessage.checkAddrPattern("/data")) {
     trueHR = theOscMessage.get(0).intValue();
     trueStressVal = theOscMessage.get(1).intValue();
-    println ("HR " + trueHR + ", SR" + trueStressVal);
+    if (DEBUG) println ("HR " + trueHR + ", SR" + trueStressVal);
+   
+    if (noData && trueHR > 0) { // sets the point where data comes in and stress goes nuts
+      manageGlassesStress();
+    }
+    if (hasCalm && trueHR <10) {
+     hasCalm = false;
+     noData = true;
+    }
   }
 
   for (int i = 0; i < oscAddr.length; i++) {
-   
-   // if (theOscMessage.checkAddrPattern(oscAddr[i])==true) {
-      if (theOscMessage.checkAddrPattern( "/Stress/s1")==true) {
-       stressVal = (int)theOscMessage.get(0).floatValue();
-       //stressIntensityVal();
-       println(stressVal);
-       return;
+
+    // if (theOscMessage.checkAddrPattern(oscAddr[i])==true) {
+    if (theOscMessage.checkAddrPattern( "/Stress/s1")==true) {
+      stressVal = (int)theOscMessage.get(0).floatValue();
+      //stressIntensityVal();
+      println(stressVal);
+      return;
       /*
       stressType[i] = theOscMessage.get(0).floatValue();
        if (stressType[i] == 1.0) {
@@ -597,6 +622,11 @@ void keyPressed() {
   case 'u':
     stressVal = 90;
     break;
+
+  case 'p':
+    manageGlassesStress();
+
+    break;
   }
 }
 
@@ -621,18 +651,18 @@ void displayStressData() {
   offscreen.text(frameCount % 35, (textXPer + 0.2) * movX, (textYPer + 0.09) * movY);
   offscreen.text(frameCount % 100, (textXPer + 0.2) * movX, (textYPer + 0.14) * movY);
   offscreen.text(trueHR, (textXPer + 0.2) * movX, (textYPer + 0.19) * movY);
-  offscreen.text(trueStressVal , (textXPer + 0.2) * movX, (textYPer + 0.24) * movY);
-  
+  offscreen.text(trueStressVal, (textXPer + 0.2) * movX, (textYPer + 0.24) * movY);
+
   /*
   offscreen.text(frameCount % 35, (textXPer + 0.2) * movX, (textYPer + 0.09) * movY);
-  offscreen.text(frameCount % 100, (textXPer + 0.2) * movX, (textYPer + 0.14) * movY);
-  offscreen.text(frameCount % 150, (textXPer + 0.2) * movX, (textYPer + 0.19) * movY);
-  offscreen.text((int) stressVal + (frameCount % 7), (textXPer + 0.2) * movX, (textYPer + 0.24) * movY);
-  */
+   offscreen.text(frameCount % 100, (textXPer + 0.2) * movX, (textYPer + 0.14) * movY);
+   offscreen.text(frameCount % 150, (textXPer + 0.2) * movX, (textYPer + 0.19) * movY);
+   offscreen.text((int) stressVal + (frameCount % 7), (textXPer + 0.2) * movX, (textYPer + 0.24) * movY);
+   */
 }
 
 void movieScrubber() {
-  float mousePosRatio = mouseX/ (float)width;
+  float mousePosRatio = mouseX / (float)width;
   myMovie.jump(mousePosRatio* myMovie.duration());
   return;
 }
@@ -660,7 +690,8 @@ void drawGridBrightness(int state) {
         if (0==(int) random(2) % 2 ) {
           // defines percentage of image to be colored
           //if (0==(int) random(updateScaleUpAndDown () ) % (updateScaleUpAndDown () + 1) ) {
-          offscreen.fill(250, 98 + state * 30, 237/(state+1));
+          //offscreen.fill(250, 98 + state * 30, 237/(state+1));
+          offscreen.fill(250, 98, 237);
           offscreen.rect(i + videoScale/2, j + videoScale/2, videoScale, videoScale);
           //offscreen.rect(i - pixelMan.width/2, j - pixelMan.height/2, videoScale, videoScale);
           //} else if (1==(int) random(updateScaleUpAndDown ()) % updateScaleUpAndDown ()  ) {
@@ -681,5 +712,23 @@ void drawGridBrightness(int state) {
         offscreen.noStroke();
       }
     }
+  }
+}
+
+void manageGlassesStress() {
+  hasGlasses = true;
+  noData = false;
+  stressVal = 90; // eventually to be replaced by real data
+  beginStressManagement = millis();
+  println(beginStressManagement);
+  return;
+}
+
+
+void gettingCalm(float startTime) {
+  if (millis() > startTime + 10000) {
+    hasCalm = true;
+    hasGlasses = false;
+    return;
   }
 }
