@@ -593,7 +593,7 @@ void keyPressed() {
 
     ///Zone2 stress level keys
   case 'q':
-    stressVal = 10;
+    stressVal = 0 ;
     if (currentZone == 1) {
       myMovie.jump(stressMovieVal[currentZone - 1][3]);
     }

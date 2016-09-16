@@ -51,7 +51,7 @@ class Oscillator {
     // offscreen.ellipse(x,y,64,64); 
     rosePosX = x + roseStartX ; 
     rosePosY = y + roseStartY ;
-    offscreen.translate(0, 0, updateRoseZoom ()- 400);
+    offscreen.translate(random(stressVal/2), random(stressVal/2), updateRoseZoom ()- 400);
 //    println("roseZoom "+updateRoseZoom());
     //drawMoviePixels();
     
@@ -74,7 +74,7 @@ class Oscillator {
     int scale = ( frameCount % 800);
 
     if (scale < 400) {
-      return (400 - scale);
+      return (400 -  scale);
     }
     return (scale - 399);
   }
