@@ -7,6 +7,7 @@ this sketch runs a movie that correlates to levels of stress
 import oscP5.*;
 import netP5.*;
 OscP5 oscP5;
+NetAddress myRemoteLocation;
 
 import deadpixel.keystone.*;
 Keystone ks;
@@ -14,6 +15,7 @@ CornerPinSurface surface;
 PGraphics offscreen;
 int cornerPinX = 1280;
 int cornerPinY = 720;
+int intensity;
 
 import processing.video.*;
 Movie myMovie, myMovie2, myMovie3, myMovie4, myMovie5, myMovie6, myMovie7;
@@ -44,7 +46,7 @@ float stressType[] = {stressLow, stressHigh, stressMed, stressCrazy};
 String oscAddr[] = {"/Stress/s2/1/1", "/Stress/s2/2/1", "/Stress/s2/1/2", "/Stress/s2/2/2"};
 
 int zone[] = {1, 2, 3, 4, 5};
-String oscZoneAddr[] = {"/Zones/s2/1/1", "/Zones/s2/2/1", "/Zones/s2/1/2", "/Zones/s2/2/2"};
+String oscZoneAddr[] = {"/Zone/switch/1/1", "/Zone/switch/2/1", "/Zone/switch/3/1", "/Zone/switch/4/1", "/Zone/switch/5/1"};
 
 boolean DEBUG = true; // determines whether to data on screen
 
@@ -85,13 +87,15 @@ void setupZone1() {
   return;
 }
 
-int lastDancerCount = -1;
+int lastDancerCount;
 int dancers;
+
 void setupZone2() {
   currentZone = 2;
   lastStressVal = 0;
   stressVal = 10;
-
+  lastDancerCount = -1;
+  frameRate(10);
   // changes speed of pixels appearing
   videoScale = 8;
   if (DEBUG) println("build zone 2");
@@ -99,7 +103,7 @@ void setupZone2() {
     movies[i] = new Movie(this, movieNames[i]);
     println("movies "+ movieNames[i]);
   }
-  frameRate(10);
+
   return;
 }
 
@@ -111,6 +115,7 @@ int yend;
 int centerPtX;
 int centerPtY;
 int pixelW;
+int greenPixel;
 
 void setupZone3() {
   if (DEBUG) println("build zone 3");
@@ -135,7 +140,7 @@ void setupZone5() {
 
   lastStressVal = 0;
   //myMovie = new Movie(this, movieNames[currentZone-1]);
-  myMovie = new Movie(this, "rope3.mp4");
+  myMovie = new Movie(this, "ropeLoop.mp4");
   myMovie.loop();
   return;
 }
@@ -214,6 +219,7 @@ void setup() {
 
   // start oscP5, listening for incoming messages at port 12000
   oscP5 = new OscP5(this, 12000);
+  myRemoteLocation = new NetAddress("10.175.88.76", 9000);
 
   setupCurrentZone();
   return;
@@ -256,13 +262,13 @@ int stressIntensityVal() {
 void drawZone5() {
 
   offscreen.stroke(255);
-
-  int intensity = stressIntensityVal();
+  float theta = 0;
+  intensity = stressIntensityVal();
   if (stressVal != lastStressVal) {
     myMovie.jump(stressMovieVal[currentZone-1][intensity]);
   } else {
 
-    myMovie.jump(stressMovieVal[currentZone-1][intensity] + updateMovieScrub());
+    //myMovie.jump(stressMovieVal[currentZone-1][intensity] + updateMovieScrub());
   }
 
   lastStressVal = stressVal;
@@ -277,25 +283,38 @@ void drawZone5() {
 }
 
 float updateMovieScrub () {
-  frameRate(10);
+  //frameRate(10);
+
   //for (int i = 0; i < 20; i++) {
-  return 5 * sin(frameCount%20);
+  //return 5 * sin(frameCount%20);
+  /*
+  theta +=  TWO_PI/36;
+   return circleX = 2 * sin(theta);
+   */
 
 
-/*
   //int scale = ((int)millis() % 21);
- int scale = (frameCount % 10);
- 
- if (scale < 10) {
- return (10 - scale);
- }
- return (scale - 9);
- */
+  float scale = (frameCount % 5);
+
+  if (scale < 5) {
+    return (5 - scale);
+  }
+  return (scale - 4);
 }
 
 void drawZone4() {
 
   offscreen.stroke(255);
+  float theta = 0;
+  intensity = stressIntensityVal();
+  if (stressVal != lastStressVal) {
+    myMovie.jump(stressMovieVal[currentZone-1][intensity]);
+  } else {
+
+    //myMovie.jump(stressMovieVal[currentZone-1][intensity] + updateMovieScrub());
+  }
+
+  lastStressVal = stressVal;
 
   if (true) { 
     //println("framRate " + frameRate);
@@ -306,9 +325,11 @@ void drawZone4() {
 }
 
 void drawZone3() {
-
+  
   //// for fixed starting point (center), the square scales up and down
-  pixelW = updateScatterScaleUpAndDown() * videoScale;
+  greenPixel = (int) map(stressVal, 0, 100, 0, 350);
+  pixelW = updateScatterScaleUpAndDown() + greenPixel;
+  println(pixelW);
 
   centerPtX = 1280/2;
   centerPtY = 780/2;
@@ -317,7 +338,6 @@ void drawZone3() {
   ystart = constrain(centerPtY - pixelW/2, 0, myMovie.height);
   xend = constrain(centerPtX + pixelW/2, 0, myMovie.width);
   yend = constrain(centerPtY + pixelW/2, 0, myMovie.height);
-
 
   //// Either a using a pixel effect or a flat square
 
@@ -360,9 +380,9 @@ void drawSquare() {
   }
   offscreen.rectMode(CENTER);
 
-  offscreen.rect(centerPtX + 170, centerPtY + 90, pixelW, pixelW ); // right
-  offscreen.rect(centerPtX - 280, centerPtY + 80, pixelW, pixelW); // left
-  offscreen.rect(centerPtX + 40, centerPtY - 210, pixelW * 0.8, pixelW * 0.8); // top
+  offscreen.rect(centerPtX + 170, centerPtY + 90, pixelW * 0.7, pixelW * 0.7); // right
+  offscreen.rect(centerPtX - 280, centerPtY + 60, pixelW , pixelW); // left
+  offscreen.rect(centerPtX + 40, centerPtY - 230, pixelW * 0.5, pixelW * 0.5); // top
 }
 
 // end Zone 3
@@ -440,29 +460,43 @@ void oscEvent(OscMessage theOscMessage) {
   println(theOscMessage.get(0).floatValue());
 
   for (int i = 0; i < oscAddr.length; i++) {
-    if (theOscMessage.checkAddrPattern(oscAddr[i])==true) {
+   
+   // if (theOscMessage.checkAddrPattern(oscAddr[i])==true) {
+      if (theOscMessage.checkAddrPattern( "/Stress/s1")==true) {
+       stressVal = (int)theOscMessage.get(0).floatValue();
+       //stressIntensityVal();
+       println(stressVal);
+       return;
+      /*
       stressType[i] = theOscMessage.get(0).floatValue();
-      if (stressType[i] == 1.0) {
-
-        myMovie.jump(stressMovieVal[currentZone - 1][i]);
-        return;
-      } else {
-        // nothing
-      }
+       if (stressType[i] == 1.0) {
+       
+       myMovie.jump(stressMovieVal[currentZone - 1][i]);
+       return;
+       } else {
+       // nothing
+       }
+       */
     }
   }
 
-  for (int i = 0; i < oscZoneAddr.length; i++) {
-    if (theOscMessage.checkAddrPattern(oscZoneAddr[i])==true) {
+  for (int j = 0; j < oscZoneAddr.length; j++) {
+    if (theOscMessage.checkAddrPattern(oscZoneAddr[j])==true) {
       float value = theOscMessage.get(0).floatValue();
+
       if (value == 1.0) {
         tearDown();
-        currentZone = zone[i];
-        setupZone(zone[i]);
+
+
+
+        println("zone"+zone[j]);
+
+        // myMovie.stop();
+        setupZone(zone[j]);
         return;
-      } else {
-        // nothing
       }
+    } else {
+      // nothing
     }
   }
 }
