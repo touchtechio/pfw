@@ -35,6 +35,10 @@ float speed;
 float lastStressVal;
 float stressVal;
 
+//glasses data
+int trueHR; 
+int trueStressVal;
+
 float stressMovieVal[][] = 
   { {0.0, 5.0, 10.0, 22.0}, 
   {0, 0, 0, 0}, 
@@ -103,7 +107,6 @@ void setupZone2() {
     movies[i] = new Movie(this, movieNames[i]);
     println("movies "+ movieNames[i]);
   }
-
   return;
 }
 
@@ -396,7 +399,7 @@ void drawZone2() {
   // handle all on screen dancers with this code
   //
   dancers = onScreenDancerCount();
-  println("dancerNumber " + dancers);
+ 
   // handle new dancers coming screen
   //
   for (int i = 0; i <= dancers; i++) {
@@ -404,7 +407,6 @@ void drawZone2() {
     if (lastDancerCount < i) {
       movies[i].jump(0);
       movies[i].loop();
-      println("movieNumber " + i);
     }
   }
 
@@ -414,7 +416,6 @@ void drawZone2() {
     if (dancers < i) {
       movies[i].jump(37);
       movies[i].noLoop();
-      println("movieNoLoop "+i);
     }
   }
 
@@ -457,7 +458,12 @@ void drawZone1() {
 void oscEvent(OscMessage theOscMessage) {
   print(" typetag:" + theOscMessage.typetag());
   print(" addrpattern: " +theOscMessage.addrPattern());
-  println(theOscMessage.get(0).floatValue());
+  
+  if(theOscMessage.checkAddrPattern("/data")) {
+    trueHR = theOscMessage.get(0).intValue();
+    trueStressVal = theOscMessage.get(1).intValue();
+    println ("HR " + trueHR + ", SR" + trueStressVal);
+  }
 
   for (int i = 0; i < oscAddr.length; i++) {
    
@@ -614,8 +620,15 @@ void displayStressData() {
   offscreen.textSize(20);
   offscreen.text(frameCount % 35, (textXPer + 0.2) * movX, (textYPer + 0.09) * movY);
   offscreen.text(frameCount % 100, (textXPer + 0.2) * movX, (textYPer + 0.14) * movY);
+  offscreen.text(trueHR, (textXPer + 0.2) * movX, (textYPer + 0.19) * movY);
+  offscreen.text(trueStressVal , (textXPer + 0.2) * movX, (textYPer + 0.24) * movY);
+  
+  /*
+  offscreen.text(frameCount % 35, (textXPer + 0.2) * movX, (textYPer + 0.09) * movY);
+  offscreen.text(frameCount % 100, (textXPer + 0.2) * movX, (textYPer + 0.14) * movY);
   offscreen.text(frameCount % 150, (textXPer + 0.2) * movX, (textYPer + 0.19) * movY);
   offscreen.text((int) stressVal + (frameCount % 7), (textXPer + 0.2) * movX, (textYPer + 0.24) * movY);
+  */
 }
 
 void movieScrubber() {
