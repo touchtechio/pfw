@@ -70,7 +70,6 @@ void tearDown() {
       println("tear "+ i);
     }
   }
-  frameRate(60);
 
   return;
 }
@@ -99,7 +98,6 @@ void setupZone2() {
   lastStressVal = 0;
   stressVal = 10;
   lastDancerCount = -1;
-  frameRate(10);
   // changes speed of pixels appearing
   videoScale = 8;
   if (DEBUG) println("build zone 2");
@@ -211,6 +209,8 @@ void setup() {
   // Keystone will only work with P3D or OPENGL renderers, 
   // since it relies on texture mapping to deform
   size(1280, 720, P3D);
+  
+  frameRate(24);
 
   font = createFont("HelveticaNeue", 15);
 
@@ -240,6 +240,7 @@ void draw() {
   offscreen.background(0);
 
   /// play movie file
+  if (currentZone!= 1) 
   if (currentZone!= 2) {
     offscreen.image(myMovie, 0, 0, 1280, 720);
   }
@@ -286,7 +287,6 @@ void drawZone5() {
 }
 
 float updateMovieScrub () {
-  //frameRate(10);
 
   //for (int i = 0; i < 20; i++) {
   //return 5 * sin(frameCount%20);
@@ -462,7 +462,10 @@ void oscEvent(OscMessage theOscMessage) {
   if(theOscMessage.checkAddrPattern("/data")) {
     trueHR = theOscMessage.get(0).intValue();
     trueStressVal = theOscMessage.get(1).intValue();
+    
     println ("HR " + trueHR + ", SR" + trueStressVal);
+   
+    stressVal = trueHR;
   }
 
   for (int i = 0; i < oscAddr.length; i++) {
