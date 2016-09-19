@@ -21,10 +21,10 @@ int cornerPinY = 720;
 int intensity;
 
 // video 
-Movie myMovie, myMovie2, myMovie3, myMovie4, myMovie5, myMovie6, myMovie7;
+Movie myMovie, myMovie2, myMovie3, myMovie4, myMovie5;
 //String movieNames[] = {"", "", "", "danger3.mp4", "rope3.mp4"};
-String movieNames[] = {"dance1.mp4", "dance2.mp4", "dance3.mp4", "dance4.mp4", "dance5.mp4", "dance6.mp4", "dance7.mp4"};
-Movie movies[] = {myMovie, myMovie2, myMovie3, myMovie4, myMovie5, myMovie6, myMovie7};
+String movieNames[] = {"dance1.mp4", "dance2.mp4", "dance3.mp4", "dance6.mp4", "dance7.mp4"};
+Movie movies[] = {myMovie, myMovie2, myMovie3, myMovie4, myMovie5};
 int moviePlaying = 0;
 
 // define zones
