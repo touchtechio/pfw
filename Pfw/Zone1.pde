@@ -115,8 +115,14 @@ class Zone1 {
 
   void drawCrossHair() {
     float r = 10 + stressVal; // radius distance to rose
-    circleX = sin(theta/12)* r; 
-    circleY = cos(theta/12)* r;
+    
+    float crossSpaz;
+    if (stressVal > 20) {
+      crossSpaz = random(r-stressVal/10, r);
+    } else {crossSpaz = r;}
+    
+    circleX = sin(theta/12)* crossSpaz; 
+    circleY = cos(theta/12)* crossSpaz;
     theta += TWO_PI/36; // angle increase around rose
     //println("theta " + theta);
 
