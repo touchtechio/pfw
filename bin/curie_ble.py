@@ -67,11 +67,24 @@ def NAME(h):
 def notifThreadMain():
     while (True):
         periph.waitForNotifications(1.0);
-        
+
 # Define notification handling class
 class notifHandler(bluepy.btle.DefaultDelegate):
     def __init__(self):
         bluepy.btle.DefaultDelegate.__init__(self);
+        return;
+
+    def reactToData(self, hr, st):
+
+        print "HR: {0} {1}".format(hr, st)	
+
+        c = OSC.OSCClient()
+        c.connect(('127.0.0.1', 12000))
+        oscmsg = OSC.OSCMessage()
+        oscmsg.setAddress("/data")
+        oscmsg.append(hr)
+        oscmsg.append(st)
+        c.send(oscmsg)
         return;
 
     def handleNotification(self, chHandle, data):
@@ -95,29 +108,17 @@ class notifHandler(bluepy.btle.DefaultDelegate):
             if (data[0] == SEESAW_DAT_PPG):
                 t = time.time();
                 (hr, st) = struct.unpack("<hh", data[1:]);
-		#print hr
-		#print st
-	        print "HR: {0} {1}".format(hr, st)	
-		c = OSC.OSCClient()
-		c.connect(('127.0.0.1', 12000))
-		oscmsg = OSC.OSCMessage()
-		oscmsg.setAddress("/data")
-		oscmsg.append(hr)
-		oscmsg.append(st)
-		c.send(oscmsg)
+                self.reactToData(hr, st);
                 ppgData.append([t, hr, st]);
             elif (data[0] == SEESAW_DAT_EEG):
-		t = time.time();
-                (idx, stress) = struct.unpack("<hh", data[1:])
-                print "EEG: {0} {1}".format(idx, stress)   
-		eegData.append([t, 0.0]);
-     
-	    elif (data[0] == SEESAW_DAT_AUD):
+                t = time.time();
+                eegData.append([t, 0.0]);
+            elif (data[0] == SEESAW_DAT_AUD):
                 t = time.time();
                 audData.append([t, 0.0, 0.0, 0.0]);
             else:
                 print("Got unknown data: %x" % ord(data[0]));
-     	else:
+        else:
             print("DATA FROM STRANGE CHANNEL o.o");
         return;
 
@@ -148,7 +149,12 @@ if (dev == None):
 periph = bluepy.btle.Peripheral();
 
 print("Connecting to device: %s" % dev);
-periph.connect(dev);
+try:
+    periph.connect(dev);
+except bluepy.btle.BTLEException:
+    print("failed to connect!")
+    sys.exit(0)
+
 
 # Configure peripheral
 periph.withDelegate(notifHandler());
@@ -181,7 +187,7 @@ while (True):
 
     if (len(cmd) == 0):
         continue;
-    
+
     if (cmd[0] == "h"):
         print("Help:");
         print("");
@@ -263,7 +269,7 @@ while (True):
                 header = "timestamp, asym\n";
             elif (d[1] == "ppg"):
                 header = "timestamp, heartrate, stress\n";
-            
+
             s = str(d[0]);
             s = header + s.replace("], [", "\n").replace("[", "").replace("]", "");
 
