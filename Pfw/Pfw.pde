@@ -1,15 +1,20 @@
 /*
+author: @adellelin
+
 this sketch runs a movie that correlates to levels of stress
  Use OSC buttons or keypress 1,2,3,4 to jump to different states
  */
-
-/// OSC
 import oscP5.*;
 import netP5.*;
+import deadpixel.keystone.*;
+import processing.video.*;
+
+
+// osc 
 OscP5 oscP5;
 NetAddress myRemoteLocation;
 
-import deadpixel.keystone.*;
+// keystoning
 Keystone ks;
 CornerPinSurface surface;
 PGraphics offscreen;
@@ -17,14 +22,18 @@ int cornerPinX = 1280;
 int cornerPinY = 720;
 int intensity;
 
-import processing.video.*;
+// video 
 Movie myMovie, myMovie2, myMovie3, myMovie4, myMovie5, myMovie6, myMovie7;
 //String movieNames[] = {"", "", "", "danger3.mp4", "rope3.mp4"};
 String movieNames[] = {"dance1.mp4", "dance2.mp4", "dance3.mp4", "dance4.mp4", "dance5.mp4", "dance6.mp4", "dance7.mp4"};
 Movie movies[] = {myMovie, myMovie2, myMovie3, myMovie4, myMovie5, myMovie6, myMovie7};
 int moviePlaying = 0;
 
+// define zones
 Zone1 zone1 = new Zone1();
+Zone zone4 = new Zone();
+Zone zone5 = new Zone();
+
 
 int movX = 1280;
 int movY = 720;
@@ -36,10 +45,11 @@ float lastStressVal;
 float stressVal;
 
 //glasses data
-int trueHR; 
+int trueHR;
 int trueStressVal;
 
-float stressMovieVal[][] = 
+// zone movie jump points
+float stressMovieVal[][] =
   { {0.0, 5.0, 10.0, 22.0}, 
   {0, 0, 0, 0}, 
   {0, 0, 0, 0}, 
@@ -49,8 +59,8 @@ float stressLow, stressHigh, stressMed, stressCrazy;
 float stressType[] = {stressLow, stressHigh, stressMed, stressCrazy};
 String oscAddr[] = {"/Stress/s2/1/1", "/Stress/s2/2/1", "/Stress/s2/1/2", "/Stress/s2/2/2"};
 
-int zone[] = {1, 2, 3, 4, 5};
 String oscZoneAddr[] = {"/Zone/switch/1/1", "/Zone/switch/2/1", "/Zone/switch/3/1", "/Zone/switch/4/1", "/Zone/switch/5/1"};
+int zone[] = {1, 2, 3, 4, 5};
 
 boolean DEBUG = true; // determines whether to data on screen
 
@@ -62,6 +72,7 @@ int currentZone = 5;
 
 void tearDown() {
   if (DEBUG) println("tearing down zone.");
+  
   myMovie.stop();
 
   for (int i = 1; i< movies.length; i++) {
@@ -71,6 +82,8 @@ void tearDown() {
     }
   }
 
+  lastStressVal = 0;
+  
   return;
 }
 
@@ -81,7 +94,7 @@ void setupZone1() {
 
   if (DEBUG) println("build zone 1");
 
-  myMovie = new Movie(this, "rose5.mp4"); 
+  myMovie = new Movie(this, "rose5.mp4");
   myMovie.loop();
 
   zone1.start();
@@ -95,7 +108,6 @@ int dancers;
 
 void setupZone2() {
   currentZone = 2;
-  lastStressVal = 0;
   stressVal = 10;
   lastDancerCount = -1;
   // changes speed of pixels appearing
@@ -136,13 +148,14 @@ void setupZone4() {
   return;
 }
 void setupZone5() {
-  if (DEBUG) println("build zone 5");
+
   currentZone = 5;
 
-  lastStressVal = 0;
-  //myMovie = new Movie(this, movieNames[currentZone-1]);
   myMovie = new Movie(this, "ropeLoop.mp4");
   myMovie.loop();
+
+  zone5.start();
+
   return;
 }
 
@@ -206,10 +219,10 @@ void drawZone(int zone) {
 
 
 void setup() {
-  // Keystone will only work with P3D or OPENGL renderers, 
+  // Keystone will only work with P3D or OPENGL renderers,
   // since it relies on texture mapping to deform
   size(1280, 720, P3D);
-  
+
   frameRate(24);
 
   font = createFont("HelveticaNeue", 15);
@@ -240,10 +253,10 @@ void draw() {
   offscreen.background(0);
 
   /// play movie file
-  if (currentZone!= 1) 
-  if (currentZone!= 2) {
-    offscreen.image(myMovie, 0, 0, 1280, 720);
-  }
+  if (currentZone!= 1)
+    if (currentZone!= 2) {
+      offscreen.image(myMovie, 0, 0, 1280, 720);
+    }
 
   //println("framRate " + frameRate);
 
@@ -265,25 +278,7 @@ int stressIntensityVal() {
 
 void drawZone5() {
 
-  offscreen.stroke(255);
-  float theta = 0;
-  intensity = stressIntensityVal();
-  if (stressVal != lastStressVal) {
-    myMovie.jump(stressMovieVal[currentZone-1][intensity]);
-  } else {
-
-    //myMovie.jump(stressMovieVal[currentZone-1][intensity] + updateMovieScrub());
-  }
-
-  lastStressVal = stressVal;
-
-  if (true) { 
-    //println("framRate " + frameRate);
-    offscreen.textSize(15);
-    offscreen.text("time " + myMovie.time(), .7 * movX, 0.1 * movY);
-    displayStressData();
-  }
-  return;
+  zone5.draw();
 }
 
 float updateMovieScrub () {
@@ -306,29 +301,11 @@ float updateMovieScrub () {
 }
 
 void drawZone4() {
-
-  offscreen.stroke(255);
-  float theta = 0;
-  intensity = stressIntensityVal();
-  if (stressVal != lastStressVal) {
-    myMovie.jump(stressMovieVal[currentZone-1][intensity]);
-  } else {
-
-    //myMovie.jump(stressMovieVal[currentZone-1][intensity] + updateMovieScrub());
-  }
-
-  lastStressVal = stressVal;
-
-  if (true) { 
-    //println("framRate " + frameRate);
-    offscreen.textSize(15);
-    offscreen.text("time " + myMovie.time(), .7 * movX, 0.1 * movY);
-    displayStressData();
-  }
+  zone4.draw();
 }
 
 void drawZone3() {
-  
+
   //// for fixed starting point (center), the square scales up and down
   greenPixel = (int) map(stressVal, 0, 100, 0, 350);
   pixelW = updateScatterScaleUpAndDown() + greenPixel;
@@ -337,7 +314,7 @@ void drawZone3() {
   centerPtX = 1280/2;
   centerPtY = 780/2;
 
-  xstart = constrain(centerPtX - pixelW/2, 0, myMovie.width); 
+  xstart = constrain(centerPtX - pixelW/2, 0, myMovie.width);
   ystart = constrain(centerPtY - pixelW/2, 0, myMovie.height);
   xend = constrain(centerPtX + pixelW/2, 0, myMovie.width);
   yend = constrain(centerPtY + pixelW/2, 0, myMovie.height);
@@ -384,7 +361,7 @@ void drawSquare() {
   offscreen.rectMode(CENTER);
 
   offscreen.rect(centerPtX + 170, centerPtY + 90, pixelW * 0.7, pixelW * 0.7); // right
-  offscreen.rect(centerPtX - 280, centerPtY + 60, pixelW , pixelW); // left
+  offscreen.rect(centerPtX - 280, centerPtY + 60, pixelW, pixelW); // left
   offscreen.rect(centerPtX + 40, centerPtY - 230, pixelW * 0.5, pixelW * 0.5); // top
 }
 
@@ -399,7 +376,7 @@ void drawZone2() {
   // handle all on screen dancers with this code
   //
   dancers = onScreenDancerCount();
- 
+
   // handle new dancers coming screen
   //
   for (int i = 0; i <= dancers; i++) {
@@ -458,24 +435,24 @@ void drawZone1() {
 void oscEvent(OscMessage theOscMessage) {
   print(" typetag:" + theOscMessage.typetag());
   print(" addrpattern: " +theOscMessage.addrPattern());
-  
-  if(theOscMessage.checkAddrPattern("/data")) {
+
+  if (theOscMessage.checkAddrPattern("/data")) {
     trueHR = theOscMessage.get(0).intValue();
     trueStressVal = theOscMessage.get(1).intValue();
-    
+
     println ("HR " + trueHR + ", SR" + trueStressVal);
-   
+
     stressVal = trueHR;
   }
 
   for (int i = 0; i < oscAddr.length; i++) {
-   
-   // if (theOscMessage.checkAddrPattern(oscAddr[i])==true) {
-      if (theOscMessage.checkAddrPattern( "/Stress/s1")==true) {
-       stressVal = (int)theOscMessage.get(0).floatValue();
-       //stressIntensityVal();
-       println(stressVal);
-       return;
+
+    // if (theOscMessage.checkAddrPattern(oscAddr[i])==true) {
+    if (theOscMessage.checkAddrPattern( "/Stress/s1")==true) {
+      stressVal = (int)theOscMessage.get(0).floatValue();
+      //stressIntensityVal();
+      println(stressVal);
+      return;
       /*
       stressType[i] = theOscMessage.get(0).floatValue();
        if (stressType[i] == 1.0) {
@@ -489,23 +466,19 @@ void oscEvent(OscMessage theOscMessage) {
     }
   }
 
+
+  // check message for zone switch address
   for (int j = 0; j < oscZoneAddr.length; j++) {
-    if (theOscMessage.checkAddrPattern(oscZoneAddr[j])==true) {
+
+    if (theOscMessage.checkAddrPattern(oscZoneAddr[j])) {
       float value = theOscMessage.get(0).floatValue();
 
       if (value == 1.0) {
+        println("osc switch zone"+zone[j]);
         tearDown();
-
-
-
-        println("zone"+zone[j]);
-
-        // myMovie.stop();
         setupZone(zone[j]);
         return;
       }
-    } else {
-      // nothing
     }
   }
 }
@@ -515,7 +488,7 @@ void keyPressed() {
 
     /// keystoning keys
   case 'c':
-    // enter/leave calibration mode, where surfaces can be warped 
+    // enter/leave calibration mode, where surfaces can be warped
     // and moved
     ks.toggleCalibration();
     break;
@@ -624,14 +597,14 @@ void displayStressData() {
   offscreen.text(frameCount % 35, (textXPer + 0.2) * movX, (textYPer + 0.09) * movY);
   offscreen.text(frameCount % 100, (textXPer + 0.2) * movX, (textYPer + 0.14) * movY);
   offscreen.text(trueHR, (textXPer + 0.2) * movX, (textYPer + 0.19) * movY);
-  offscreen.text(trueStressVal , (textXPer + 0.2) * movX, (textYPer + 0.24) * movY);
-  
+  offscreen.text(trueStressVal, (textXPer + 0.2) * movX, (textYPer + 0.24) * movY);
+
   /*
   offscreen.text(frameCount % 35, (textXPer + 0.2) * movX, (textYPer + 0.09) * movY);
-  offscreen.text(frameCount % 100, (textXPer + 0.2) * movX, (textYPer + 0.14) * movY);
-  offscreen.text(frameCount % 150, (textXPer + 0.2) * movX, (textYPer + 0.19) * movY);
-  offscreen.text((int) stressVal + (frameCount % 7), (textXPer + 0.2) * movX, (textYPer + 0.24) * movY);
-  */
+   offscreen.text(frameCount % 100, (textXPer + 0.2) * movX, (textYPer + 0.14) * movY);
+   offscreen.text(frameCount % 150, (textXPer + 0.2) * movX, (textYPer + 0.19) * movY);
+   offscreen.text((int) stressVal + (frameCount % 7), (textXPer + 0.2) * movX, (textYPer + 0.24) * movY);
+   */
 }
 
 void movieScrubber() {
@@ -653,9 +626,9 @@ void drawGridBrightness(int state) {
       // Each rect is colored white with a size determined by brightness
       color c = movies[state].pixels[loc];
 
-      // A rectangle size is calculated as a function of the pixel's brightness. 
+      // A rectangle size is calculated as a function of the pixel's brightness.
       // A bright pixel is a large rectangle, and a dark pixel is a small one.
-      float sz = (brightness(c)/255)*videoScale; 
+      float sz = (brightness(c)/255)*videoScale;
 
       // chromakey
       if (brightness(c) <50) {
