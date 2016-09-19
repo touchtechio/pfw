@@ -31,8 +31,12 @@ int moviePlaying = 0;
 
 // define zones
 Zone1 zone1 = new Zone1();
+Zone2 zone2 = new Zone2();
+Zone3 zone3 = new Zone3();
 Zone zone4 = new Zone();
 Zone zone5 = new Zone();
+
+
 
 
 int movX = 1280;
@@ -112,6 +116,7 @@ void setupZone2() {
   lastDancerCount = -1;
   // changes speed of pixels appearing
   videoScale = 8;
+  zone2.start();
   if (DEBUG) println("build zone 2");
   for (int i = 0; i < movies.length; i ++) {
     movies[i] = new Movie(this, movieNames[i]);
@@ -119,16 +124,6 @@ void setupZone2() {
   }
   return;
 }
-
-
-int xstart;
-int ystart;
-int xend;
-int yend;
-int centerPtX;
-int centerPtY;
-int pixelW;
-int greenPixel;
 
 void setupZone3() {
   if (DEBUG) println("build zone 3");
@@ -147,6 +142,7 @@ void setupZone4() {
   myMovie.loop();
   return;
 }
+
 void setupZone5() {
 
   currentZone = 5;
@@ -305,126 +301,13 @@ void drawZone4() {
 }
 
 void drawZone3() {
-
-  //// for fixed starting point (center), the square scales up and down
-  greenPixel = (int) map(stressVal, 0, 100, 0, 350);
-  pixelW = updateScatterScaleUpAndDown() + greenPixel;
-  println(pixelW);
-
-  centerPtX = 1280/2;
-  centerPtY = 780/2;
-
-  xstart = constrain(centerPtX - pixelW/2, 0, myMovie.width);
-  ystart = constrain(centerPtY - pixelW/2, 0, myMovie.height);
-  xend = constrain(centerPtX + pixelW/2, 0, myMovie.width);
-  yend = constrain(centerPtY + pixelW/2, 0, myMovie.height);
-
-  //// Either a using a pixel effect or a flat square
-
-  drawSquare();
-  if (DEBUG) {
-    //println("framRate " + frameRate);
-    offscreen.fill(255);
-    offscreen.textSize(15);
-    offscreen.text("frameRate " + (int)frameRate, .7 * movX, 0.1 * movY);
-    displayStressData();
-    //println("time "+myMovie.time()); // if want to see timestamp of while movie plays
-  }
-
-  return;
+  zone3.draw();
 }
-// replace framCount with bioSensing data;
-int updateScatterScaleUpAndDown () {
-  //int scale = ((int)millis() % 21);
-  int scale = (frameCount % 80);
-
-  if (scale < 40) {
-    return (40 - scale);
-  }
-  return (scale - 39);
-}
-// replace framCount with bioSensing data;
-
-void drawSquare() {
-  for (int i = xstart; i < xend; i +=videoScale) {
-    // Begin loop for rows
-    for (int j = ystart; j < yend; j +=videoScale) {
-
-      // Looking up the appropriate color in the pixel array
-      int loc = i + j * myMovie.width;
-      color c = myMovie.pixels[loc];
-      //fill(c);
-      offscreen.noStroke();
-      offscreen.fill(125, 244, 38);
-    }
-  }
-  offscreen.rectMode(CENTER);
-
-  offscreen.rect(centerPtX + 170, centerPtY + 90, pixelW * 0.7, pixelW * 0.7); // right
-  offscreen.rect(centerPtX - 280, centerPtY + 60, pixelW, pixelW); // left
-  offscreen.rect(centerPtX + 40, centerPtY - 230, pixelW * 0.5, pixelW * 0.5); // top
-}
-
-// end Zone 3
 
 // start Zone 2
 
 void drawZone2() {
-
-  offscreen.background(25);
-
-  // handle all on screen dancers with this code
-  //
-  dancers = onScreenDancerCount();
-
-  // handle new dancers coming screen
-  //
-  for (int i = 0; i <= dancers; i++) {
-
-    if (lastDancerCount < i) {
-      movies[i].jump(0);
-      movies[i].loop();
-    }
-  }
-
-  // handle old dancers leaving screen
-  //
-  for (int i = 0; i <= lastDancerCount; i++) {
-    if (dancers < i) {
-      movies[i].jump(37);
-      movies[i].noLoop();
-    }
-  }
-
-
-  for (int i = 0; i < movies.length; i++) {
-    offscreen.pushMatrix();
-    //offscreen.translate(250 - i * 150, 0);
-    if (movies[i].playbin.isPlaying()) {
-      drawGridBrightness(i);
-    }
-    offscreen.popMatrix();
-  }
-
-  lastDancerCount = dancers;
-  // println("dancers     "+dancers);
-  // println("lastdancercount "+lastDancerCount);
-
-  updatePixels();
-
-  if (DEBUG) {
-    //println("framRate " + frameRate);
-    offscreen.fill(255);
-    offscreen.textSize(15);
-    offscreen.text("frameRate " + (int)frameRate, .7 * movX, 0.1 * movY);
-    displayStressData();
-    //println("time "+myMovie.time()); // if want to see timestamp of while movie plays
-  }
-}
-
-int onScreenDancerCount() {
-  // maps number of dancers from 1-5 based on stress values
-  return (int) map(stressVal, 0, 100, 0, 7);
+  zone2.draw();
 }
 
 void drawZone1() {
@@ -476,6 +359,7 @@ void oscEvent(OscMessage theOscMessage) {
       if (value == 1.0) {
         println("osc switch zone"+zone[j]);
         tearDown();
+        println("osc switch zone"+zone[j]);
         setupZone(zone[j]);
         return;
       }
@@ -611,51 +495,4 @@ void movieScrubber() {
   float mousePosRatio = mouseX/ (float)width;
   myMovie.jump(mousePosRatio* myMovie.duration());
   return;
-}
-
-/// used in Zone2
-void drawGridBrightness(int state) {
-  movies[state].loadPixels();
-  // Begin loop for columns
-  for (int i = 0; i < movX; i +=videoScale) {
-    // Begin loop for rows
-    for (int j = 0; j < movY; j +=videoScale) {
-
-      int loc = i + j * movies[state].width;
-
-      // Each rect is colored white with a size determined by brightness
-      color c = movies[state].pixels[loc];
-
-      // A rectangle size is calculated as a function of the pixel's brightness.
-      // A bright pixel is a large rectangle, and a dark pixel is a small one.
-      float sz = (brightness(c)/255)*videoScale;
-
-      // chromakey
-      if (brightness(c) <50) {
-        // offscreen.rect(i - pixelMan.width/2, j - pixelMan.height/2, videoScale, videoScale);
-        if (0==(int) random(2) % 2 ) {
-          // defines percentage of image to be colored
-          //if (0==(int) random(updateScaleUpAndDown () ) % (updateScaleUpAndDown () + 1) ) {
-          offscreen.fill(250, 98 + state * 30, 237/(state+1));
-          offscreen.rect(i + videoScale/2, j + videoScale/2, videoScale, videoScale);
-          //offscreen.rect(i - pixelMan.width/2, j - pixelMan.height/2, videoScale, videoScale);
-          //} else if (1==(int) random(updateScaleUpAndDown ()) % updateScaleUpAndDown ()  ) {
-        } else if (1==(int) random(2) % 2 ) {
-          offscreen.fill(0);
-          offscreen.rect(i + videoScale/2, j + videoScale/2, videoScale, videoScale);
-          //offscreen.rect(i - pixelMan.width/2, j - pixelMan.height/2, videoScale, videoScale);
-        } else {
-          //offscreen.fill(0);
-          //offscreen.rect(i + videoScale/2, j + videoScale/2, videoScale, videoScale);
-          // clear
-          // this can be blank
-          offscreen.fill(0);
-          offscreen.rect(i + videoScale/2, j + videoScale/2, videoScale, videoScale);
-          // offscreen.rect(i + videoScale/2, j + videoScale/2, 0, 0);
-          //offscreen.rect(i - pixelMan.width/2, j - pixelMan.height/2, 0, 0);
-        }
-        offscreen.noStroke();
-      }
-    }
-  }
 }

@@ -1,11 +1,3 @@
-// Learning Processing
-// Daniel Shiffman
-// http://www.learningprocessing.com
-
-// Exercise 13-6: Encapsulate Example 13-6 into an Oscillator object. Create an array 
-// of Oscillators, each moving at diff erent rates along the x and y axes. Here is some code for the 
-// Oscillator class to help you get started.  
-
 class Oscillator {   
 
   // Two angles
@@ -51,6 +43,7 @@ class Oscillator {
     // offscreen.ellipse(x,y,64,64); 
     rosePosX = x + roseStartX ; 
     rosePosY = y + roseStartY ;
+    //offscreen.translate(stressVal * sin(updateRoseSpaz()),  stressVal/2 * cos(updateRoseSpaz()), updateRoseZoom ()- 400);
     offscreen.translate(0, 0, updateRoseZoom ()- 400);
     //println("roseZoom "+updateRoseZoom());
     //drawMoviePixels();
@@ -77,5 +70,20 @@ class Oscillator {
       return (400 - scale);
     }
     return (scale - 399);
+  }
+  
+    int updateRoseSpaz () {
+    //int scale = ((int)millis() % 21);
+    if (stressVal !=0) {
+      int spazRate = (int) 400;
+      int scale = ( frameCount % spazRate);
+
+      if (scale < spazRate/2) {
+        return ((int) spazRate/2 -  scale);
+      }
+      return (scale - (spazRate/2 - 1));
+    } else { 
+      return 0;
+    }
   }
 }   

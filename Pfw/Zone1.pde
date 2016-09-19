@@ -1,41 +1,41 @@
 
-Oscillator[] oscillators = new Oscillator[1];
-
-/// moving arrow object
-
-float theta = TWO_PI;
-
-float arrowPosX;
-float arrowPosY;
-
-float circleX;
-float circleY;
-
-float  ct = cos(PI/9.0);
-float  st = sin(PI/9.0); 
-
-/// determines speed of rose motion
-float dxtheta_low = 0;//-0.012; //old -0.009
-float dxtheta_high = 0;//0.012;
-float dytheta_low = 0;//-0.01; //old -0.004
-float dytheta_high = 0;//0.01;
-
-
-float crossPosX; 
-float crossPosY;
-int circlePoints = 160;
-int textPoints = 75;
-float thetaText = TWO_PI / (float)textPoints ; // get the angle for each point
-
-boolean roseBloom = false;
 
 class Zone1 {
 
 
+  Oscillator[] oscillators = new Oscillator[1];
+
+  /// moving arrow object
+
+  float theta = TWO_PI;
+
+  float arrowPosX;
+  float arrowPosY;
+
+  float circleX;
+  float circleY;
+
+  float  ct = cos(PI/9.0);
+  float  st = sin(PI/9.0); 
+
+  /// determines speed of rose motion
+  float dxtheta_low = 0;//-0.012; //old -0.009
+  float dxtheta_high = 0;//0.012;
+  float dytheta_low = 0;//-0.01; //old -0.004
+  float dytheta_high = 0;//0.01;
+
+  float crossPosX; 
+  float crossPosY;
+  int circlePoints = 160;
+  int textPoints = 75;
+  float thetaText = TWO_PI / (float)textPoints ; // get the angle for each point
+
+  boolean roseBloom = false;
+
   TargetArrow arrow;
   PImage crossHair;
 
- 
+
   void start() {
     if (DEBUG) println("start zone 1");
 
@@ -61,7 +61,7 @@ class Zone1 {
       oscillators[i].display(0, 0);
     }
     offscreen.popMatrix();
-    
+
 
     //offscreen.image(myMovie, 0, 0);
     drawCrossHair();
@@ -95,15 +95,15 @@ class Zone1 {
       // circle with line points
       offscreen.line(sin(theta * i)*r, cos(theta * i) * r, sin(theta * i)*r2, cos(theta *i) * r2);
       offscreen.rotate(0.3 * sin(thetaText * 5));
-     
-     // draw triangle indicator
+
+      // draw triangle indicator
       offscreen.line(r * 1.15, 15, r * 1.15, - 15);
       offscreen.beginShape(); 
       offscreen.vertex(r * 1.15, -8);
       offscreen.vertex(r * 1.1, 0);
       offscreen.vertex(r * 1.15, 8);
       offscreen.endShape();
-      
+
       offscreen.text("Chalayan", r * 1.2, 3);
       offscreen.line(r * 1.3, -20, r * 1.3, - 28);
       offscreen.line(r * 1.3, 20, r * 1.3, 28);
@@ -115,8 +115,14 @@ class Zone1 {
 
   void drawCrossHair() {
     float r = 10 + stressVal; // radius distance to rose
-    circleX = sin(theta/12)* r; 
-    circleY = cos(theta/12)* r;
+    
+    float crossSpaz;
+    if (stressVal > 20) {
+      crossSpaz = random(r-stressVal/10, r);
+    } else {crossSpaz = r;}
+    
+    circleX = sin(theta/12)* crossSpaz; 
+    circleY = cos(theta/12)* crossSpaz;
     theta += TWO_PI/36; // angle increase around rose
     //println("theta " + theta);
 
@@ -152,13 +158,13 @@ class Zone1 {
     }
     return (scale - 99);
   }
-  
-   void checkRoseBloom() {
+
+  void checkRoseBloom() {
     if (myMovie.time() > 20.5) {
-      if(!roseBloom) {
-      stressVal = 10;
-      println("bloom");
-      roseBloom = true;
+      if (!roseBloom) {
+        stressVal = 10;
+        println("bloom");
+        roseBloom = true;
       }
       return;
     } else {
