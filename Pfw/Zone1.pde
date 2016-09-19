@@ -144,8 +144,6 @@ class Zone1 {
     offscreen.popMatrix();
   }
 
-
-
   // using this to move arrow on left of target up and down
   int updateArrowScaleUpAndDown () {
     //int scale = ((int)millis() % 21);

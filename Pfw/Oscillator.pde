@@ -33,10 +33,10 @@ class Oscillator {
   void display(float roseStartX, float roseStartY) {   
     // Map results of sine / cosine to width and height of window to give oscillator motion
 
-    //x = abs((sin(xtheta)) * movX * 0.4);   
-    //y = abs((cos(ytheta)) * movY * 0.4);
-    x = 0;
-    y = 0;
+    x = abs((sin(xtheta)) * movX * 0.4);   
+    y = abs((cos(ytheta)) * movY * 0.4);
+    //x = 0;
+    //y = 0;
     stroke(0);
     fill(175, 100);
     /// draw rose film
@@ -44,7 +44,8 @@ class Oscillator {
     rosePosX = x + roseStartX ; 
     rosePosY = y + roseStartY ;
     //offscreen.translate(stressVal * sin(updateRoseSpaz()),  stressVal/2 * cos(updateRoseSpaz()), updateRoseZoom ()- 400);
-    offscreen.translate(0, 0, (updateRoseZoom()- 400)* (int)stressVal/100);
+    //offscreen.translate(0, 0, (updateRoseZoom()- 400)* (int)stressVal/100);
+    offscreen.translate(0, 0, (updateRoseZoom()- 400));
     //println("roseZoom "+updateRoseZoom());
     //drawMoviePixels();
 

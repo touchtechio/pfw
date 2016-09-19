@@ -116,7 +116,7 @@ void setupZone2() {
   lastDancerCount = -1;
 
   // changes speed of pixels appearing
-  videoScale = 6;
+  videoScale = 4;
   zone2.start();
   if (DEBUG) println("build zone 2");
   for (int i = 0; i < movies.length; i ++) {
