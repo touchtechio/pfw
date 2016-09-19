@@ -11,7 +11,6 @@ import processing.video.*;
 
 // osc 
 OscP5 oscP5;
-NetAddress myRemoteLocation;
 
 // keystoning
 Keystone ks;
@@ -71,6 +70,8 @@ boolean DEBUG = true; // determines whether to data on screen
 PFont font;
 
 /// zone state
+//
+String thisHostsZone=System.getenv("ZONE");
 int lastZone;
 int currentZone = 5;
 
@@ -215,11 +216,16 @@ void drawZone(int zone) {
 
 
 void setup() {
+  
+  
+  // start oscP5 first, listening for incoming messages at port 12000
+  oscP5 = new OscP5(this, 12000);
+  
+  
   // Keystone will only work with P3D or OPENGL renderers,
   // since it relies on texture mapping to deform
   size(1280, 720, P3D);
 
-  frameRate(24);
 
   font = createFont("HelveticaNeue", 15);
 
@@ -229,9 +235,12 @@ void setup() {
 
   ks.load();
 
-  // start oscP5, listening for incoming messages at port 12000
-  oscP5 = new OscP5(this, 12000);
-  myRemoteLocation = new NetAddress("10.175.88.76", 9000);
+  // get start zone from local env
+  if (null != thisHostsZone) {
+    currentZone = Integer.parseInt(thisHostsZone);
+  }
+
+  frameRate(24);
 
   setupCurrentZone();
   return;
