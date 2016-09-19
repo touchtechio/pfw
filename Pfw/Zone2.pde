@@ -78,6 +78,9 @@ class Zone2 {
         int loc = i + j * movies[state].width;
 
         // Each rect is colored white with a size determined by brightness
+        if (movies[state].pixels.length == 0) 
+          break;
+          
         color c = movies[state].pixels[loc];
 
         // A rectangle size is calculated as a function of the pixel's brightness. 
