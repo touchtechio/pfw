@@ -19,10 +19,10 @@ class Zone1 {
   float  st = sin(PI/9.0); 
 
   /// determines speed of rose motion
-  float dxtheta_low = 0;//-0.012; //old -0.009
-  float dxtheta_high = 0;//0.012;
-  float dytheta_low = 0;//-0.01; //old -0.004
-  float dytheta_high = 0;//0.01;
+  float dxtheta_low = -0.012; //old -0.009
+  float dxtheta_high = 0.012;
+  float dytheta_low = -0.01; //old -0.004
+  float dytheta_high = 0.01;
 
   float crossPosX; 
   float crossPosY;
@@ -35,6 +35,7 @@ class Zone1 {
   TargetArrow arrow;
   PImage crossHair;
 
+  int arrowSpeed;
 
   void start() {
     if (DEBUG) println("start zone 1");
@@ -55,6 +56,7 @@ class Zone1 {
     offscreen.pushMatrix();
     checkRoseBloom(); //check to see if rose has bloomed, if it has move arrow
     //myMovie.loadPixels();
+    arrowSpeed = (int)stressVal/10;
 
     for (int i = 0; i < oscillators.length; i++) {
       oscillators[i].oscillate();
@@ -94,7 +96,7 @@ class Zone1 {
 
       // circle with line points
       offscreen.line(sin(theta * i)*r, cos(theta * i) * r, sin(theta * i)*r2, cos(theta *i) * r2);
-      offscreen.rotate(0.3 * sin(thetaText * 5));
+      offscreen.rotate(0.3 * sin(thetaText * arrowSpeed));
 
       // draw triangle indicator
       offscreen.line(r * 1.15, 15, r * 1.15, - 15);
@@ -112,8 +114,8 @@ class Zone1 {
   }
 
   void drawCrossHair() {
-    float r = 10 + stressVal; // radius distance to rose
-    
+    float r = stressVal; // radius distance to rose
+    /*
     float crossSpaz;
     if (stressVal > 20) {
       crossSpaz = random(r-stressVal/10, r);
@@ -121,12 +123,15 @@ class Zone1 {
     
     circleX = sin(theta/12)* crossSpaz; 
     circleY = cos(theta/12)* crossSpaz;
+    */
+    circleX = sin(theta/12) * r; 
+    circleY = cos(theta/12) * r;
     theta += TWO_PI/36; // angle increase around rose
     //println("theta " + theta);
 
     /// set position of crosshair to OSC Stress data but rotating around the rose;
     crossPosX = oscillators[0].rosePosX + 340 + circleX * 4; // check this out
-    crossPosY = oscillators[0].rosePosY  + 230 + circleY * 3; // check this out
+    crossPosY = oscillators[0].rosePosY + 230 + circleY * 3; // check this out
 
     offscreen.pushMatrix();
     //offscreen.scale(0.5);
@@ -147,7 +152,7 @@ class Zone1 {
   // using this to move arrow on left of target up and down
   int updateArrowScaleUpAndDown () {
     //int scale = ((int)millis() % 21);
-    int scale = ( frameCount % 200);
+    int scale = (frameCount * arrowSpeed / 2 % 200); // changes arrow speed
 
     if (scale < 100) {
       return (100 - scale);

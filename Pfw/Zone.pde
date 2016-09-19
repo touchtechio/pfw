@@ -2,7 +2,7 @@
 class Zone {
 
   void start() {
-    if (DEBUG) println("build zone 4");
+    //if (DEBUG) println("build zone 4");
 
     return;
   }

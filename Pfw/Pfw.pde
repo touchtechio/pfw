@@ -56,7 +56,7 @@ float stressMovieVal[][] =
   { {0.0, 5.0, 10.0, 22.0}, 
   {0, 0, 0, 0}, 
   {0, 0, 0, 0}, 
-  {0.5, 8.0, 16.0, 26.0}, 
+  {0.5, 8.0, 16.0, 26.0, 0.5}, 
   {2.1, 8.0, 13, 22.0, 52.0}}; // times in the movie to jump to
 float stressLow, stressHigh, stressMed, stressCrazy;
 float stressType[] = {stressLow, stressHigh, stressMed, stressCrazy};

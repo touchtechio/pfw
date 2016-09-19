@@ -33,8 +33,8 @@ class Oscillator {
   void display(float roseStartX, float roseStartY) {   
     // Map results of sine / cosine to width and height of window to give oscillator motion
 
-    x = abs((sin(xtheta)) * movX * 0.4);   
-    y = abs((cos(ytheta)) * movY * 0.4);
+    x = (sin(xtheta)) * movX * 0.2;   
+    y = (cos(ytheta)) * movY * 0.2;
     //x = 0;
     //y = 0;
     stroke(0);
@@ -65,7 +65,7 @@ class Oscillator {
 
   int updateRoseZoom () {
     //int scale = ((int)millis() % 21);
-    int scale = (millis() % 800) ;
+    int scale = (frameCount % 800) ;
 
     if (scale < 400) {
       return (400 - scale);
