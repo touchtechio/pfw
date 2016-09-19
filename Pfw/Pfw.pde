@@ -21,10 +21,10 @@ int cornerPinY = 720;
 int intensity;
 
 // video 
-Movie myMovie, myMovie2, myMovie3, myMovie4, myMovie5, myMovie6, myMovie7;
+Movie myMovie, myMovie2, myMovie3, myMovie4, myMovie5;
 //String movieNames[] = {"", "", "", "danger3.mp4", "rope3.mp4"};
-String movieNames[] = {"dance1.mp4", "dance2.mp4", "dance3.mp4", "dance4.mp4", "dance5.mp4", "dance6.mp4", "dance7.mp4"};
-Movie movies[] = {myMovie, myMovie2, myMovie3, myMovie4, myMovie5, myMovie6, myMovie7};
+String movieNames[] = {"dance1.mp4", "dance2.mp4", "dance3.mp4", "dance6.mp4", "dance7.mp4"};
+Movie movies[] = {myMovie, myMovie2, myMovie3, myMovie4, myMovie5};
 int moviePlaying = 0;
 
 // define zones
@@ -114,8 +114,9 @@ void setupZone2() {
   currentZone = 2;
   stressVal = 10;
   lastDancerCount = -1;
+
   // changes speed of pixels appearing
-  videoScale = 8;
+  videoScale = 6;
   zone2.start();
   if (DEBUG) println("build zone 2");
   for (int i = 0; i < movies.length; i ++) {
@@ -240,7 +241,7 @@ void setup() {
     currentZone = Integer.parseInt(thisHostsZone);
   }
 
-  frameRate(24);
+  //frameRate(24);
 
   setupCurrentZone();
   return;
@@ -286,7 +287,11 @@ int stressIntensityVal() {
 }
 
 float movieSpeed() {
-   return map(stressVal, 0, 100, 0.1, 5.0); 
+   return map(stressVal, 0, 100, 0.5, 5.0); 
+}
+
+float zone2MovieSpeed() {
+   return map(stressVal, 0, 100, 0.7, 2.0); 
 }
   
 void drawZone5() {
@@ -421,23 +426,25 @@ void keyPressed() {
     }
     break;
   case 'w':
-    stressVal = 20;
+    stressVal = 30;
     break;
   case 'e':
-    stressVal = 35;
+    stressVal = 50;
     break;
   case 'r':
-    stressVal = 45;
+    stressVal = 70;
     break;
   case 't':
-    stressVal = 65;
+    stressVal = 90;
     break;
+    /*
   case 'y':
     stressVal = 80;
     break;
   case 'u':
     stressVal = 90;
     break;
+    */
   case 'p':
     manageGlassesStress();
     println("hasGlasses "+hasGlasses+", NoData " +noData+ ", hasCalm "+hasCalm);

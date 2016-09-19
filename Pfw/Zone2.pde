@@ -8,7 +8,7 @@ class Zone2 {
   void draw() {
 
     offscreen.background(25);
-
+    
     // handle all on screen   with this code
     //
     dancers = onScreenDancerCount();
@@ -31,12 +31,15 @@ class Zone2 {
         movies[i].noLoop();
       }
     }
-
-
+   
     for (int i = 0; i < movies.length; i++) {
       offscreen.pushMatrix();
       //offscreen.translate(250 - i * 150, 0);
       if (movies[i].playbin.isPlaying()) {
+        offscreen.scale(2);
+        if(i > 3) {
+        movies[i].speed(2); 
+        }// maps each movie speed to stress
         drawGridBrightness(i);
       }
       offscreen.popMatrix();
@@ -60,16 +63,17 @@ class Zone2 {
 
   int onScreenDancerCount() {
     // maps number of dancers from 1-5 based on stress values
-    return (int) map(stressVal, 0, 100, 0, 7);
+    return (int) map(stressVal, 0, 100, 0, 5);
   }
 
   /// used in Zone2
   void drawGridBrightness(int state) {
+    
     movies[state].loadPixels();
     // Begin loop for columns
-    for (int i = 0; i < movX; i +=videoScale) {
+    for (int i = 0; i < 640; i +=videoScale) {
       // Begin loop for rows
-      for (int j = 0; j < movY; j +=videoScale) {
+      for (int j = 0; j < 360; j +=videoScale) {
 
         int loc = i + j * movies[state].width;
 
@@ -78,7 +82,7 @@ class Zone2 {
 
         // A rectangle size is calculated as a function of the pixel's brightness. 
         // A bright pixel is a large rectangle, and a dark pixel is a small one.
-        float sz = (brightness(c)/255)*videoScale; 
+        //float sz = (brightness(c)/255)*videoScale; 
 
         // chromakey
         if (brightness(c) <50) {
@@ -96,18 +100,11 @@ class Zone2 {
             offscreen.rect(i + videoScale/2, j + videoScale/2, videoScale, videoScale);
             //offscreen.rect(i - pixelMan.width/2, j - pixelMan.height/2, videoScale, videoScale);
           } else {
-            //offscreen.fill(0);
-            //offscreen.rect(i + videoScale/2, j + videoScale/2, videoScale, videoScale);
-            // clear
-            // this can be blank
-            offscreen.fill(0);
-            offscreen.rect(i + videoScale/2, j + videoScale/2, videoScale, videoScale);
-            // offscreen.rect(i + videoScale/2, j + videoScale/2, 0, 0);
-            //offscreen.rect(i - pixelMan.width/2, j - pixelMan.height/2, 0, 0);
           }
           offscreen.noStroke();
         }
       }
     }
   }
+  
 }
