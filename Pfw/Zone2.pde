@@ -97,14 +97,6 @@ class Zone2 {
             offscreen.rect(i + videoScale/2, j + videoScale/2, videoScale, videoScale);
             //offscreen.rect(i - pixelMan.width/2, j - pixelMan.height/2, videoScale, videoScale);
           } else {
-            //offscreen.fill(0);
-            //offscreen.rect(i + videoScale/2, j + videoScale/2, videoScale, videoScale);
-            // clear
-            // this can be blank
-            offscreen.fill(0);
-            offscreen.rect(i + videoScale/2, j + videoScale/2, videoScale, videoScale);
-            // offscreen.rect(i + videoScale/2, j + videoScale/2, 0, 0);
-            //offscreen.rect(i - pixelMan.width/2, j - pixelMan.height/2, 0, 0);
           }
           offscreen.noStroke();
         }
