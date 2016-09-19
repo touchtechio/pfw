@@ -9,7 +9,7 @@ class Zone2 {
 
     offscreen.background(25);
 
-    // handle all on screen dancers with this code
+    // handle all on screen   with this code
     //
     dancers = onScreenDancerCount();
 

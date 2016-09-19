@@ -1,14 +1,13 @@
 /*
 author: @adellelin
-
-this sketch runs a movie that correlates to levels of stress
+ 
+ this sketch runs a movie that correlates to levels of stress
  Use OSC buttons or keypress 1,2,3,4 to jump to different states
  */
 import oscP5.*;
 import netP5.*;
 import deadpixel.keystone.*;
 import processing.video.*;
-
 
 // osc 
 OscP5 oscP5;
@@ -36,21 +35,22 @@ Zone3 zone3 = new Zone3();
 Zone zone4 = new Zone();
 Zone zone5 = new Zone();
 
-
-
-
 int movX = 1280;
 int movY = 720;
 float textXPer = 0.7;
 float textYPer = 0.7;
 int videoScale = 0;
-float speed;
+//float speed;
 float lastStressVal;
 float stressVal;
 
 //glasses data
 int trueHR;
 int trueStressVal;
+boolean hasGlasses = false;
+boolean hasCalm = false;
+boolean noData = true;
+long beginStressManagement = 0L;
 
 // zone movie jump points
 float stressMovieVal[][] =
@@ -58,7 +58,7 @@ float stressMovieVal[][] =
   {0, 0, 0, 0}, 
   {0, 0, 0, 0}, 
   {0.5, 8.0, 16.0, 26.0}, 
-  {2.1, 8.0, 13, 22.0}}; // times in the movie to jump to
+  {2.1, 8.0, 13, 22.0, 52.0}}; // times in the movie to jump to
 float stressLow, stressHigh, stressMed, stressCrazy;
 float stressType[] = {stressLow, stressHigh, stressMed, stressCrazy};
 String oscAddr[] = {"/Stress/s2/1/1", "/Stress/s2/2/1", "/Stress/s2/1/2", "/Stress/s2/2/2"};
@@ -76,7 +76,7 @@ int currentZone = 5;
 
 void tearDown() {
   if (DEBUG) println("tearing down zone.");
-  
+
   myMovie.stop();
 
   for (int i = 1; i< movies.length; i++) {
@@ -87,14 +87,13 @@ void tearDown() {
   }
 
   lastStressVal = 0;
-  
+
   return;
 }
 
 
 
 void setupZone1() {
-
 
   if (DEBUG) println("build zone 1");
 
@@ -127,7 +126,7 @@ void setupZone2() {
 
 void setupZone3() {
   if (DEBUG) println("build zone 3");
-  myMovie = new Movie(this, "rose_viz3.mp4");
+  myMovie = new Movie(this, "rose_3a.mp4");
   myMovie.loop();
   currentZone = 3;
   videoScale = 13;
@@ -140,18 +139,19 @@ void setupZone4() {
 
   myMovie = new Movie(this, "danger3.mp4");
   myMovie.loop();
+
+  zone4.start();
   return;
 }
 
 void setupZone5() {
-
+  if (DEBUG) println("build zone 5");
   currentZone = 5;
 
   myMovie = new Movie(this, "ropeLoop.mp4");
   myMovie.loop();
 
   zone5.start();
-
   return;
 }
 
@@ -259,6 +259,10 @@ void draw() {
   // do stuff specific for each zone here
   drawCurrentZone();
 
+  if (hasGlasses) { //checking to see if glasses has beeen put on
+    gettingCalm(beginStressManagement);
+  }
+
   offscreen.translate(cornerPinX/2, cornerPinY/2);
   offscreen.endDraw();
 
@@ -272,28 +276,12 @@ int stressIntensityVal() {
   return (int) map(stressVal, 0, 100, 0, 4);
 }
 
-void drawZone5() {
-
-  zone5.draw();
+float movieSpeed() {
+   return map(stressVal, 0, 100, 0.1, 5.0); 
 }
-
-float updateMovieScrub () {
-
-  //for (int i = 0; i < 20; i++) {
-  //return 5 * sin(frameCount%20);
-  /*
-  theta +=  TWO_PI/36;
-   return circleX = 2 * sin(theta);
-   */
-
-
-  //int scale = ((int)millis() % 21);
-  float scale = (frameCount % 5);
-
-  if (scale < 5) {
-    return (5 - scale);
-  }
-  return (scale - 4);
+  
+void drawZone5() {
+  zone5.draw();
 }
 
 void drawZone4() {
@@ -325,7 +313,16 @@ void oscEvent(OscMessage theOscMessage) {
 
     println ("HR " + trueHR + ", SR" + trueStressVal);
 
-    stressVal = trueHR;
+    if (noData && trueHR > 0) { //trueHR should be > 0 when glasses are put on
+      manageGlassesStress();
+    }
+
+    if (hasCalm && trueHR < 10) { //trueHR < 10 when glasses taken off
+      hasCalm = false;
+      noData = true;
+    }
+
+    //stressVal = trueHR;
   }
 
   for (int i = 0; i < oscAddr.length; i++) {
@@ -385,25 +382,6 @@ void keyPressed() {
     ks.save();
     break;
 
-    /// Zone 4 and 5 stress level keys
-
-  case 'v':
-    myMovie.jump(stressMovieVal[currentZone - 1][0]);
-    //return;
-    break;
-  case 'b':
-    myMovie.jump(stressMovieVal[currentZone - 1][1]);
-    return;
-  case 'n':
-    myMovie.jump(stressMovieVal[currentZone - 1][2]);
-    //float stress3 = 21.0;
-    //myMovie.jump(stress3);
-    //stress3 -= 0.1;
-    break;
-  case 'm':
-    myMovie.jump(stressMovieVal[currentZone - 1][3]);
-    break;
-
     /// Zone switching
   case '1':
     tearDown();
@@ -426,36 +404,58 @@ void keyPressed() {
     setupZone5();
     break;
 
-    ///Zone2 stress level keys
+    ///Global stress level keys
   case 'q':
     stressVal = 10;
     if (currentZone == 1) {
       myMovie.jump(stressMovieVal[currentZone - 1][3]);
     }
     break;
-
   case 'w':
     stressVal = 20;
     break;
-
   case 'e':
     stressVal = 35;
     break;
-
   case 'r':
     stressVal = 45;
     break;
-
   case 't':
     stressVal = 65;
     break;
-
   case 'y':
     stressVal = 80;
     break;
-
   case 'u':
     stressVal = 90;
+    break;
+  case 'p':
+    manageGlassesStress();
+    println("hasGlasses "+hasGlasses+", NoData " +noData+ ", hasCalm "+hasCalm);
+    break;
+  case 'o': //resets to calm
+    hasCalm = false;
+    noData = true;
+    println("hasGlasses "+hasGlasses+", NoData " +noData+ ", hasCalm "+hasCalm);
+    break;
+
+    /// Zone 4 and 5 stress level keys
+
+  case 'v':
+    myMovie.jump(stressMovieVal[currentZone - 1][0]);
+    //return;
+    break;
+  case 'b':
+    myMovie.jump(stressMovieVal[currentZone - 1][1]);
+    return;
+  case 'n':
+    myMovie.jump(stressMovieVal[currentZone - 1][2]);
+    //float stress3 = 21.0;
+    //myMovie.jump(stress3);
+    //stress3 -= 0.1;
+    break;
+  case 'm':
+    myMovie.jump(stressMovieVal[currentZone - 1][3]);
     break;
   }
 }
@@ -495,4 +495,22 @@ void movieScrubber() {
   float mousePosRatio = mouseX/ (float)width;
   myMovie.jump(mousePosRatio* myMovie.duration());
   return;
+}
+
+void manageGlassesStress() {
+  hasGlasses = true;
+  noData = false;
+  stressVal = 90; // eventually to be replaced by real data
+  beginStressManagement = millis();
+  println("timer " + beginStressManagement);
+  return;
+}
+
+void gettingCalm(float startTime) {
+  if (millis() > startTime + 10000) {
+    hasCalm = true;
+    hasGlasses = false;
+    println("calming down");
+    return;
+  }
 }

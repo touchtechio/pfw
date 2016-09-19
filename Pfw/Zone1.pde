@@ -111,8 +111,6 @@ class Zone1 {
     }
   }
 
-
-
   void drawCrossHair() {
     float r = 10 + stressVal; // radius distance to rose
     
