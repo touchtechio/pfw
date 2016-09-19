@@ -114,8 +114,9 @@ void setupZone2() {
   currentZone = 2;
   stressVal = 10;
   lastDancerCount = -1;
+
   // changes speed of pixels appearing
-  videoScale = 10;
+  videoScale = 6;
   zone2.start();
   if (DEBUG) println("build zone 2");
   for (int i = 0; i < movies.length; i ++) {
@@ -290,7 +291,7 @@ float movieSpeed() {
 }
 
 float zone2MovieSpeed() {
-   return map(stressVal, 0, 100, 0.5, 1.5); 
+   return map(stressVal, 0, 100, 0.7, 2.0); 
 }
   
 void drawZone5() {
@@ -425,23 +426,25 @@ void keyPressed() {
     }
     break;
   case 'w':
-    stressVal = 20;
+    stressVal = 30;
     break;
   case 'e':
-    stressVal = 35;
+    stressVal = 50;
     break;
   case 'r':
-    stressVal = 45;
+    stressVal = 70;
     break;
   case 't':
-    stressVal = 65;
+    stressVal = 90;
     break;
+    /*
   case 'y':
     stressVal = 80;
     break;
   case 'u':
     stressVal = 90;
     break;
+    */
   case 'p':
     manageGlassesStress();
     println("hasGlasses "+hasGlasses+", NoData " +noData+ ", hasCalm "+hasCalm);

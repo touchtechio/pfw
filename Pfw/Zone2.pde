@@ -31,13 +31,15 @@ class Zone2 {
         movies[i].noLoop();
       }
     }
-
+   
     for (int i = 0; i < movies.length; i++) {
       offscreen.pushMatrix();
       //offscreen.translate(250 - i * 150, 0);
       if (movies[i].playbin.isPlaying()) {
-        
-        //movies[i].speed(2.0);  // maps each movie speed to stress
+        offscreen.scale(2);
+        if(i > 3) {
+        movies[i].speed(2); 
+        }// maps each movie speed to stress
         drawGridBrightness(i);
       }
       offscreen.popMatrix();
@@ -66,11 +68,12 @@ class Zone2 {
 
   /// used in Zone2
   void drawGridBrightness(int state) {
+    
     movies[state].loadPixels();
     // Begin loop for columns
-    for (int i = 0; i < movX; i +=videoScale) {
+    for (int i = 0; i < 640; i +=videoScale) {
       // Begin loop for rows
-      for (int j = 0; j < movY; j +=videoScale) {
+      for (int j = 0; j < 360; j +=videoScale) {
 
         int loc = i + j * movies[state].width;
 
