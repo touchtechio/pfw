@@ -115,7 +115,7 @@ void setupZone2() {
   stressVal = 10;
   lastDancerCount = -1;
   // changes speed of pixels appearing
-  videoScale = 8;
+  videoScale = 10;
   zone2.start();
   if (DEBUG) println("build zone 2");
   for (int i = 0; i < movies.length; i ++) {
@@ -240,7 +240,7 @@ void setup() {
     currentZone = Integer.parseInt(thisHostsZone);
   }
 
-  frameRate(24);
+  //frameRate(24);
 
   setupCurrentZone();
   return;
@@ -286,7 +286,11 @@ int stressIntensityVal() {
 }
 
 float movieSpeed() {
-   return map(stressVal, 0, 100, 0.1, 5.0); 
+   return map(stressVal, 0, 100, 0.5, 5.0); 
+}
+
+float zone2MovieSpeed() {
+   return map(stressVal, 0, 100, 0.5, 1.5); 
 }
   
 void drawZone5() {

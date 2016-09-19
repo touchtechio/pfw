@@ -8,7 +8,7 @@ class Zone2 {
   void draw() {
 
     offscreen.background(25);
-
+    
     // handle all on screen   with this code
     //
     dancers = onScreenDancerCount();
@@ -32,11 +32,12 @@ class Zone2 {
       }
     }
 
-
     for (int i = 0; i < movies.length; i++) {
       offscreen.pushMatrix();
       //offscreen.translate(250 - i * 150, 0);
       if (movies[i].playbin.isPlaying()) {
+        
+        //movies[i].speed(2.0);  // maps each movie speed to stress
         drawGridBrightness(i);
       }
       offscreen.popMatrix();
@@ -78,7 +79,7 @@ class Zone2 {
 
         // A rectangle size is calculated as a function of the pixel's brightness. 
         // A bright pixel is a large rectangle, and a dark pixel is a small one.
-        float sz = (brightness(c)/255)*videoScale; 
+        //float sz = (brightness(c)/255)*videoScale; 
 
         // chromakey
         if (brightness(c) <50) {
