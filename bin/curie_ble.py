@@ -2,8 +2,6 @@
 
 #
 # SeeSaw data collector
-#
-
 import os
 import sys
 import time
@@ -66,11 +64,11 @@ def NAME(h):
 # Define notification "processing" thread
 def notifThreadMain():
     while (True):
-        try:
-            periph.waitForNotifications(1.0);
-        except BTLEException:
-            print "Device disconnected";
-            sys.exit(-1);
+        #try:
+        periph.waitForNotifications(1.0);
+        #except bluepy.btle.BTLEException:
+        #    print "Device disconnected";
+        #    sys.exit(-1);
 
 
 # Define notification handling class
@@ -79,16 +77,17 @@ class notifHandler(bluepy.btle.DefaultDelegate):
         bluepy.btle.DefaultDelegate.__init__(self);
         return;
 
-    def reactToData(self, hr, st):
-
-        print "HR: {0} {1}".format(hr, st);
-
+    def reactToData(self, hr, st, br):
+        print "DATA: {0} {1} {2}".format(hr, st, br);
+        #print "EEG: {0} {1}".format(idx, asym);
+        #print "Breath Duration: {0}".format(br);
         c = OSC.OSCClient();
         c.connect(('127.0.0.1', 12000));
         oscmsg = OSC.OSCMessage();
         oscmsg.setAddress("/data");
         oscmsg.append(hr);
         oscmsg.append(st);
+        oscmsg.append(br);
         c.send(oscmsg);
         return;
 
@@ -113,13 +112,18 @@ class notifHandler(bluepy.btle.DefaultDelegate):
             if (data[0] == SEESAW_DAT_PPG):
                 t = time.time();
                 (hr, st) = struct.unpack("<hh", data[1:]);
-                self.reactToData(hr, st);
+                self.reactToData(hr, st, 0);
                 ppgData.append([t, hr, st]);
             elif (data[0] == SEESAW_DAT_EEG):
                 t = time.time();
+                (idx, asym) = struct.unpack("<hh", data[1:]);
+                #print "EEG: {0} {1}".format(idx, asym);
                 eegData.append([t, 0.0]);
             elif (data[0] == SEESAW_DAT_AUD):
                 t = time.time();
+                br = struct.unpack("<h", data[1:]);
+                #print "Breath: {0}".format(br[0]);
+                self.reactToData(0, 0, br[0]);
                 audData.append([t, 0.0, 0.0, 0.0]);
             else:
                 print("Got unknown data: %x" % ord(data[0]));
