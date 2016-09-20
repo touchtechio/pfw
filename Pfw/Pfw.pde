@@ -322,9 +322,6 @@ void oscEvent(OscMessage theOscMessage) {
     // todo: add counting zero for table detection
     if ( breathe !=0 )
       trueBreatheVal = breathe;
-      
-      
-      
     println ("HR " + trueHR + ", SR" + trueStressVal);
 
     if (noData && trueHR > 0) { //trueHR should be > 0 when glasses are put on
@@ -347,7 +344,6 @@ void oscEvent(OscMessage theOscMessage) {
       //stressIntensityVal();
       println(stressVal);
       return;
- 
     }
   }
 
