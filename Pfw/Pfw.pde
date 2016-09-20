@@ -323,9 +323,11 @@ void oscEvent(OscMessage theOscMessage) {
     if ( breathe !=0 )
       trueBreatheVal = breathe;
       
+
       
       
-    println ("HR " + trueHR + ", SR" + trueStressVal);
+      
+    println ("HR " + trueHR + ", SR " + trueStressVal + ", BR " + trueBreatheVal);
 
     if (noData && trueHR > 0) { //trueHR should be > 0 when glasses are put on
       manageGlassesStress();
@@ -336,7 +338,8 @@ void oscEvent(OscMessage theOscMessage) {
       noData = true;
     }
 
-    stressVal = map(trueBreatheVal, 8000, 1000, 0, 100);
+    stressVal = breathStressMapping();
+   
   }
 
   for (int i = 0; i < oscAddr.length; i++) {
@@ -367,6 +370,13 @@ void oscEvent(OscMessage theOscMessage) {
       }
     }
   }
+}
+
+int breathStressMapping() {
+  
+  int mappedStress = (int)map(trueBreatheVal, 3500, 0, 0, 100);
+  println("breathMappedStress:" + mappedStress);
+  return constrain(mappedStress, 0, 100);
 }
 
 void keyPressed() {
