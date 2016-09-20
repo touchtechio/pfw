@@ -333,9 +333,7 @@ void oscEvent(OscMessage theOscMessage) {
       hasCalm = false;
       noData = true;
     }
-
     stressVal = breathStressMapping();
-   
   }
 
   for (int i = 0; i < oscAddr.length; i++) {
@@ -369,7 +367,7 @@ void oscEvent(OscMessage theOscMessage) {
 
 int breathStressMapping() {
   
-  int mappedStress = (int)map(trueBreatheVal, 3500, 0, 0, 100);
+  int mappedStress = (int)map(trueBreatheVal, 3500, 1000, 0, 100);
   println("breathMappedStress:" + mappedStress);
   return constrain(mappedStress, 0, 100);
 }
