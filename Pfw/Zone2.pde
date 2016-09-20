@@ -24,7 +24,7 @@ class Zone2 {
       }
     }
     
-    float jumpPoints[] = {37, 38.4, 18};
+    float jumpPoints[] = {37, 36, 18};
     // handle old dancers leaving screen
     //
     for (int i = 0; i <= lastDancerCount; i++) {
@@ -34,15 +34,12 @@ class Zone2 {
       }
     }
 
-
-
     for (int i = 0; i < movies.length; i++) {
       offscreen.pushMatrix();
       //offscreen.translate(250 - i * 150, 0);
       if (movies[i].playbin.isPlaying()) {
         offscreen.scale(2);
-         movies[0].speed(0.7);
-        
+        movies[0].speed(0.7);
         drawGridBrightness(i);
       }
       offscreen.popMatrix();
@@ -66,19 +63,19 @@ class Zone2 {
 
   int onScreenDancerCount() {
     // maps number of dancers from 1-5 based on stress values
-    return (int) map(stressVal, 0, 100, 0, 3);
+    return (int) map(stressVal, 0, 101, 0, 3);
   }
 
 /*
   float danceSpeed() {
     return map(dancers, 0, 3, 0.5, 1.5);
   }
-
   
   float danceSpeed() {
    return map(stressVal, 0, 100, 0.5, 1.5);
    }
 */
+
   /// used in Zone2
   void drawGridBrightness(int state) {
 
