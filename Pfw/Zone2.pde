@@ -63,7 +63,9 @@ class Zone2 {
 
   int onScreenDancerCount() {
     // maps number of dancers from 1-5 based on stress values
-    return (int) map(stressVal, 0, 101, 0, 3);
+    int dancers = (int) map(stressVal, 0, 101, 0, 3);
+   // println("dancers: " +dancers);
+    return dancers;
   }
 
 /*
