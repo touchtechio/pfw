@@ -282,9 +282,6 @@ void draw() {
 }
 
 
-float zone2MovieSpeed() {
-   return map(stressVal, 0, 100, 0.7, 2.0); 
-}
   
 void drawZone5() {
   zone5.draw();
@@ -328,7 +325,7 @@ void oscEvent(OscMessage theOscMessage) {
       noData = true;
     }
 
-    //stressVal = trueHR;
+    stressVal = trueStressVal;
   }
 
   for (int i = 0; i < oscAddr.length; i++) {

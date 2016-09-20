@@ -17,8 +17,9 @@ class Zone4 {
    //float theta = 0;
   intensity = stressIntensityVal();
   if (stressVal > lastStressVal) {
-    myMovie.jump(stressMovieVal[currentZone-1][intensity]);
+    myMovie.jump(stressMovieVal[currentZone-1][intensity]); // jumps to times, speed changes linearly
   } else if (stressVal < lastStressVal || hasCalm) {
+    myMovie.jump(stressMovieVal[currentZone-1][intensity]);
     //myMovie.jump(stressMovieVal[currentZone-1][3]);
     hasCalm = false;
     // myMovie

@@ -31,15 +31,16 @@ class Zone2 {
         movies[i].noLoop();
       }
     }
-   
+
+
+
     for (int i = 0; i < movies.length; i++) {
       offscreen.pushMatrix();
       //offscreen.translate(250 - i * 150, 0);
       if (movies[i].playbin.isPlaying()) {
         offscreen.scale(2);
-        if(i > 3) {
-        movies[i].speed(2); 
-        }// maps each movie speed to stress
+
+        movies[i].speed(danceSpeed());
         drawGridBrightness(i);
       }
       offscreen.popMatrix();
@@ -66,9 +67,19 @@ class Zone2 {
     return (int) map(stressVal, 0, 100, 0, 5);
   }
 
+
+  float danceSpeed() {
+    return map(dancers, 0, 4, 0.5, 1.5);
+  }
+
+  /*
+  float danceSpeed() {
+   return map(stressVal, 0, 100, 0.5, 1.5);
+   }
+*/
   /// used in Zone2
   void drawGridBrightness(int state) {
-    
+
     movies[state].loadPixels();
     // Begin loop for columns
     for (int i = 0; i < 640; i +=videoScale) {
@@ -78,9 +89,11 @@ class Zone2 {
         int loc = i + j * movies[state].width;
 
         // Each rect is colored white with a size determined by brightness
-        if (movies[state].pixels.length == 0) {println("000");
-          break;}
-          
+        if (movies[state].pixels.length == 0) {
+          println("000");
+          break;
+        }
+
         color c = movies[state].pixels[loc];
 
         // A rectangle size is calculated as a function of the pixel's brightness. 
@@ -109,5 +122,4 @@ class Zone2 {
       }
     }
   }
-  
 }
