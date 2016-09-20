@@ -44,8 +44,11 @@ float lastStressVal;
 float stressVal;
 
 //glasses data
-int trueHR;
-int trueStressVal;
+// todo: make neater
+int trueHR = 72;
+int trueStressVal = 20;
+int trueBreatheVal = 1507;
+
 boolean hasGlasses = false;
 boolean hasCalm = false;
 boolean noData = true;
@@ -313,7 +316,15 @@ void oscEvent(OscMessage theOscMessage) {
   if (theOscMessage.checkAddrPattern("/data")) {
     trueHR = theOscMessage.get(0).intValue();
     trueStressVal = theOscMessage.get(1).intValue();
-
+    
+    int breathe = theOscMessage.get(2).intValue();
+    
+    // todo: add counting zero for table detection
+    if ( breathe !=0 )
+      trueBreatheVal = breathe;
+      
+      
+      
     println ("HR " + trueHR + ", SR" + trueStressVal);
 
     if (noData && trueHR > 0) { //trueHR should be > 0 when glasses are put on
@@ -325,7 +336,7 @@ void oscEvent(OscMessage theOscMessage) {
       noData = true;
     }
 
-    stressVal = trueStressVal;
+    stressVal = map(trueBreatheVal, 8000, 1000, 0, 100);
   }
 
   for (int i = 0; i < oscAddr.length; i++) {
@@ -477,8 +488,8 @@ void displayStressData() {
   offscreen.text("stress rate", textXPer * movX, (textYPer + 0.24) * movY);
   offscreen.textSize(20);
   offscreen.text(frameCount % 35, (textXPer + 0.2) * movX, (textYPer + 0.09) * movY);
-  offscreen.text(frameCount % 100, (textXPer + 0.2) * movX, (textYPer + 0.14) * movY);
-  offscreen.text(trueHR, (textXPer + 0.2) * movX, (textYPer + 0.19) * movY);
+  offscreen.text(trueBreatheVal, (textXPer + 0.2) * movX, (textYPer + 0.14) * movY);
+   offscreen.text(trueHR, (textXPer + 0.2) * movX, (textYPer + 0.19) * movY);
   offscreen.text(trueStressVal, (textXPer + 0.2) * movX, (textYPer + 0.24) * movY);
 
   /*
