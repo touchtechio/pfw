@@ -217,12 +217,12 @@ void drawZone(int zone) {
 
 
 void setup() {
-  
-  
+
+
   // start oscP5 first, listening for incoming messages at port 12000
   oscP5 = new OscP5(this, 12000);
-  
-  
+
+
   // Keystone will only work with P3D or OPENGL renderers,
   // since it relies on texture mapping to deform
   size(1280, 720, P3D);
@@ -282,7 +282,7 @@ void draw() {
 }
 
 
-  
+
 void drawZone5() {
   zone5.draw();
 }
@@ -308,7 +308,7 @@ void drawZone1() {
 
 void oscEvent(OscMessage theOscMessage) {
   print(" typetag:" + theOscMessage.typetag());
-  print(" addrpattern: " +theOscMessage.addrPattern());
+  println(" addrpattern: " +theOscMessage.addrPattern());
 
   if (theOscMessage.checkAddrPattern("/data")) {
     trueHR = theOscMessage.get(0).intValue();
@@ -336,16 +336,7 @@ void oscEvent(OscMessage theOscMessage) {
       //stressIntensityVal();
       println(stressVal);
       return;
-      /*
-      stressType[i] = theOscMessage.get(0).floatValue();
-       if (stressType[i] == 1.0) {
-       
-       myMovie.jump(stressMovieVal[currentZone - 1][i]);
-       return;
-       } else {
-       // nothing
-       }
-       */
+ 
     }
   }
 
@@ -412,9 +403,9 @@ void keyPressed() {
     stressVal = 8;
     /*
     if (currentZone == 1) {
-      myMovie.jump(stressMovieVal[currentZone - 1][3]);
-    }
-    */
+     myMovie.jump(stressMovieVal[currentZone - 1][3]);
+     }
+     */
     break;
   case 'w':
     stressVal = 30;
@@ -430,12 +421,12 @@ void keyPressed() {
     break;
     /*
   case 'y':
-    stressVal = 80;
-    break;
-  case 'u':
-    stressVal = 90;
-    break;
-    */
+     stressVal = 80;
+     break;
+     case 'u':
+     stressVal = 90;
+     break;
+     */
   case 'p':
     manageGlassesStress();
     println("hasGlasses "+hasGlasses+", NoData " +noData+ ", hasCalm "+hasCalm);
