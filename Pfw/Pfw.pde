@@ -353,7 +353,7 @@ void oscEvent(OscMessage theOscMessage) {
 
     if (theOscMessage.checkAddrPattern(oscZoneAddr[j])) {
       float value = theOscMessage.get(0).floatValue();
-
+      println(value);
       if (value == 1.0) {
         println("osc switch zone"+zone[j]);
         tearDown();
