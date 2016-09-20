@@ -66,7 +66,12 @@ def NAME(h):
 # Define notification "processing" thread
 def notifThreadMain():
     while (True):
-        periph.waitForNotifications(1.0);
+        try:
+            periph.waitForNotifications(1.0);
+        except BTLEException:
+            print "Device disconnected";
+            sys.exit(-1);
+
 
 # Define notification handling class
 class notifHandler(bluepy.btle.DefaultDelegate):
@@ -76,15 +81,15 @@ class notifHandler(bluepy.btle.DefaultDelegate):
 
     def reactToData(self, hr, st):
 
-        print "HR: {0} {1}".format(hr, st)	
+        print "HR: {0} {1}".format(hr, st);
 
-        c = OSC.OSCClient()
-        c.connect(('127.0.0.1', 12000))
-        oscmsg = OSC.OSCMessage()
-        oscmsg.setAddress("/data")
-        oscmsg.append(hr)
-        oscmsg.append(st)
-        c.send(oscmsg)
+        c = OSC.OSCClient();
+        c.connect(('127.0.0.1', 12000));
+        oscmsg = OSC.OSCMessage();
+        oscmsg.setAddress("/data");
+        oscmsg.append(hr);
+        oscmsg.append(st);
+        c.send(oscmsg);
         return;
 
     def handleNotification(self, chHandle, data):
