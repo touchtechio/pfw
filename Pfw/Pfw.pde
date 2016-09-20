@@ -81,7 +81,8 @@ int currentZone = 1;
 void tearDown() {
   if (DEBUG) println("tearing down zone.");
 
-  myMovie.stop();
+  if (myMovie != null)
+    myMovie.stop();
 
   for (int i = 1; i< movies.length; i++) {
     if (movies[i] != null) {
@@ -316,9 +317,9 @@ void oscEvent(OscMessage theOscMessage) {
   if (theOscMessage.checkAddrPattern("/data")) {
     trueHR = theOscMessage.get(0).intValue();
     trueStressVal = theOscMessage.get(1).intValue();
-    
+
     int breathe = theOscMessage.get(2).intValue();
-    
+
     // todo: add counting zero for table detection
     if ( breathe !=0 )
       trueBreatheVal = breathe;
@@ -366,7 +367,7 @@ void oscEvent(OscMessage theOscMessage) {
 }
 
 int breathStressMapping() {
-  
+
   int mappedStress = (int)map(trueBreatheVal, 3500, 1000, 0, 100);
   println("breathMappedStress:" + mappedStress);
   return constrain(mappedStress, 0, 100);
@@ -492,7 +493,7 @@ void displayStressData() {
   offscreen.textSize(20);
   offscreen.text(frameCount % 35, (textXPer + 0.2) * movX, (textYPer + 0.09) * movY);
   offscreen.text(trueBreatheVal, (textXPer + 0.2) * movX, (textYPer + 0.14) * movY);
-   offscreen.text(trueHR, (textXPer + 0.2) * movX, (textYPer + 0.19) * movY);
+  offscreen.text(trueHR, (textXPer + 0.2) * movX, (textYPer + 0.19) * movY);
   offscreen.text(trueStressVal, (textXPer + 0.2) * movX, (textYPer + 0.24) * movY);
 
   /*
