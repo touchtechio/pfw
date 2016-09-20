@@ -46,6 +46,7 @@ float stressVal;
 //glasses data
 int trueHR;
 int trueStressVal;
+int trueBreatheVal = 1507;
 boolean hasGlasses = false;
 boolean hasCalm = false;
 boolean noData = true;
@@ -313,6 +314,10 @@ void oscEvent(OscMessage theOscMessage) {
   if (theOscMessage.checkAddrPattern("/data")) {
     trueHR = theOscMessage.get(0).intValue();
     trueStressVal = theOscMessage.get(1).intValue();
+    
+    int breathe = theOscMessage.get(2).intValue();
+    if ( breathe !=0 )
+    trueBreatheVal = breathe;
 
     println ("HR " + trueHR + ", SR" + trueStressVal);
 
@@ -471,13 +476,15 @@ void displayStressData() {
   offscreen.textSize(24);
   offscreen.fill(255);
   // data input shown on screen
+  
+  
   offscreen.text("brainwave frequency", textXPer * movX, (textYPer + 0.09) * movY);
   offscreen.text("respiratory rate", textXPer * movX, (textYPer + 0.14) * movY);
   offscreen.text("heart rate", textXPer * movX, (textYPer + 0.19) * movY);
   offscreen.text("stress rate", textXPer * movX, (textYPer + 0.24) * movY);
   offscreen.textSize(20);
   offscreen.text(frameCount % 35, (textXPer + 0.2) * movX, (textYPer + 0.09) * movY);
-  offscreen.text(frameCount % 100, (textXPer + 0.2) * movX, (textYPer + 0.14) * movY);
+  offscreen.text(60000 / trueBreatheVal, (textXPer + 0.2) * movX, (textYPer + 0.14) * movY);
   offscreen.text(trueHR, (textXPer + 0.2) * movX, (textYPer + 0.19) * movY);
   offscreen.text(trueStressVal, (textXPer + 0.2) * movX, (textYPer + 0.24) * movY);
 

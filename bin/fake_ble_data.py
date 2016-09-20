@@ -16,9 +16,9 @@ import random
 import OSC
 
 
-def reactToData(hr, st):
+def reactToData(hr, st, br):
 
-    print "HR: {0} {1}".format(hr, st);
+    print "HR: {0} {1} {2}".format(hr, st, br);
 
     c = OSC.OSCClient();
     c.connect(('127.0.0.1', 12000));
@@ -26,13 +26,15 @@ def reactToData(hr, st):
     oscmsg.setAddress("/data");
     oscmsg.append(hr);
     oscmsg.append(st);
+    oscmsg.append(br);
     c.send(oscmsg);
     return;
 
-reactToData(0, 0);
+reactToData(0, 0, 0);
 
-for i in range(30):
-    reactToData(random.randrange(72,100), random.randrange(0,100));
-    time.sleep(0.5);
+for i in range(15):
+    br = random.randrange(1500,6000);
+    reactToData(random.randrange(72,100), random.randrange(0,100), br);
+    time.sleep(br/1000);
 
-reactToData(99, 50);
+reactToData(99, 15, 2000);
