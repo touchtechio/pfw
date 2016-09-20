@@ -31,8 +31,8 @@ int moviePlaying = 0;
 Zone1 zone1 = new Zone1();
 Zone2 zone2 = new Zone2();
 Zone3 zone3 = new Zone3();
-Zone zone4 = new Zone();
-Zone zone5 = new Zone();
+Zone4 zone4 = new Zone4();
+Zone5 zone5 = new Zone5();
 
 int movX = 1280;
 int movY = 720;
@@ -56,8 +56,8 @@ float stressMovieVal[][] =
   { {0.0, 5.0, 10.0, 22.0}, 
   {0, 0, 0, 0}, 
   {0, 0, 0, 0}, 
-  {0.5, 8.0, 16.0, 26.0, 0.5}, 
-  {2.1, 8.0, 13, 22.0, 52.0}}; // times in the movie to jump to
+  {0.5, 3.0, 8.0, 0.5}, 
+  {1.0, 10.0, 16, 52.0}}; // times in the movie to jump to
 float stressLow, stressHigh, stressMed, stressCrazy;
 float stressType[] = {stressLow, stressHigh, stressMed, stressCrazy};
 String oscAddr[] = {"/Stress/s2/1/1", "/Stress/s2/2/1", "/Stress/s2/1/2", "/Stress/s2/2/2"};
@@ -73,7 +73,7 @@ PFont font;
 //
 String thisHostsZone=System.getenv("ZONE");
 int lastZone;
-int currentZone = 5;
+int currentZone = 1;
 
 void tearDown() {
   if (DEBUG) println("tearing down zone.");
@@ -139,7 +139,7 @@ void setupZone4() {
   if (DEBUG) println("build zone 4");
   currentZone = 4;
 
-  myMovie = new Movie(this, "danger3.mp4");
+  myMovie = new Movie(this, "danger4.mp4");
   myMovie.loop();
 
   zone4.start();
@@ -281,14 +281,6 @@ void draw() {
   return;
 }
 
-int stressIntensityVal() {
-  // maps number of dancers from 1-5 based on stress values
-  return (int) map(stressVal, 0, 100, 0, 4);
-}
-
-float movieSpeed() {
-   return map(stressVal, 0, 100, 0.5, 5.0); 
-}
 
 float zone2MovieSpeed() {
    return map(stressVal, 0, 100, 0.7, 2.0); 
@@ -420,10 +412,12 @@ void keyPressed() {
 
     ///Global stress level keys
   case 'q':
-    stressVal = 10;
+    stressVal = 8;
+    /*
     if (currentZone == 1) {
       myMovie.jump(stressMovieVal[currentZone - 1][3]);
     }
+    */
     break;
   case 'w':
     stressVal = 30;

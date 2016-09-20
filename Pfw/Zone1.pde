@@ -18,11 +18,7 @@ class Zone1 {
   float  ct = cos(PI/9.0);
   float  st = sin(PI/9.0); 
 
-  /// determines speed of rose motion
-  float dxtheta_low = -0.012; //old -0.009
-  float dxtheta_high = 0.012;
-  float dytheta_low = -0.01; //old -0.004
-  float dytheta_high = 0.01;
+
 
   float crossPosX; 
   float crossPosY;
@@ -31,6 +27,8 @@ class Zone1 {
   float thetaText = TWO_PI / (float)textPoints ; // get the angle for each point
 
   boolean roseBloom = false;
+  float bloomStart;
+  boolean roseMovieAutoBloom = false;
 
   TargetArrow arrow;
   PImage crossHair;
@@ -45,7 +43,7 @@ class Zone1 {
 
     // initialize oscillator
     for (int i = 0; i < oscillators.length; i++) {
-      oscillators[i] = new Oscillator(dxtheta_low, dxtheta_high, dytheta_low, dytheta_high);
+      oscillators[i] = new Oscillator(-0.012, 0.012, -0.01, 0.01); //starting speed of oscillator
     }
 
     return;
@@ -54,12 +52,14 @@ class Zone1 {
   void draw() {
 
     offscreen.pushMatrix();
+
     checkRoseBloom(); //check to see if rose has bloomed, if it has move arrow
     //myMovie.loadPixels();
-    arrowSpeed = (int)stressVal/10;
+
+    arrowSpeed = (int)stressVal/10; // affect arrows on the crosshair
 
     for (int i = 0; i < oscillators.length; i++) {
-      oscillators[i].oscillate();
+      oscillators[i].oscillate(stressVal/10); // oscillator speed changes as multiple of stressVal
       oscillators[i].display(0, 0);
     }
     offscreen.popMatrix();
@@ -74,7 +74,8 @@ class Zone1 {
 
     /// draw the moving curved arrow to right of target;
     radialArrow();
-
+    println(myMovie.time());
+    resetBloom();
     thetaText -= 0.01;
     //popMatrix();
     displayStressData();
@@ -117,13 +118,13 @@ class Zone1 {
     float r = stressVal; // radius distance to rose
     /*
     float crossSpaz;
-    if (stressVal > 20) {
-      crossSpaz = random(r-stressVal/10, r);
-    } else {crossSpaz = r;}
-    
-    circleX = sin(theta/12)* crossSpaz; 
-    circleY = cos(theta/12)* crossSpaz;
-    */
+     if (stressVal > 20) {
+     crossSpaz = random(r-stressVal/10, r);
+     } else {crossSpaz = r;}
+     
+     circleX = sin(theta/12)* crossSpaz; 
+     circleY = cos(theta/12)* crossSpaz;
+     */
     circleX = sin(theta/12) * r; 
     circleY = cos(theta/12) * r;
     theta += TWO_PI/36; // angle increase around rose
@@ -153,7 +154,6 @@ class Zone1 {
   int updateArrowScaleUpAndDown () {
     //int scale = ((int)millis() % 21);
     int scale = (frameCount * arrowSpeed / 2 % 200); // changes arrow speed
-
     if (scale < 100) {
       return (100 - scale);
     }
@@ -161,14 +161,33 @@ class Zone1 {
   }
 
   void checkRoseBloom() {
-    if (myMovie.time() > 20.5) {
-      if (!roseBloom) {
-        stressVal = 10;
-        println("bloom");
-        roseBloom = true;
-      }
+
+    if (stressVal < 10 && !roseBloom) {
+      println("stressed");
+      myMovie.jump(stressMovieVal[0][3]);
+      roseBloom = true;
+      bloomStart = millis();
+      roseMovieAutoBloom = true;
+      println(roseMovieAutoBloom);
+      return;
+    }
+
+    if (myMovie.time() > 20.5 && myMovie.time() < 36.0 && !roseMovieAutoBloom) {
+      stressVal = 8;
+      println("bloom");
+      roseMovieAutoBloom = true;
       return;
     } else {
+    }
+  }
+
+  void resetBloom() {
+    if (roseBloom) {
+      if (millis() > bloomStart + 5000) {
+        myMovie.jump(36.1); // jump time to rose close;
+        roseMovieAutoBloom = false;
+        roseBloom = false;
+      }
     }
   }
 }
