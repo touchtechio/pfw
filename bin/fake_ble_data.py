@@ -18,7 +18,7 @@ import OSC
 
 def reactToData(hr, st, br):
 
-    print "HR: {0} {1} {2}".format(hr, st, br);
+    print "FAKE-DATA: {0} {1} {2}".format(hr, st, br);
 
     c = OSC.OSCClient();
     c.connect(('127.0.0.1', 12000));
@@ -33,7 +33,7 @@ def reactToData(hr, st, br):
 reactToData(0, 0, 0);
 
 for i in range(15):
-    br = random.randrange(1500,6000);
+    br = random.randrange(700,4000);
     reactToData(random.randrange(72,100), random.randrange(0,100), br);
     time.sleep(br/1000);
 
