@@ -1,5 +1,5 @@
 /*
-author: @adellelin
+author: @adellelin @mpinner
  
  this sketch runs a movie that correlates to levels of stress
  Use OSC buttons or keypress 1,2,3,4 to jump to different states
@@ -77,6 +77,50 @@ PFont font;
 String thisHostsZone=System.getenv("ZONE");
 int lastZone;
 int currentZone = 1;
+
+/// calculate ave
+//
+float aveBR=0;
+float sumBR = 0;
+float[] storedValBR;
+int countBR = 0;
+int br = 0;
+
+void setup() {
+
+  // start oscP5 first, listening for incoming messages at port 12000
+  oscP5 = new OscP5(this, 12000);
+
+
+  // Keystone will only work with P3D or OPENGL renderers,
+  // since it relies on texture mapping to deform
+  size(1280, 720, P3D);
+
+
+  font = createFont("HelveticaNeue", 15);
+
+  ks = new Keystone(this);
+  surface = ks.createCornerPinSurface(cornerPinX, cornerPinY, 20);
+  offscreen = createGraphics(cornerPinX, cornerPinY, P3D);
+
+  ks.load();
+
+  // get start zone from local env
+  if (null != thisHostsZone) {
+    currentZone = Integer.parseInt(thisHostsZone);
+  }
+
+  //frameRate(24);
+
+  setupCurrentZone();
+  
+  storedValBR= new float[3]; // for counting average set
+  return;
+}
+
+void movieEvent(Movie m) {
+  m.read();
+}
 
 void tearDown() {
   if (DEBUG) println("tearing down zone.");
@@ -219,42 +263,6 @@ void drawZone(int zone) {
 }
 
 
-
-void setup() {
-
-
-  // start oscP5 first, listening for incoming messages at port 12000
-  oscP5 = new OscP5(this, 12000);
-
-
-  // Keystone will only work with P3D or OPENGL renderers,
-  // since it relies on texture mapping to deform
-  size(1280, 720, P3D);
-
-
-  font = createFont("HelveticaNeue", 15);
-
-  ks = new Keystone(this);
-  surface = ks.createCornerPinSurface(cornerPinX, cornerPinY, 20);
-  offscreen = createGraphics(cornerPinX, cornerPinY, P3D);
-
-  ks.load();
-
-  // get start zone from local env
-  if (null != thisHostsZone) {
-    currentZone = Integer.parseInt(thisHostsZone);
-  }
-
-  //frameRate(24);
-
-  setupCurrentZone();
-  return;
-}
-
-void movieEvent(Movie m) {
-  m.read();
-}
-
 void draw() {
   background(0);
 
@@ -325,7 +333,21 @@ void oscEvent(OscMessage theOscMessage) {
       trueBreatheVal = breathe;
 
     println ("HR " + trueHR + ", SR " + trueStressVal + ", BR " + trueBreatheVal);
+    
+    float newBRFromGlass = (float)trueBreatheVal; // trueBR
+    AddNewValue(newBRFromGlass);
+    aveBR = 0;
+   // float multiplier = 2/(countBR + 1);
 
+    //if (countBR == 10){ //calculate first ave
+    if (countBR > 0) { //calculate first ave
+      aveBR = sumBR / countBR;
+    }
+    //float EMA_BR = (newBRFromGlass - aveBR) * multiplier + aveBR;
+    println("count: " + countBR + " new value: " +  newBRFromGlass + " proper average: " + aveBR);
+
+    // glasses on off state setting
+    /*
     if (noData && trueHR > 0) { //trueHR should be > 0 when glasses are put on
       manageGlassesStress();
     }
@@ -334,6 +356,7 @@ void oscEvent(OscMessage theOscMessage) {
       hasCalm = false;
       noData = true;
     }
+    */
     stressVal = breathStressMapping();
   }
 
@@ -348,13 +371,12 @@ void oscEvent(OscMessage theOscMessage) {
     }
   }
 
-
   // check message for zone switch address
   for (int j = 0; j < oscZoneAddr.length; j++) {
 
     if (theOscMessage.checkAddrPattern(oscZoneAddr[j])) {
       float value = theOscMessage.get(0).floatValue();
-      println(value);
+      //println(value);
       if (value == 1.0) {
         println("osc switch zone"+zone[j]);
         tearDown();
@@ -366,10 +388,25 @@ void oscEvent(OscMessage theOscMessage) {
   }
 }
 
+void AddNewValue(float valBR) {
+  if (countBR < storedValBR.length) {
+    //array is not full yet
+    storedValBR[countBR++] = valBR;
+    sumBR += valBR;
+  } else {
+    sumBR -= storedValBR[br];
+    storedValBR[br] = valBR;
+    sumBR += valBR;
+    br = br+1;
+    br = br % storedValBR.length;
+  }
+}
+
 int breathStressMapping() {
 
-  int mappedStress = (int)map(trueBreatheVal, 3500, 1000, 0, 100);
-  println("breathMappedStress:" + mappedStress);
+  //int mappedStress = (int)map(trueBreatheVal, 3500, 1000, 0, 100); using raw data
+  int mappedStress = (int)map(aveBR, 3500, 1000, 0, 100);
+  //println("breathMappedStress:" + mappedStress);
   return constrain(mappedStress, 0, 100);
 }
 
@@ -492,7 +529,7 @@ void displayStressData() {
   offscreen.text("stress rate", textXPer * movX, (textYPer + 0.24) * movY);
   offscreen.textSize(20);
   offscreen.text(frameCount % 35, (textXPer + 0.2) * movX, (textYPer + 0.09) * movY);
-  offscreen.text(trueBreatheVal, (textXPer + 0.2) * movX, (textYPer + 0.14) * movY);
+  offscreen.text((int)aveBR, (textXPer + 0.2) * movX, (textYPer + 0.14) * movY);
   offscreen.text(trueHR, (textXPer + 0.2) * movX, (textYPer + 0.19) * movY);
   offscreen.text(trueStressVal, (textXPer + 0.2) * movX, (textYPer + 0.24) * movY);
 
@@ -515,7 +552,7 @@ void manageGlassesStress() {
   noData = false;
   stressVal = 90; // eventually to be replaced by real data
   beginStressManagement = millis();
-  println("timer " + beginStressManagement);
+  //println("timer " + beginStressManagement);
   return;
 }
 
