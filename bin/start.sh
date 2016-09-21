@@ -5,18 +5,12 @@
 OLD_DISPLAY=$DISPLAY
 export DISPLAY=:0
 
-
-#kill old start.sh that might be running
-echo "killing any python running..."
-killall python
+# killing everything
+echo "killing everything..."
+./stop.sh
 
 echo "running curie ble watcher"
-#./run-curie-ble.sh &> /tmp/intel-ble.log &
-
-
-#kill old start.sh that might be running
-echo "killing any java running..."
-killall java
+./run-curie-ble.sh > /tmp/intel-ble.log 2>&1 &
 
 #zone setting
 echo "ZONE is set to $ZONE"
