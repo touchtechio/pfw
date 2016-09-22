@@ -10,33 +10,33 @@ class Zone4 {
   void draw() {
 
     offscreen.stroke(255);
-    
-    myMovie.speed(movieSpeed()); 
-    
-   float theta = 0;
-   //float theta = 0;
-  intensity = stressIntensityVal();
-  if (stressVal > lastStressVal) {
-    myMovie.jump(stressMovieVal[currentZone-1][intensity]); // jumps to times, speed changes linearly
-  } else if (stressVal < lastStressVal || hasCalm) {
-    myMovie.jump(stressMovieVal[currentZone-1][intensity]);
-    //myMovie.jump(stressMovieVal[currentZone-1][3]);
-    hasCalm = false;
-    // myMovie
-  } else {
-    //myMovie.jump(stressMovieVal[currentZone-1][intensity] + updateMovieScrub());
-  }
-  
-  lastStressVal = stressVal;
 
-    if (true) {
+    myMovie.speed(movieSpeed()); 
+
+    float theta = 0;
+    //float theta = 0;
+    intensity = stressIntensityVal();
+    if (stressVal > lastStressVal) {
+      myMovie.jump(stressMovieVal[currentZone-1][intensity]); // jumps to times, speed changes linearly
+    } else if (stressVal < lastStressVal || hasCalm) {
+      myMovie.jump(stressMovieVal[currentZone-1][intensity]);
+      //myMovie.jump(stressMovieVal[currentZone-1][3]);
+      hasCalm = false;
+      // myMovie
+    } else {
+      //myMovie.jump(stressMovieVal[currentZone-1][intensity] + updateMovieScrub());
+    }
+
+    lastStressVal = stressVal;
+
+    if (DEBUG) {
       //println("framRate " + frameRate);
       offscreen.textSize(15);
       offscreen.text("frameRate " + frameRate, .7 * movX, 0.1 * movY);
       displayStressData();
     }
   }
-  
+
   float updateMovieScrub () { // if want to oscillate playing
 
     //for (int i = 0; i < 20; i++) {
@@ -55,12 +55,11 @@ class Zone4 {
     return (scale - 4);
   }
   int stressIntensityVal() {
-  // maps number of dancers from 1-5 based on stress values
-  return (int) map(stressVal, 0, 101, 0, 3);
-}
+    // maps number of dancers from 1-5 based on stress values
+    return (int) map(stressVal, 0, 101, 0, 3);
+  }
 
-float movieSpeed() {
-   return map(stressVal, 0, 100, 0.2, 1.0); 
-}
-
+  float movieSpeed() {
+    return map(stressVal, 0, 100, 0.2, 1.0);
+  }
 }

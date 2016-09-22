@@ -29,7 +29,7 @@ class Zone5 {
 
     lastStressVal = stressVal;
 
-    if (true) {
+    if (DEBUG) {
       //println("framRate " + frameRate);
       offscreen.textSize(15);
       offscreen.text("frameRate " + frameRate, .7 * movX, 0.1 * movY);

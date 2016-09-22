@@ -17,9 +17,6 @@ class Zone1 {
 
   float  ct = cos(PI/9.0);
   float  st = sin(PI/9.0); 
-
-
-
   float crossPosX; 
   float crossPosY;
   int circlePoints = 160;
@@ -59,7 +56,7 @@ class Zone1 {
     arrowSpeed = (int)stressVal/10; // affect arrows on the crosshair
 
     for (int i = 0; i < oscillators.length; i++) {
-      oscillators[i].oscillate(stressVal/10); // oscillator speed changes as multiple of stressVal
+      //oscillators[i].oscillate(stressVal/20); // oscillator speed changes as multiple of stressVal
       oscillators[i].display(0, 0);
     }
     offscreen.popMatrix();
@@ -74,7 +71,6 @@ class Zone1 {
 
     /// draw the moving curved arrow to right of target;
     radialArrow();
-    println(myMovie.time());
     resetBloom();
     thetaText -= 0.01;
     //popMatrix();
@@ -84,11 +80,12 @@ class Zone1 {
 
   /// draw moving arrow on the right
   void radialArrow() {
+    offscreen.strokeWeight(3);
     //float dataRate = 1 + (float)updateFlatUpAndDown()/rate/2;
-    float distLine = 1.05;
+    float distLine = 1.05; //linelength
     for (int i = 31; i < 50; i ++) {
       offscreen.pushMatrix();
-      stroke(255);
+      
       //translate(firstValue * 1280, secondValue * 780);
       offscreen.translate(crossPosX + crossHair.width/2, crossPosY + crossHair.height/2);
       int r = 200;

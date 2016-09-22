@@ -31,10 +31,12 @@ class Oscillator {
   }   
 
   void display(float roseStartX, float roseStartY) {   
-    // Map results of sine / cosine to width and height of window to give oscillator motion
+    // Map results of sine / cosine to width and height of window to
+    // give oscillator motion
+    // movX * 0.1 determins amount of movement across the screen
 
-    x = (sin(xtheta)) * movX * 0.2;   
-    y = (cos(ytheta)) * movY * 0.2;
+    x = (sin(xtheta)) * movX * 0.1;   
+    y = (cos(ytheta)) * movY * 0.1;
     //x = 0;
     //y = 0;
     stroke(0);
@@ -45,7 +47,7 @@ class Oscillator {
     rosePosY = y + roseStartY ;
     //offscreen.translate(stressVal * sin(updateRoseSpaz()),  stressVal/2 * cos(updateRoseSpaz()), updateRoseZoom ()- 400);
     //offscreen.translate(0, 0, (updateRoseZoom()- 400)* (int)stressVal/100);
-    offscreen.translate(0, 0, (updateRoseZoom()- (400 * roseZoomScale()) ));
+    offscreen.translate(0, 0, (updateRoseZoom()- (100 * roseZoomScale()) ));
     
     //println("roseZoom "+updateRoseZoom());
     //drawMoviePixels();
@@ -66,16 +68,16 @@ class Oscillator {
 
   int updateRoseZoom () {
     //int scale = ((int)millis() % 21);
-    int scale = (frameCount % 800) ;
+    int scale = (frameCount % 200) ;
 
-    if (scale < 400) {
-      return (400 - scale);
+    if (scale < 100) {
+      return (100 - scale);
     }
-    return (scale - 399);
+    return (scale - 99);
   }
 
   float roseZoomScale() {
-  return map(stressVal, 0, 100, 1.0, 5.0);
+  return map(stressVal, 0, 100, 1.0, 1.5);
   
   }
   int updateRoseSpaz () {
