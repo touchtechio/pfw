@@ -74,7 +74,6 @@ class Zone1 {
 
     /// draw the moving curved arrow to right of target;
     radialArrow();
-    println(myMovie.time());
     resetBloom();
     thetaText -= 0.01;
     //popMatrix();
