@@ -107,7 +107,7 @@ class Zone2 {
           if (0==(int) random(2) % 2 ) {
             // defines percentage of image to be colored
             //if (0==(int) random(updateScaleUpAndDown () ) % (updateScaleUpAndDown () + 1) ) {
-            offscreen.fill(250, 98, 237);
+            offscreen.fill(125, 244, 38);
             //offscreen.fill(250, 98 + state * 30, 237/(state+1));
             offscreen.rect(i + videoScale/2, j + videoScale/2, videoScale, videoScale);
             //offscreen.rect(i - pixelMan.width/2, j - pixelMan.height/2, videoScale, videoScale);
