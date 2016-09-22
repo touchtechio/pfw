@@ -2,8 +2,6 @@
 
 #
 # SeeSaw data collector
-#
-
 import os
 import sys
 import time
@@ -66,12 +64,30 @@ def NAME(h):
 # Define notification "processing" thread
 def notifThreadMain():
     while (True):
-        periph.waitForNotifications(1.0);
-        
+        try:
+            periph.waitForNotifications(1.0);
+        except bluepy.btle.BTLEException:
+            print "Device disconnected";
+
+
 # Define notification handling class
 class notifHandler(bluepy.btle.DefaultDelegate):
     def __init__(self):
         bluepy.btle.DefaultDelegate.__init__(self);
+        return;
+
+    def reactToData(self, hr, st, br):
+        print "DATA: {0} {1} {2}".format(hr, st, br);
+        print "EEG: {0} {1} {2} {3}".format(asym, idx, l_peak, r_peak);
+        print "Breath Duration: {0}".format(br);
+        c = OSC.OSCClient();
+        c.connect(('127.0.0.1', 12000));
+        oscmsg = OSC.OSCMessage();
+        oscmsg.setAddress("/data");
+        oscmsg.append(hr);
+        oscmsg.append(st);
+        oscmsg.append(br);
+        c.send(oscmsg);
         return;
 
     def handleNotification(self, chHandle, data):
@@ -81,6 +97,8 @@ class notifHandler(bluepy.btle.DefaultDelegate):
                 print("Started Sensing...");
             elif (data[0] == SEESAW_RET_STOP_SENSE):
                 print("Stopped Sensing...");
+                periph.writeCharacteristic(VAL(yctrlHandle), SEESAW_CMD_START_SENSE);
+                state = SENSE;
             elif (data[0] == SEESAW_RET_START_RAW):
                 print("Started Data Collection...");
             elif (data[0] == SEESAW_RET_STOP_RAW):
@@ -95,29 +113,23 @@ class notifHandler(bluepy.btle.DefaultDelegate):
             if (data[0] == SEESAW_DAT_PPG):
                 t = time.time();
                 (hr, st) = struct.unpack("<hh", data[1:]);
-		#print hr
-		#print st
-	        print "HR: {0} {1}".format(hr, st)	
-		c = OSC.OSCClient()
-		c.connect(('127.0.0.1', 12000))
-		oscmsg = OSC.OSCMessage()
-		oscmsg.setAddress("/data")
-		oscmsg.append(hr)
-		oscmsg.append(st)
-		c.send(oscmsg)
+                print "HR: {0}".format(hr); 
+		#self.reactToData(hr, st, 0);
                 ppgData.append([t, hr, st]);
             elif (data[0] == SEESAW_DAT_EEG):
-		t = time.time();
-                (idx, stress) = struct.unpack("<hh", data[1:])
-                print "EEG: {0} {1}".format(idx, stress)   
-		eegData.append([t, 0.0]);
-     
-	    elif (data[0] == SEESAW_DAT_AUD):
                 t = time.time();
+                (asym, idx,l_peak,r_peak) = struct.unpack("<hhhh", data[1:]);
+                print "EEG: {0} {1} {2} {3}".format(asym, idx, l_peak, r_peak);
+                eegData.append([t, 0.0]);
+            elif (data[0] == SEESAW_DAT_AUD):
+                t = time.time();
+                br = struct.unpack("<h", data[1:]);
+                print "Breath: {0}".format(br[0]);
+                #self.reactToData(0, 0, br[0]);
                 audData.append([t, 0.0, 0.0, 0.0]);
             else:
                 print("Got unknown data: %x" % ord(data[0]));
-     	else:
+        else:
             print("DATA FROM STRANGE CHANNEL o.o");
         return;
 
@@ -148,7 +160,12 @@ if (dev == None):
 periph = bluepy.btle.Peripheral();
 
 print("Connecting to device: %s" % dev);
-periph.connect(dev);
+try:
+    periph.connect(dev);
+except bluepy.btle.BTLEException:
+    print("failed to connect!")
+    sys.exit(0)
+
 
 # Configure peripheral
 periph.withDelegate(notifHandler());
@@ -171,106 +188,17 @@ periph.writeCharacteristic(CCC(ystatHandle), "\x01\x00");
 print("Notifications enabled for all channels");
 
 # Handle multithreading
-notifThread = threading.Thread(target=notifThreadMain);
-notifThread.daemon = True;
-notifThread.start();
+#notifThread = threading.Thread(target=notifThreadMain);
+#notifThread.daemon = True;
+#notifThread.start();
+
+periph.writeCharacteristic(VAL(yctrlHandle), SEESAW_CMD_START_SENSE);
+state = SENSE;
 
 # Main loop
 while (True):
-    cmd = raw_input(">> ");
-
-    if (len(cmd) == 0):
-        continue;
-    
-    if (cmd[0] == "h"):
-        print("Help:");
-        print("");
-        print("q, e               leaves the program");
-        print("s                  toggle sense mode");
-        print("r                  toggle raw mode");
-        print("d [metric] [file]  dump collected sense data to file for metric");
-        print("c [metric]         clear collected sense data for metric");
-        print("h                  print help");
-    elif ((cmd[0] == "q") or (cmd[0] == "e")):
-        print("Exiting...");
-        sys.exit(0);
-    elif (cmd[0] == "s"):
-        if (state == IDLE):
-            periph.writeCharacteristic(VAL(yctrlHandle),
-                                       SEESAW_CMD_START_SENSE);
-            state = SENSE;
-        elif (state == SENSE):
-            periph.writeCharacteristic(VAL(yctrlHandle),
-                                       SEESAW_CMD_STOP_SENSE);
-            state = IDLE;
-        else:
-            print("Not in a state where sense mode may be changed");
-    elif (cmd[0] == "r"):
-        if (state == IDLE):
-            periph.writeCharacteristic(VAL(yctrlHandle),
-                                       SEESAW_CMD_START_RAW);
-            state = RAW;
-        elif (state == RAW):
-            periph.writeCharacteristic(VAL(yctrlHandle),
-                                       SEESAW_CMD_STOP_RAW);
-            state = IDLE;
-        else:
-            print("Not in a state where raw mode may be changed");
-    elif (cmd[0] == "c"):
-        if (len(cmd) != 5):
-            print("Bad format: c [metric]");
-            continue;
-
-        if ("aud" in cmd):
-            audData = [];
-            print("Audio data cleared");
-        elif ("ppg" in cmd):
-            ppgData = [];
-            print("PPG data cleared");
-        elif ("eeg" in cmd):
-            eegData = [];
-            print("EEG data cleared");
-        elif ("all" in cmd):
-            audData = [];
-            eegData = [];
-            ppgData = [];
-            print("All data cleared");
-        else:
-            print("Unknown data metric, options are 'eeg', 'aud', 'ppg', 'all'");
-    elif (cmd[0] == "d"):
-        cmdParts = cmd.split(" ");
-
-        if ((len(cmdParts) != 3) or (len(cmdParts[1]) != 3)):
-            print("Bad format: d [metric] [file]");
-            continue;
-
-        if ("aud" in cmdParts[1]):
-            data = [(audData, "aud")];
-        elif ("ppg" in cmdParts[1]):
-            data = [(ppgData, "ppg")];
-        elif ("eeg" in cmdParts[1]):
-            data = [(eegData, "eeg")];
-        elif ("all" in cmdParts[1]):
-            data = [(audData, "aud"), (ppgData, "ppg"), (eegData, "eeg")];
-        else:
-            print("Unknown data metric, options are 'eeg', 'aud', 'ppg', 'all'");
-            continue;
-
-        for d in data:
-            if (d[1] == "aud"):
-                header = "timestamp, x, y, z\n";
-            elif (d[1] == "eeg"):
-                header = "timestamp, asym\n";
-            elif (d[1] == "ppg"):
-                header = "timestamp, heartrate, stress\n";
-            
-            s = str(d[0]);
-            s = header + s.replace("], [", "\n").replace("[", "").replace("]", "");
-
-            fn = cmdParts[2] + "." + d[1];
-            fh = open(fn, 'w');
-            fh.write(s);
-            fh.close();
-            print("Wrote out %s data to %s" % (d[1], fn));
-    else:
-        print("Unknown command: '%s'" % cmd[0]);
+    try:
+        periph.waitForNotifications(1.0);
+    except bluepy.btle.BTLEException:
+        print "Device disconnected";
+        sys.exit(-1);
