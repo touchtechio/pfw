@@ -36,8 +36,8 @@ Zone5 zone5 = new Zone5();
 
 int movX = 1280;
 int movY = 720;
-float textXPer = 0.7;
-float textYPer = 0.7;
+float textXPer = 0.005;
+float textYPer = 0.06;
 int videoScale = 0;
 //float speed;
 float lastStressVal;
@@ -97,11 +97,12 @@ void setup() {
   size(1280, 720, P3D);
 
 
-  font = createFont("HelveticaNeue", 15);
+  font = createFont("Roboto Bold", 32);
 
   ks = new Keystone(this);
   surface = ks.createCornerPinSurface(cornerPinX, cornerPinY, 20);
   offscreen = createGraphics(cornerPinX, cornerPinY, P3D);
+  offscreen.textFont(font);
 
   ks.load();
 
@@ -113,7 +114,7 @@ void setup() {
   //frameRate(24);
 
   setupCurrentZone();
-  
+
   storedValBR= new float[3]; // for counting average set
   return;
 }
@@ -333,11 +334,11 @@ void oscEvent(OscMessage theOscMessage) {
       trueBreatheVal = breathe;
 
     println ("HR " + trueHR + ", SR " + trueStressVal + ", BR " + trueBreatheVal);
-    
+
     float newBRFromGlass = (float)trueBreatheVal; // trueBR
     AddNewValue(newBRFromGlass);
     aveBR = 0;
-   // float multiplier = 2/(countBR + 1);
+    // float multiplier = 2/(countBR + 1);
 
     //if (countBR == 10){ //calculate first ave
     if (countBR > 0) { //calculate first ave
@@ -349,14 +350,14 @@ void oscEvent(OscMessage theOscMessage) {
     // glasses on off state setting
     /*
     if (noData && trueHR > 0) { //trueHR should be > 0 when glasses are put on
-      manageGlassesStress();
-    }
-
-    if (hasCalm && trueHR < 10) { //trueHR < 10 when glasses taken off
-      hasCalm = false;
-      noData = true;
-    }
-    */
+     manageGlassesStress();
+     }
+     
+     if (hasCalm && trueHR < 10) { //trueHR < 10 when glasses taken off
+     hasCalm = false;
+     noData = true;
+     }
+     */
     stressVal = breathStressMapping();
   }
 
@@ -517,28 +518,29 @@ void mousePressed() {
 }
 
 void displayStressData() {
+  
+  offscreen.textSize(28);
+
+  offscreen.fill(255);
+  offscreen.noStroke();
+  offscreen.textFont(font);
+
+  offscreen.text("ANALYSIS", textXPer * movX, (textYPer - 0.02) * movY);
+
   for (int i = 0; i < 30; i++) {
     offscreen.ellipse(textXPer * movX + i * 10, textYPer * movY, 3, 3);
   }
-  offscreen.textSize(24);
-  offscreen.fill(255);
-  // data input shown on screen
-  offscreen.text("brainwave frequency", textXPer * movX, (textYPer + 0.09) * movY);
-  offscreen.text("respiratory rate", textXPer * movX, (textYPer + 0.14) * movY);
-  offscreen.text("heart rate", textXPer * movX, (textYPer + 0.19) * movY);
-  offscreen.text("stress rate", textXPer * movX, (textYPer + 0.24) * movY);
-  offscreen.textSize(20);
-  offscreen.text(frameCount % 35, (textXPer + 0.2) * movX, (textYPer + 0.09) * movY);
-  offscreen.text((int)aveBR, (textXPer + 0.2) * movX, (textYPer + 0.14) * movY);
-  offscreen.text(trueHR, (textXPer + 0.2) * movX, (textYPer + 0.19) * movY);
-  offscreen.text(trueStressVal, (textXPer + 0.2) * movX, (textYPer + 0.24) * movY);
 
-  /*
-  offscreen.text(frameCount % 35, (textXPer + 0.2) * movX, (textYPer + 0.09) * movY);
-   offscreen.text(frameCount % 100, (textXPer + 0.2) * movX, (textYPer + 0.14) * movY);
-   offscreen.text(frameCount % 150, (textXPer + 0.2) * movX, (textYPer + 0.19) * movY);
-   offscreen.text((int) stressVal + (frameCount % 7), (textXPer + 0.2) * movX, (textYPer + 0.24) * movY);
-   */
+  offscreen.text("BRAIN WAVES", textXPer * movX, (textYPer + 0.05) * movY);
+  offscreen.text(frameCount % 35, (textXPer + 0.2) * movX, (textYPer + 0.05) * movY);
+
+  offscreen.text("RESPIRATION", textXPer * movX, (textYPer + 0.10) * movY);
+  offscreen.text((int)aveBR, (textXPer + 0.2) * movX, (textYPer + 0.10) * movY);
+
+  offscreen.text("HEART RATE ", textXPer * movX, (textYPer + 0.15) * movY);
+  offscreen.text(trueHR, (textXPer + 0.2) * movX, (textYPer + 0.15) * movY);
+
+  return;
 }
 
 void movieScrubber() {
