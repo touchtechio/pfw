@@ -326,12 +326,16 @@ void oscEvent(OscMessage theOscMessage) {
   println(" addrpattern: " +theOscMessage.addrPattern());
 
   if (theOscMessage.checkAddrPattern("/data")) {
-    trueHR = theOscMessage.get(0).intValue();
-    trueBrainVal = theOscMessage.get(1).intValue();
-
+    int hr = theOscMessage.get(0).intValue();
+    int brain = theOscMessage.get(1).intValue();
     int breathe = theOscMessage.get(2).intValue();
 
-    // todo: add counting zero for table detection
+    if (hr != 0)
+      trueHR = hr;
+
+    if (brain != 0)
+      trueBrainVal = brain;
+
     if ( breathe !=0 )
       trueBreatheVal = breathe;
 
@@ -520,7 +524,7 @@ void mousePressed() {
 }
 
 void displayStressData() {
-  
+
   offscreen.textSize(HUDtextSize);
 
   offscreen.fill(255);
