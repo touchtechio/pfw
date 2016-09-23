@@ -76,10 +76,10 @@ class notifHandler(bluepy.btle.DefaultDelegate):
         bluepy.btle.DefaultDelegate.__init__(self);
         return;
 
-    def reactToData(self, hr, bw, br):
-        print "DATA: {0} {1} {2}".format(hr, bw, br);
-        #print "EEG: {0} {1}".format(idx, asym);
-        #print "Breath Duration: {0}".format(br);
+    def reactToData(hr, bw, br):
+
+        print "DATA: {1} {2} {0}".format(hr, bw, br);
+
         c = OSC.OSCClient();
         c.connect(('127.0.0.1', 12000));
         oscmsg = OSC.OSCMessage();

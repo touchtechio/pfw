@@ -49,7 +49,7 @@ float stressVal;
 //glasses data
 // todo: make neater
 int trueHR = 72;
-int trueStressVal = 20;
+int trueBrainVal = 20;
 int trueBreatheVal = 1507;
 
 boolean hasGlasses = false;
@@ -326,7 +326,7 @@ void oscEvent(OscMessage theOscMessage) {
 
   if (theOscMessage.checkAddrPattern("/data")) {
     trueHR = theOscMessage.get(0).intValue();
-    trueStressVal = theOscMessage.get(1).intValue();
+    trueBrainVal = theOscMessage.get(1).intValue();
 
     int breathe = theOscMessage.get(2).intValue();
 
@@ -334,7 +334,7 @@ void oscEvent(OscMessage theOscMessage) {
     if ( breathe !=0 )
       trueBreatheVal = breathe;
 
-    println ("HR " + trueHR + ", SR " + trueStressVal + ", BR " + trueBreatheVal);
+    println ("HR " + trueHR + ", BW " + trueBrainVal + ", BR " + trueBreatheVal);
 
     float newBRFromGlass = (float)trueBreatheVal; // trueBR
     AddNewValue(newBRFromGlass);
@@ -533,7 +533,7 @@ void displayStressData() {
   }
 
   offscreen.text("Brain Waves".toUpperCase(), textXPer * movX, (textYPer + 0.05) * movY);
-  offscreen.text(frameCount % 35, (textXPer + 0.16) * movX, (textYPer + 0.05) * movY);
+  offscreen.text(trueBrainVal, (textXPer + 0.16) * movX, (textYPer + 0.05) * movY);
 
   offscreen.text("RESPIRATION", textXPer * movX, (textYPer + 0.10) * movY);
   offscreen.text((int)aveBR, (textXPer + 0.16) * movX, (textYPer + 0.10) * movY);

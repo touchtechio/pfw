@@ -16,16 +16,16 @@ import random
 import OSC
 
 
-def reactToData(hr, st, br):
+def reactToData(hr, bw, br):
 
-    print "FAKE-DATA: {0} {1} {2}".format(hr, st, br);
+    print "FAKE-DATA: {1} {2} {0}".format(hr, bw, br);
 
     c = OSC.OSCClient();
     c.connect(('127.0.0.1', 12000));
     oscmsg = OSC.OSCMessage();
     oscmsg.setAddress("/data");
     oscmsg.append(hr);
-    oscmsg.append(st);
+    oscmsg.append(bw);
     oscmsg.append(br);
     c.send(oscmsg);
     return;
