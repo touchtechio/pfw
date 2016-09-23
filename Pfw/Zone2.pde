@@ -8,8 +8,8 @@ class Zone2 {
   void draw() {
 
     offscreen.background(25);
-   
-    
+
+
     // handle all on screen   with this code
     //
     dancers = onScreenDancerCount();
@@ -23,7 +23,7 @@ class Zone2 {
         movies[i].loop();
       }
     }
-    
+
     float jumpPoints[] = {37, 36, 18};
     // handle old dancers leaving screen
     //
@@ -51,32 +51,26 @@ class Zone2 {
 
     updatePixels();
 
-    if (DEBUG) {
-      //println("framRate " + frameRate);
-      offscreen.fill(255);
-      offscreen.textSize(15);
-      offscreen.text("frameRate " + (int)frameRate, .7 * movX, 0.1 * movY);
-      displayStressData();
-      //println("time "+myMovie.time()); // if want to see timestamp of while movie plays
-    }
+    displayStressData();
+    
   }
 
   int onScreenDancerCount() {
     // maps number of dancers from 1-5 based on stress values
     int dancers = (int) map(stressVal, 0, 101, 0, 3);
-   // println("dancers: " +dancers);
+    // println("dancers: " +dancers);
     return dancers;
   }
 
-/*
+  /*
   float danceSpeed() {
-    return map(dancers, 0, 3, 0.5, 1.5);
-  }
-  
-  float danceSpeed() {
+   return map(dancers, 0, 3, 0.5, 1.5);
+   }
+   
+   float danceSpeed() {
    return map(stressVal, 0, 100, 0.5, 1.5);
    }
-*/
+   */
 
   /// used in Zone2
   void drawGridBrightness(int state) {
