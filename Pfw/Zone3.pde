@@ -17,7 +17,7 @@ class Zone3 {
   void draw() {
     //// for fixed starting point (center), the square scales up and down
 
-    greenPixel = (int) map(stressVal, 0, 100, 0, 350);
+    greenPixel = (int) map(smoothStressVal, 0, 100, 0, 350);
     pixelW = updateScatterScaleUpAndDown() + greenPixel;
 
     centerPtX = 1280/2;

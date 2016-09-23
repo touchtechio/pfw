@@ -44,9 +44,10 @@ PFont HUDFont;
 PFont HUDArrowFont;
 
 int videoScale = 0;
-//float speed;
-float lastStressVal;
-float stressVal;
+
+float lastStressVal; // global for zone4 and zone5 stress caching
+float smoothStressVal; // drives the content
+float stressVal;  // set by incoming data
 
 //glasses data
 // todo: make neater
@@ -137,8 +138,6 @@ void tearDown() {
       println("tear "+ i);
     }
   }
-
-  lastStressVal = 0;
 
   return;
 }
@@ -268,7 +267,11 @@ void drawZone(int zone) {
 
 void draw() {
   background(0);
+    
+  // smoothing the stress value changes
+  smoothStressVal += (stressVal - smoothStressVal) * 0.1;
 
+ 
   // Draw the scene, offscreen
   offscreen.beginDraw();
   offscreen.background(0);
@@ -373,7 +376,7 @@ void oscEvent(OscMessage theOscMessage) {
     if (theOscMessage.checkAddrPattern( "/Stress/s1")==true) {
       stressVal = (int)theOscMessage.get(0).floatValue();
       //stressIntensityVal();
-      println(stressVal);
+      println("target stress:" + stressVal);
       return;
     }
   }
@@ -478,14 +481,7 @@ void keyPressed() {
   case 't':
     stressVal = 90;
     break;
-    /*
-  case 'y':
-     stressVal = 80;
-     break;
-     case 'u':
-     stressVal = 90;
-     break;
-     */
+   
   case 'p':
     manageGlassesStress();
     println("hasGlasses "+hasGlasses+", NoData " +noData+ ", hasCalm "+hasCalm);

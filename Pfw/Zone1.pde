@@ -47,7 +47,7 @@ class Zone1 {
     offscreen.stroke(255);
     
     for (int i = 0; i < oscillators.length; i++) {
-      oscillators[i].oscillate(stressVal/30); // oscillator speed changes as multiple of stressVal
+      oscillators[i].oscillate(smoothStressVal/30); // oscillator speed changes as multiple of smoothStressVal
       oscillators[i].display(0, 0);
     }
     offscreen.popMatrix();
@@ -66,11 +66,11 @@ class Zone1 {
   /// draw moving arrow on the right
 
   void drawCrossHair() {
-    float r = stressVal; // radius distance to rose
+    float r = smoothStressVal; // radius distance to rose
     /*
     float crossSpaz;
-     if (stressVal > 20) {
-     crossSpaz = random(r-stressVal/10, r);
+     if (smoothStressVal > 20) {
+     crossSpaz = random(r-smoothStressVal/10, r);
      } else {crossSpaz = r;}
      
      circleX = sin(theta/12)* crossSpaz; 
@@ -86,7 +86,7 @@ class Zone1 {
     crossPosY = oscillators[0].rosePosY + 230 + circleY * 3; // check this out
     
     //// new changes
-    int arrowSpeed = (int)stressVal/10;
+    int arrowSpeed = (int)smoothStressVal/10;
     offscreen.pushMatrix();
     
     offscreen.translate(crossPosX, crossPosY);
@@ -102,7 +102,7 @@ class Zone1 {
 
   void checkRoseBloom() {
 
-    if (stressVal < 10 && !roseBloom) {
+    if (smoothStressVal < 10 && !roseBloom) {
       println("stressed");
       //myMovie.jump(stressMovieVal[0][3]);
       myMovie.jump(17.5);
@@ -121,7 +121,7 @@ class Zone1 {
 
   /*
     if (myMovie.time() > 20.5 && myMovie.time() < 36.0 && !roseMovieAutoBloom) {
-   stressVal = 8;
+   smoothStressVal = 8;
    println("bloom");
    roseMovieAutoBloom = true;
    return;
