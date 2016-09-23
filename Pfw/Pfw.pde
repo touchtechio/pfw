@@ -40,6 +40,8 @@ int movY = 720;
 float textXPer = 0.01;
 float textYPer = 0.09;
 int HUDtextSize = 28;
+PFont HUDFont;
+PFont HUDArrowFont;
 
 int videoScale = 0;
 //float speed;
@@ -73,7 +75,7 @@ int zone[] = {1, 2, 3, 4, 5};
 
 boolean DEBUG = true; // determines whether to data on screen
 
-PFont font;
+
 
 /// zone state
 //
@@ -100,12 +102,14 @@ void setup() {
   size(1280, 720, P3D);
 
 
-  font = createFont("Roboto-Black", HUDtextSize);
+  HUDFont = createFont("Roboto-Bold", HUDtextSize);
+  HUDArrowFont = createFont("Roboto-Thin", 10); // font size can be changed in code
 
   ks = new Keystone(this);
   surface = ks.createCornerPinSurface(cornerPinX, cornerPinY, 20);
   offscreen = createGraphics(cornerPinX, cornerPinY, P3D);
-  offscreen.textFont(font);
+  offscreen.textFont(HUDFont);
+  
 
   ks.load();
 
@@ -526,7 +530,7 @@ void displayStressData() {
 
   offscreen.fill(255);
   offscreen.noStroke();
-  offscreen.textFont(font);
+  offscreen.textFont(HUDFont);
 
   offscreen.text("ANALYSIS", textXPer * movX, (textYPer - 0.02) * movY);
 
