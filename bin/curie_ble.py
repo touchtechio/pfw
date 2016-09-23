@@ -76,7 +76,7 @@ class notifHandler(bluepy.btle.DefaultDelegate):
         bluepy.btle.DefaultDelegate.__init__(self);
         return;
 
-    def reactToData(hr, bw, br):
+    def reactToData(self, hr, bw, br):
 
         print "DATA: {1} {2} {0}".format(hr, bw, br);
 
