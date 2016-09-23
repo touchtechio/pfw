@@ -36,7 +36,7 @@ class Oscillator {
     // movX * 0.1 determins amount of movement across the screen
 
     x = (sin(xtheta)) * movX * 0.1;   
-    y = (cos(ytheta)) * movY * 0.1;
+    y = (cos(ytheta)) * movX * 0.01;
     //x = 0;
     //y = 0;
     stroke(0);
@@ -47,7 +47,7 @@ class Oscillator {
     rosePosY = y + roseStartY ;
     //offscreen.translate(stressVal * sin(updateRoseSpaz()),  stressVal/2 * cos(updateRoseSpaz()), updateRoseZoom ()- 400);
     //offscreen.translate(0, 0, (updateRoseZoom()- 400)* (int)stressVal/100);
-    offscreen.translate(0, 0, (updateRoseZoom()- (100 * roseZoomScale()) ));
+   // offscreen.translate(0, 0, (updateRoseZoom()- (100 * roseZoomScale()) ));
     
     //println("roseZoom "+updateRoseZoom());
     //drawMoviePixels();

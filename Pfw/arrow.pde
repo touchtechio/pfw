@@ -15,7 +15,7 @@ public class TargetArrow {
 
     data = tempData;
     offscreen.noFill();
-    offscreen.strokeWeight(2);
+    offscreen.strokeWeight(3);
     offscreen.stroke(fillC);
     offscreen.beginShape();
     offscreen.vertex(0, 0);

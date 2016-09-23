@@ -1,7 +1,4 @@
-
-
 class Zone1 {
-
 
   Oscillator[] oscillators = new Oscillator[1];
 
@@ -25,6 +22,7 @@ class Zone1 {
 
   boolean roseBloom = false;
   float bloomStart;
+  float roseTimer;
   boolean roseMovieAutoBloom = false;
 
   TargetArrow arrow;
@@ -56,7 +54,7 @@ class Zone1 {
     arrowSpeed = (int)stressVal/10; // affect arrows on the crosshair
 
     for (int i = 0; i < oscillators.length; i++) {
-      //oscillators[i].oscillate(stressVal/20); // oscillator speed changes as multiple of stressVal
+      oscillators[i].oscillate(stressVal/30); // oscillator speed changes as multiple of stressVal
       oscillators[i].display(0, 0);
     }
     offscreen.popMatrix();
@@ -85,7 +83,7 @@ class Zone1 {
     float distLine = 1.05; //linelength
     for (int i = 31; i < 50; i ++) {
       offscreen.pushMatrix();
-      
+
       //translate(firstValue * 1280, secondValue * 780);
       offscreen.translate(crossPosX + crossHair.width/2, crossPosY + crossHair.height/2);
       int r = 200;
@@ -161,30 +159,45 @@ class Zone1 {
 
     if (stressVal < 10 && !roseBloom) {
       println("stressed");
-      myMovie.jump(stressMovieVal[0][3]);
+      //myMovie.jump(stressMovieVal[0][3]);
+      myMovie.jump(17.5);
       roseBloom = true;
       bloomStart = millis();
       roseMovieAutoBloom = true;
       println(roseMovieAutoBloom);
       return;
     }
-
-    if (myMovie.time() > 20.5 && myMovie.time() < 36.0 && !roseMovieAutoBloom) {
-      stressVal = 8;
-      println("bloom");
-      roseMovieAutoBloom = true;
-      return;
-    } else {
-    }
   }
 
+  /*
+      myMovie.jump(6.0);
+   roseTimer = millis();
+   */
+
+  /*
+    if (myMovie.time() > 20.5 && myMovie.time() < 36.0 && !roseMovieAutoBloom) {
+   stressVal = 8;
+   println("bloom");
+   roseMovieAutoBloom = true;
+   return;
+   } else {
+   }
+   }
+   */
   void resetBloom() {
     if (roseBloom) {
       if (millis() > bloomStart + 5000) {
-        myMovie.jump(36.1); // jump time to rose close;
+        myMovie.jump(4.0); // jump time to rose close;
         roseMovieAutoBloom = false;
         roseBloom = false;
       }
     }
+    /*
+    if (millis() > roseTimer + 3000) {
+     myMovie.jump(4.0);
+     //roseBloom = false;
+     }
+     }
+     */
   }
 }
