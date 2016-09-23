@@ -22,20 +22,28 @@ public class TargetArrow {
     crossHair = loadImage("crossHair6.png");
   }
 
-  void displayChevronArrow(float crossPosX, float crossPosY, int tempData, int arrowSpeed) {
-   
-     /// draw moving arrow left of crosshair
+  void placeCrosshair() {
+
+    offscreen.pushMatrix();
+    //offscreen.scale(0.5);
+    //offscreen.translate(-crossHair.width/2, -crossHair.height/2);
+    offscreen.image(crossHair, 0, 0);//, 500, 320);
+    offscreen.popMatrix();
+  }
+
+  void displayChevronArrow(int tempData, int arrowSpeed) {
+
+    /// draw moving arrow left of crosshair
     offscreen.pushMatrix();
     // position moving arrow in relation to cross hair
     offscreen.textFont(HUDFont);
     offscreen.textSize(15);
-    arrowPosX = crossPosX - 70; // X pos fixed
-    arrowPosY = crossPosY + 90 + updateArrowScaleUpAndDown(arrowSpeed); // y pos moved up and down
+    arrowPosX = - 70; // X pos fixed
+    arrowPosY = 90 + updateArrowScaleUpAndDown(arrowSpeed); // y pos moved up and down
     offscreen.translate(arrowPosX, arrowPosY);
     //offscreen.scale(1.2);
     drawChevronArrow(tempData);
     offscreen.popMatrix();
-    
   }
 
   void drawChevronArrow(int tempData) {
@@ -52,25 +60,16 @@ public class TargetArrow {
     offscreen.vertex(0, 20);
     offscreen.endShape(CLOSE);
     offscreen.fill(255);
-    
+
 
     offscreen.text(data, 8, 15);
     //offscreen.text(myMovie.time(), 8, 15);
   }
 
-  void placeCrosshair(float crossPosX, float crossPosY) {
 
-    offscreen.pushMatrix();
-    //offscreen.scale(0.5);
-    //offscreen.translate(-crossHair.width/2, -crossHair.height/2);
-    offscreen.image(crossHair, crossPosX, crossPosY);//, 500, 320);
-    offscreen.popMatrix();
-  }
+  void displayRadialArrow(int arrowSpeed) {
 
-  void displayRadialArrow(float crossPosX, float crossPosY, int arrowSpeed) {
-   
     thetaText -= 0.01;
-
 
     //float dataRate = 1 + (float)updateFlatUpAndDown()/rate/2;
     float distLine = 1.05; //linelength
@@ -78,7 +77,7 @@ public class TargetArrow {
       offscreen.pushMatrix();
       //offscreen.strokeWeight(3);
       //translate(firstValue * 1280, secondValue * 780);
-      offscreen.translate(crossPosX + crossHair.width/2, crossPosY + crossHair.height/2);
+      offscreen.translate(crossHair.width/2, crossHair.height/2);
       //offscreen.translate(crossPosX , crossPosY );
       int r = 200;
       float r2 = (float)r * distLine;
@@ -89,27 +88,15 @@ public class TargetArrow {
       offscreen.rotate(0.3 * sin(thetaText * arrowSpeed));
 
       // draw triangle indicator
-      
       offscreen.line(r * 1.15, 20, r * 1.15, - 20);
-      
-      /*
       offscreen.beginShape(); 
       offscreen.vertex(r * 1.15, -8);
       offscreen.vertex(r * 1.1, 0);
       offscreen.vertex(r * 1.15, 8);
       offscreen.endShape();
-*/
 
-     offscreen.beginShape(); 
-      offscreen.vertex(r * 1.15, -8);
-      offscreen.vertex(r * 1.1, 0);
-      offscreen.vertex(r * 1.15, 8);
-      offscreen.endShape();
-      
-      
-      
       offscreen.textFont(HUDArrowFont);
-       
+
       offscreen.textSize(12);
       offscreen.text("Chalayan", r * 1.2, 7);
       offscreen.line(r * 1.3, -20, r * 1.3, - 30); // line below and top of
@@ -117,7 +104,7 @@ public class TargetArrow {
       offscreen.popMatrix();
     }
   }
-   int updateArrowScaleUpAndDown (int arrowSpeed) {
+  int updateArrowScaleUpAndDown (int arrowSpeed) {
     //int scale = ((int)millis() % 21);
     int scale = (frameCount * arrowSpeed / 2 % 200); // changes arrow speed
     if (scale < 100) {

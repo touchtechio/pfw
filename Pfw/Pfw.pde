@@ -75,8 +75,6 @@ int zone[] = {1, 2, 3, 4, 5};
 
 boolean DEBUG = true; // determines whether to data on screen
 
-
-
 /// zone state
 //
 String thisHostsZone=System.getenv("ZONE");

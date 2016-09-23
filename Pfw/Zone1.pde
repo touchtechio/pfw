@@ -56,10 +56,7 @@ class Zone1 {
     drawCrossHair();
     /// set position of arrow in relation to crosshair
 
-   
-
     /// draw the moving curved arrow to right of target;
-    
     resetBloom();
     
     //popMatrix();
@@ -88,12 +85,18 @@ class Zone1 {
     crossPosX = oscillators[0].rosePosX + 340 + circleX * 4; // check this out
     crossPosY = oscillators[0].rosePosY + 230 + circleY * 3; // check this out
     
+    //// new changes
     int arrowSpeed = (int)stressVal/10;
+    offscreen.pushMatrix();
     
-    arrow.placeCrosshair(crossPosX, crossPosY);
-    arrow.displayRadialArrow(crossPosX, crossPosY, arrowSpeed);
-    arrow.displayChevronArrow(crossPosX, crossPosY, (int)frameRate, arrowSpeed);
+    offscreen.translate(crossPosX, crossPosY);
+    
+    arrow.placeCrosshair();
+    arrow.displayChevronArrow((int)frameRate, arrowSpeed);
+    arrow.displayRadialArrow(arrowSpeed);
+    
     //arrow.display(updateArrowScaleUpAndDown ());
+    offscreen.popMatrix();
   }
 
 
