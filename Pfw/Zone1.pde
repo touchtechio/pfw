@@ -21,6 +21,7 @@ class Zone1 {
   boolean roseBloom = false;
   float bloomStart;
   float roseTimer;
+  float bloomCycle;
   boolean roseMovieAutoBloom = false;
 
   TargetArrow arrow;
@@ -43,7 +44,7 @@ class Zone1 {
 
     offscreen.pushMatrix();
     checkRoseBloom(); //check to see if rose has bloomed, if it has move arrow
-    //myMovie.loadPixels();
+    println(myMovie.time());
     offscreen.stroke(255);
     
     for (int i = 0; i < oscillators.length; i++) {
@@ -58,6 +59,7 @@ class Zone1 {
 
     /// draw the moving curved arrow to right of target;
     resetBloom();
+    resetBloomCycle();
     
     //popMatrix();
     displayStressData();
@@ -105,19 +107,21 @@ class Zone1 {
     if (smoothStressVal < 10 && !roseBloom) {
       println("stressed");
       //myMovie.jump(stressMovieVal[0][3]);
-      myMovie.jump(17.5);
+      myMovie.jump(6.0); // jump to rose bloom point
       roseBloom = true;
       bloomStart = millis();
-      roseMovieAutoBloom = true;
+      
       println(roseMovieAutoBloom);
-      return;
+    
+    } else if (!roseMovieAutoBloom && !roseBloom) {
+      myMovie.jump(4.0); // jump to close to bloom point
+      roseMovieAutoBloom = true;
+      bloomCycle = millis();
     }
+    
+      return;
   }
 
-  /*
-      myMovie.jump(6.0);
-   roseTimer = millis();
-   */
 
   /*
     if (myMovie.time() > 20.5 && myMovie.time() < 36.0 && !roseMovieAutoBloom) {
@@ -133,19 +137,23 @@ class Zone1 {
        // using this to move arrow on left of target up and down
  
   void resetBloom() {
-    if (roseBloom) {
-      if (millis() > bloomStart + 5000) {
-        myMovie.jump(4.0); // jump time to rose close;
-        roseMovieAutoBloom = false;
+      if(roseBloom) {
+      if (millis() > bloomStart + 8000) {
+        //myMovie.jump(4.0); // jump time to rose close;
+        
         roseBloom = false;
       }
     }
-    /*
-    if (millis() > roseTimer + 3000) {
-     myMovie.jump(4.0);
-     //roseBloom = false;
-     }
-     }
-     */
+  }
+
+  
+  
+  void resetBloomCycle() {
+    if (roseMovieAutoBloom) {
+      if (millis() > bloomCycle + 4000) {
+     
+      roseMovieAutoBloom = false;
+      }
+    }
   }
 }
