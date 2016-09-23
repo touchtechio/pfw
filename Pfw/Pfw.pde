@@ -9,7 +9,7 @@ import netP5.*;
 import deadpixel.keystone.*;
 import processing.video.*;
 
-// osc 
+// osc fra
 OscP5 oscP5;
 
 // keystoning
@@ -100,7 +100,7 @@ void setup() {
   size(1280, 720, P3D);
 
 
-  font = createFont("Roboto-Black", HUDtextSize);
+  font = createFont("Roboto-Bold", HUDtextSize);
 
   ks = new Keystone(this);
   surface = ks.createCornerPinSurface(cornerPinX, cornerPinY, 20);
@@ -113,8 +113,6 @@ void setup() {
   if (null != thisHostsZone) {
     currentZone = Integer.parseInt(thisHostsZone);
   }
-
-  //frameRate(24);
 
   setupCurrentZone();
 
@@ -528,20 +526,20 @@ void displayStressData() {
   offscreen.noStroke();
   offscreen.textFont(font);
 
-  offscreen.text("ANALYSIS", textXPer * movX, (textYPer - 0.02) * movY);
+  offscreen.text("Analysis".toUpperCase(), textXPer * movX, (textYPer - 0.02) * movY);
 
-  for (int i = 0; i < 30; i++) {
+  for (int i = 0; i < 20; i++) {
     offscreen.ellipse(textXPer * movX + i * 10, textYPer * movY, 3, 3);
   }
 
-  offscreen.text("BRAIN WAVES", textXPer * movX, (textYPer + 0.05) * movY);
-  offscreen.text(frameCount % 35, (textXPer + 0.2) * movX, (textYPer + 0.05) * movY);
+  offscreen.text("Brain Waves".toUpperCase(), textXPer * movX, (textYPer + 0.05) * movY);
+  offscreen.text(frameCount % 35, (textXPer + 0.16) * movX, (textYPer + 0.05) * movY);
 
   offscreen.text("RESPIRATION", textXPer * movX, (textYPer + 0.10) * movY);
-  offscreen.text((int)aveBR, (textXPer + 0.2) * movX, (textYPer + 0.10) * movY);
+  offscreen.text((int)aveBR, (textXPer + 0.16) * movX, (textYPer + 0.10) * movY);
 
-  offscreen.text("HEART RATE ", textXPer * movX, (textYPer + 0.15) * movY);
-  offscreen.text(trueHR, (textXPer + 0.2) * movX, (textYPer + 0.15) * movY);
+  offscreen.text("Heart Rate".toUpperCase(), textXPer * movX, (textYPer + 0.15) * movY);
+  offscreen.text(trueHR, (textXPer + 0.16) * movX, (textYPer + 0.15) * movY);
 
   return;
 }
