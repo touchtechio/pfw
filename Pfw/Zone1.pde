@@ -93,7 +93,7 @@ class Zone1 {
     
     offscreen.translate(crossPosX, crossPosY);
     
-    arrow.placeCrosshair();
+  //  arrow.placeCrosshair();
     arrow.displayChevronArrow((int)frameRate, arrowSpeed);
     arrow.displayRadialArrow(arrowSpeed);
     
