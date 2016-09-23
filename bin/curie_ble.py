@@ -76,16 +76,16 @@ class notifHandler(bluepy.btle.DefaultDelegate):
         bluepy.btle.DefaultDelegate.__init__(self);
         return;
 
-    def reactToData(self, hr, st, br):
-        print "DATA: {0} {1} {2}".format(hr, st, br);
-        #print "EEG: {0} {1}".format(idx, asym);
-        #print "Breath Duration: {0}".format(br);
+    def reactToData(self, hr, bw, br):
+
+        print "DATA: {1} {2} {0}".format(hr, bw, br);
+
         c = OSC.OSCClient();
         c.connect(('127.0.0.1', 12000));
         oscmsg = OSC.OSCMessage();
         oscmsg.setAddress("/data");
         oscmsg.append(hr);
-        oscmsg.append(st);
+        oscmsg.append(bw);
         oscmsg.append(br);
         c.send(oscmsg);
         return;
@@ -113,12 +113,13 @@ class notifHandler(bluepy.btle.DefaultDelegate):
             if (data[0] == SEESAW_DAT_PPG):
                 t = time.time();
                 (hr, st) = struct.unpack("<hh", data[1:]);
-                self.reactToData(hr, st, 0);
+                self.reactToData(hr, 0, 0);
                 ppgData.append([t, hr, st]);
             elif (data[0] == SEESAW_DAT_EEG):
                 t = time.time();
-                (idx, asym) = struct.unpack("<hh", data[1:]);
-                #print "EEG: {0} {1}".format(idx, asym);
+                (asym, idx,l_peak,r_peak) = struct.unpack("<hhhh", data[1:]);
+                print "EEG: {0} {1} {2} {3}".format(asym, idx, l_peak, r_peak);
+                self.reactToData(0, idx, 0);
                 eegData.append([t, 0.0]);
             elif (data[0] == SEESAW_DAT_AUD):
                 t = time.time();

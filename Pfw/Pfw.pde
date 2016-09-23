@@ -9,7 +9,7 @@ import netP5.*;
 import deadpixel.keystone.*;
 import processing.video.*;
 
-// osc 
+// osc fra
 OscP5 oscP5;
 
 // keystoning
@@ -51,7 +51,7 @@ float stressVal;
 //glasses data
 // todo: make neater
 int trueHR = 72;
-int trueStressVal = 20;
+int trueBrainVal = 20;
 int trueBreatheVal = 1507;
 
 boolean hasGlasses = false;
@@ -101,7 +101,6 @@ void setup() {
   // since it relies on texture mapping to deform
   size(1280, 720, P3D);
 
-
   HUDFont = createFont("Roboto-Bold", HUDtextSize);
   HUDArrowFont = createFont("Roboto-Thin", 10); // font size can be changed in code
 
@@ -117,8 +116,6 @@ void setup() {
   if (null != thisHostsZone) {
     currentZone = Integer.parseInt(thisHostsZone);
   }
-
-  //frameRate(24);
 
   setupCurrentZone();
 
@@ -332,7 +329,7 @@ void oscEvent(OscMessage theOscMessage) {
 
   if (theOscMessage.checkAddrPattern("/data")) {
     trueHR = theOscMessage.get(0).intValue();
-    trueStressVal = theOscMessage.get(1).intValue();
+    trueBrainVal = theOscMessage.get(1).intValue();
 
     int breathe = theOscMessage.get(2).intValue();
 
@@ -340,7 +337,7 @@ void oscEvent(OscMessage theOscMessage) {
     if ( breathe !=0 )
       trueBreatheVal = breathe;
 
-    println ("HR " + trueHR + ", SR " + trueStressVal + ", BR " + trueBreatheVal);
+    println ("HR " + trueHR + ", BW " + trueBrainVal + ", BR " + trueBreatheVal);
 
     float newBRFromGlass = (float)trueBreatheVal; // trueBR
     AddNewValue(newBRFromGlass);
@@ -532,20 +529,20 @@ void displayStressData() {
   offscreen.noStroke();
   offscreen.textFont(HUDFont);
 
-  offscreen.text("ANALYSIS", textXPer * movX, (textYPer - 0.02) * movY);
+  offscreen.text("Analysis".toUpperCase(), textXPer * movX, (textYPer - 0.02) * movY);
 
-  for (int i = 0; i < 30; i++) {
+  for (int i = 0; i < 20; i++) {
     offscreen.ellipse(textXPer * movX + i * 10, textYPer * movY, 3, 3);
   }
 
-  offscreen.text("BRAIN WAVES", textXPer * movX, (textYPer + 0.05) * movY);
-  offscreen.text(frameCount % 35, (textXPer + 0.2) * movX, (textYPer + 0.05) * movY);
+  offscreen.text("Brain Waves".toUpperCase(), textXPer * movX, (textYPer + 0.05) * movY);
+  offscreen.text(trueBrainVal, (textXPer + 0.16) * movX, (textYPer + 0.05) * movY);
 
   offscreen.text("RESPIRATION", textXPer * movX, (textYPer + 0.10) * movY);
-  offscreen.text((int)aveBR, (textXPer + 0.2) * movX, (textYPer + 0.10) * movY);
+  offscreen.text((int)aveBR, (textXPer + 0.16) * movX, (textYPer + 0.10) * movY);
 
-  offscreen.text("HEART RATE ", textXPer * movX, (textYPer + 0.15) * movY);
-  offscreen.text(trueHR, (textXPer + 0.2) * movX, (textYPer + 0.15) * movY);
+  offscreen.text("Heart Rate".toUpperCase(), textXPer * movX, (textYPer + 0.15) * movY);
+  offscreen.text(trueHR, (textXPer + 0.16) * movX, (textYPer + 0.15) * movY);
 
   return;
 }

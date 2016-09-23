@@ -29,12 +29,8 @@ class Zone4 {
 
     lastStressVal = stressVal;
 
-    if (DEBUG) {
-      //println("framRate " + frameRate);
-      offscreen.textSize(15);
-      offscreen.text("frameRate " + frameRate, .7 * movX, 0.1 * movY);
-      displayStressData();
-    }
+
+    displayStressData();
   }
 
   float updateMovieScrub () { // if want to oscillate playing

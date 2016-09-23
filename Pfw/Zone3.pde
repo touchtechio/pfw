@@ -8,7 +8,7 @@ class Zone3 {
   int centerPtY;
   int pixelW;
   int greenPixel;
-  
+
   void start() {
 
     return;
@@ -16,10 +16,10 @@ class Zone3 {
 
   void draw() {
     //// for fixed starting point (center), the square scales up and down
-  
+
     greenPixel = (int) map(stressVal, 0, 100, 0, 350);
     pixelW = updateScatterScaleUpAndDown() + greenPixel;
-    
+
     centerPtX = 1280/2;
     centerPtY = 780/2;
 
@@ -30,15 +30,8 @@ class Zone3 {
 
     //// Either a using a pixel effect or a flat square
     drawSquare();
-    
-    if (DEBUG) {
-      //println("framRate " + frameRate);
-      offscreen.fill(255);
-      offscreen.textSize(15);
-      offscreen.text("frameRate " + (int)frameRate, .7 * movX, 0.1 * movY);
-      displayStressData();
-      //println("time "+myMovie.time()); // if want to see timestamp of while movie plays
-    }
+
+    displayStressData();
 
     return;
   }
