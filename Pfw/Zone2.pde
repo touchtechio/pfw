@@ -7,7 +7,7 @@ class Zone2 {
 
   void draw() {
 
-    offscreen.background(25);
+    offscreen.background(0);
 
 
     // handle all on screen   with this code
