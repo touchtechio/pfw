@@ -36,8 +36,11 @@ Zone5 zone5 = new Zone5();
 
 int movX = 1280;
 int movY = 720;
-float textXPer = 0.005;
-float textYPer = 0.06;
+
+float textXPer = 0.01;
+float textYPer = 0.09;
+int HUDtextSize = 28;
+
 int videoScale = 0;
 //float speed;
 float lastStressVal;
@@ -56,7 +59,7 @@ long beginStressManagement = 0L;
 
 // zone movie jump points
 float stressMovieVal[][] =
-  { {0.0, 5.0, 10.0, 22.0}, 
+  { {0.0, 5.0, 10.0, 0.0}, 
   {0, 0, 0, 0}, 
   {0, 0, 0, 0}, 
   {0.5, 3.0, 8.0, 0.5}, 
@@ -97,7 +100,7 @@ void setup() {
   size(1280, 720, P3D);
 
 
-  font = createFont("Roboto Bold", 32);
+  font = createFont("Roboto-Black", HUDtextSize);
 
   ks = new Keystone(this);
   surface = ks.createCornerPinSurface(cornerPinX, cornerPinY, 20);
@@ -519,7 +522,7 @@ void mousePressed() {
 
 void displayStressData() {
   
-  offscreen.textSize(28);
+  offscreen.textSize(HUDtextSize);
 
   offscreen.fill(255);
   offscreen.noStroke();
