@@ -1,3 +1,6 @@
+// stress value affects 3 things - oscillator input parameter, radius of crosshair, speed of arrows
+// to switch between analog stress values and 3 stress states - smootStressVal or smoothStressIntensity
+
 class Zone1 {
 
   Oscillator[] oscillators = new Oscillator[1];
@@ -26,8 +29,10 @@ class Zone1 {
 
   TargetArrow arrow;
   int arrowSpeed;
-  float crossHairScale = 1.5;
+  float crossHairScale = 1.6;
 
+  
+  
   void start() {
     if (DEBUG) println("start zone 1");
     arrow = new TargetArrow(color(255));
@@ -45,11 +50,12 @@ class Zone1 {
 
     offscreen.pushMatrix();
     checkRoseBloom(); //check to see if rose has bloomed, if it has move arrow
-    println(myMovie.time());
+    
     offscreen.stroke(255);
 
     for (int i = 0; i < oscillators.length; i++) {
-      oscillators[i].oscillate(smoothStressVal/30); // oscillator speed changes as multiple of smoothStressVal
+      //oscillators[i].oscillate(smoothStressVal/20); // oscillator speed changes as multiple of smoothStressVal
+      oscillators[i].oscillate(smoothStressIntensity/10); // oscillator speed changes as multiple of smoothStressVal
       oscillators[i].display(0, 0);
     }
     offscreen.popMatrix();
@@ -61,15 +67,18 @@ class Zone1 {
     /// draw the moving curved arrow to right of target;
     resetBloom();
     resetBloomCycle();
-
-    //popMatrix();
+    
+    // smooths the movement between the 3 zone values
+    
+    
     displayStressData();
   }
 
   /// draw moving arrow on the right
 
   void drawCrossHair() {
-    float r = smoothStressVal; // radius distance to rose
+    //float r = smoothStressVal; // radius distance to rose
+    float r = smoothStressIntensity;
     /*
     float crossSpaz;
      if (smoothStressVal > 20) {
@@ -85,11 +94,11 @@ class Zone1 {
     //println("theta " + theta);
 
     /// set position of crosshair to OSC Stress data but rotating around the rose;
-    crossPosX = oscillators[0].rosePosX + 340 + circleX * 4; // check this out
-    crossPosY = oscillators[0].rosePosY + 230 + circleY * 3; // check this out
+    crossPosX = oscillators[0].rosePosX + 160 + circleX * 4; // check this out
+    crossPosY = oscillators[0].rosePosY + 140 + circleY * 3; // check this out
 
     //// new changes
-    int arrowSpeed = (int)smoothStressVal/10;
+    int arrowSpeed = (int)smoothStressVal/5;
     offscreen.pushMatrix();
 
     offscreen.translate(crossPosX, crossPosY);
@@ -113,7 +122,7 @@ class Zone1 {
 
       println(roseMovieAutoBloom);
     } else if (!roseMovieAutoBloom && !roseBloom) {
-      myMovie.jump(4.0); // jump to close to bloom point
+      myMovie.jump(0.5); // jump to half bloom point to start loop
       roseMovieAutoBloom = true;
       bloomCycle = millis();
     }
@@ -124,7 +133,7 @@ class Zone1 {
 
   void resetBloom() {
     if (roseBloom) {
-      if (millis() > bloomStart + 8000) {
+      if (millis() > bloomStart + 6000) {
         //myMovie.jump(4.0); // jump time to rose close;
 
         roseBloom = false;
@@ -134,11 +143,12 @@ class Zone1 {
 
   void resetBloomCycle() {
     if (roseMovieAutoBloom) {
-      if (millis() > bloomCycle + 4000) {
+      if (millis() > bloomCycle + 4500) {
         roseMovieAutoBloom = false;
       }
     }
   }
+
 
   /*
     if (myMovie.time() > 20.5 && myMovie.time() < 36.0 && !roseMovieAutoBloom) {

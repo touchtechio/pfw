@@ -26,7 +26,7 @@ class Zone5 {
 
     // myMovie.speed(movieSpeed()); 
 
-    intensity = stressIntensityVal();
+    intensity = stressIntensityVal(); // set this to correlate to zone jumps
 
     //println("lastStressVal "+lastStressIntensityVal+" lastIntensity "+lastIntensity);
     //println("turningState " + turningState);
@@ -35,21 +35,7 @@ class Zone5 {
     checkForCalm();
     stateTurn();
 
-
-    /*
-    if (stressIntensityVal() > lastStressIntensityVal || hasCalm) {
-     myMovie.jump(stressMovieVal[currentZone-1][intensity]);
-     lastIntensity = intensity;
-     hasCalm = false;
-     } else if (stressIntensityVal() < lastStressIntensityVal && lastIntensity < 5 ) { // if stress is decreasing but not to lowest point
-     myMovie.jump(stressMovieVal[currentZone-1][lastIntensity + 1]);// (0, 1, 2, 3, 4) need to jump to 3 and 4
-     lastIntensity = lastIntensity + 1;
-     if (lastIntensity == 5) hasCalm = true;
-     // myMovie
-     } else {
-     }
-     */
-    lastStressIntensityVal = stressIntensityVal();
+    lastStressIntensityVal = stressIntensityVal(); // used to determine states
     displayStressData();
   }
 
@@ -70,10 +56,6 @@ class Zone5 {
     }
     return (scale - 4);
   }
-  int stressIntensityVal() {
-    // maps number of dancers from 1-5 based on stress values
-    return (int) map(stressVal, 0, 101, 0, 3);
-  }
 
   float movieSpeed() {
     return map(stressVal, 0, 100, 0.4, 3.0);
@@ -88,7 +70,6 @@ class Zone5 {
       turningState = false;
       return;
     } else if (stressIntensityVal() < lastStressIntensityVal) {
-
       myMovie.jump(stressMovieVal[currentZone-1][lastIntensity + 1]);// (0, 1, 2, 3, 4) need to jump to 3 and 4
       lastIntensity = lastIntensity + 1;
       stressCount += 1; //begin calming down states, there are 2

@@ -17,7 +17,8 @@ class Zone3 {
   void draw() {
     //// for fixed starting point (center), the square scales up and down
 
-    greenPixel = (int) map(smoothStressVal, 0, 100, 0, 350);
+    greenPixel = (int) map(smoothStressIntensity, 0, 120, 0, 500);
+    //greenPixel = (int) map(smoothStressVal, 0, 100, 0, 350);
     pixelW = updateScatterScaleUpAndDown() + greenPixel;
 
     centerPtX = 1280/2;
@@ -62,8 +63,13 @@ class Zone3 {
     }
     offscreen.rectMode(CENTER);
 
-    offscreen.rect(centerPtX + 220, centerPtY + 70, pixelW * 0.7, pixelW * 0.7); // right
-    offscreen.rect(centerPtX - 230, centerPtY + 60, pixelW, pixelW); // left
-    offscreen.rect(centerPtX + 40, centerPtY - 230, pixelW * 0.5, pixelW * 0.5); // top
+    offscreen.rect(centerPtX + 250, centerPtY + 70, pixelW * 0.7, pixelW * 0.7); // right
+    offscreen.rect(centerPtX - 220, centerPtY + 50, pixelW, pixelW); // left
+    offscreen.rect(centerPtX + 60, centerPtY - 220, pixelW * 0.55, pixelW * 0.55); // top
+  }
+
+  int stressIntensityVal() {
+    // maps number of dancers from 1-5 based on stress values
+    return (int) map(stressVal, 0, 101, 0, 3);
   }
 }

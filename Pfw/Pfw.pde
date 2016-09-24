@@ -52,6 +52,7 @@ int videoScale = 0;
 float lastStressVal; // global for zone4 and zone5 stress caching
 float smoothStressVal; // drives the content
 float stressVal;  // set by incoming data
+int smoothStressIntensity;
 
 //glasses data
 // todo: make neater
@@ -289,8 +290,9 @@ void draw() {
   background(0);
 
   // smoothing the stress value changes
-  smoothStressVal += (stressVal - smoothStressVal) * 0.1;
-
+  smoothStressVal += (stressVal - smoothStressVal) * 0.1; // analog stress values
+  smoothStressIntensity += (stressIntensityVal() * 40 - smoothStressIntensity) * 0.1; // 3 states of stress
+  //println("stressVal " + stressVal + "stressIntensityVal " + stressIntensityVal());
 
   // Draw the scene, offscreen
   offscreen.beginDraw();
@@ -317,6 +319,11 @@ void draw() {
   // render the scene, transformed using the corner pin surface
   surface.render(offscreen);
   return;
+}
+
+int stressIntensityVal() {
+  // maps number of dancers from 1-5 based on stress values
+  return (int) map(stressVal, 0, 101, 0, 3);
 }
 
 void drawZone1() {
@@ -499,10 +506,13 @@ void keyPressed() {
     stressVal = 50;
     break;
   case 'r':
-    stressVal = 70;
+    stressVal = 60;
     break;
   case 't':
-    stressVal = 90;
+    stressVal = 75;
+    break;
+  case 'y':
+    stressVal = 100;
     break;
 
   case 'p':

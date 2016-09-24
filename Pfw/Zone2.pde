@@ -50,27 +50,16 @@ class Zone2 {
     // println("lastdancercount "+lastDancerCount);
 
     updatePixels();
-
     displayStressData();
-    
+
   }
 
   int onScreenDancerCount() {
     // maps number of dancers from 1-5 based on stress values
-    int dancers = (int) map(stressVal, 0, 101, 0, 3);
+    int dancers = stressIntensityVal();
     // println("dancers: " +dancers);
     return dancers;
   }
-
-  /*
-  float danceSpeed() {
-   return map(dancers, 0, 3, 0.5, 1.5);
-   }
-   
-   float danceSpeed() {
-   return map(stressVal, 0, 100, 0.5, 1.5);
-   }
-   */
 
   /// used in Zone2
   void drawGridBrightness(int state) {

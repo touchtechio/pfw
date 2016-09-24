@@ -47,7 +47,7 @@ class Oscillator {
     rosePosY = y + roseStartY ;
     //offscreen.translate(stressVal * sin(updateRoseSpaz()),  stressVal/2 * cos(updateRoseSpaz()), updateRoseZoom ()- 400);
     //offscreen.translate(0, 0, (updateRoseZoom()- 400)* (int)stressVal/100);
-   // offscreen.translate(0, 0, (updateRoseZoom()- (100 * roseZoomScale()) ));
+    offscreen.translate(0, 0, -50);
     
     //println("roseZoom "+updateRoseZoom());
     //drawMoviePixels();
