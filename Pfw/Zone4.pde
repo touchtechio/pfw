@@ -1,6 +1,9 @@
 
 class Zone4 {
 
+  int intensity;
+  int lastIntensity;
+
   void start() {
     //if (DEBUG) println("build zone 4");
 
@@ -11,7 +14,7 @@ class Zone4 {
 
     offscreen.stroke(255);
 
-    myMovie.speed(movieSpeed()); 
+    //myMovie.speed(movieSpeed()); 
 
     float theta = 0;
     //float theta = 0;

@@ -1,9 +1,12 @@
 
 class Zone5 {
 
+  int intensity;
+  int lastIntensity;
+
   void start() {
     //if (DEBUG) println("build zone 4");
-
+    lastIntensity = -1;
     return;
   }
 
@@ -11,26 +14,30 @@ class Zone5 {
 
     offscreen.stroke(255);
 
-    myMovie.speed(movieSpeed()); 
-
-    float theta = 0;
+    // myMovie.speed(movieSpeed()); 
+    
+    //float theta = 0;
     //float theta = 0;
     intensity = stressIntensityVal();
-
-    if (stressVal > lastStressVal) {
+   
+    println("stressVal "+stressVal+" lastIntensity "+lastIntensity+" intensity "+intensity);
+    if (stressVal > lastStressVal || !hasCalm) {
       myMovie.jump(stressMovieVal[currentZone-1][intensity]);
-    } else if (stressVal < lastStressVal || hasCalm) {
-      myMovie.jump(stressMovieVal[currentZone-1][3]);
-      hasCalm = false;
+      lastIntensity = intensity;
+      hasCalm = true;
+    } else if (stressVal < lastStressVal && lastIntensity < 4 ){// && intensity > 0) { // if stress is decreasing but not to lowest point
+      myMovie.jump(stressMovieVal[currentZone-1][lastIntensity + 1]);// (0, 1, 2, 3, 4) need to jump to 3 and 4
+      lastIntensity = lastIntensity + 1;
+      //if (lastIntensity == 4) {hasCalm = false;}
       // myMovie
     } else {
-      //myMovie.jump(stressMovieVal[currentZone-1][intensity] + updateMovieScrub());
+      
     }
-
+    // if (intensity == 0) hasCalm = false;
     lastStressVal = stressVal;
+    
 
     displayStressData();
-    
   }
 
   float updateMovieScrub () { // if want to oscillate playing

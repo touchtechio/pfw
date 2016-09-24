@@ -26,6 +26,7 @@ class Zone1 {
 
   TargetArrow arrow;
   int arrowSpeed;
+  float crossHairScale = 1.5;
 
   void start() {
     if (DEBUG) println("start zone 1");
@@ -92,7 +93,7 @@ class Zone1 {
     offscreen.pushMatrix();
     
     offscreen.translate(crossPosX, crossPosY);
-    offscreen.scale(1.5);
+    offscreen.scale(crossHairScale);
   //  arrow.placeCrosshair();
     arrow.displayChevronArrow((int)frameRate, arrowSpeed);
     arrow.displayRadialArrow(arrowSpeed);
@@ -134,7 +135,7 @@ class Zone1 {
    }
    */
    
-       // using this to move arrow on left of target up and down
+  // using this to move arrow on left of target up and down
  
   void resetBloom() {
       if(roseBloom) {
@@ -146,12 +147,9 @@ class Zone1 {
     }
   }
 
-  
-  
   void resetBloomCycle() {
     if (roseMovieAutoBloom) {
       if (millis() > bloomCycle + 4000) {
-     
       roseMovieAutoBloom = false;
       }
     }

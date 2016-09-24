@@ -18,7 +18,7 @@ CornerPinSurface surface;
 PGraphics offscreen;
 int cornerPinX = 1280;
 int cornerPinY = 720;
-int intensity;
+
 
 // video 
 Movie myMovie, myMovie2, myMovie3;
@@ -37,8 +37,11 @@ Zone5 zone5 = new Zone5();
 int movX = 1280;
 int movY = 720;
 
-float textXPer = 0.01;
-float textYPer = 0.09;
+float textXPer = 0.01; // distance off the left side of screen
+float textYPer = 0.09; // distance off top of screen
+float numSpacing = 0.18;
+int textDotNumber = 28;
+
 int HUDtextSize = 28;
 PFont HUDFont;
 PFont HUDArrowFont;
@@ -65,8 +68,8 @@ float stressMovieVal[][] =
   { {0.0, 5.0, 10.0, 0.0}, 
   {0, 0, 0, 0}, 
   {0, 0, 0, 0}, 
-  {0.5, 3.0, 8.0, 0.5}, 
-  {1.0, 10.0, 16, 52.0}}; // times in the movie to jump to
+  {0.2, 9.2, 19.2, 0.2}, 
+  {1.0, 18.2, 27, 42.0, 51.1}}; // times in the movie to jump to, last jump 51.1
 float stressLow, stressHigh, stressMed, stressCrazy;
 float stressType[] = {stressLow, stressHigh, stressMed, stressCrazy};
 String oscAddr[] = {"/Stress/s2/1/1", "/Stress/s2/2/1", "/Stress/s2/1/2", "/Stress/s2/2/2"};
@@ -529,18 +532,18 @@ void displayStressData() {
 
   offscreen.text("Analysis".toUpperCase(), textXPer * movX, (textYPer - 0.02) * movY);
 
-  for (int i = 0; i < 20; i++) {
+  for (int i = 0; i < textDotNumber; i++) {
     offscreen.ellipse(textXPer * movX + i * 10, textYPer * movY, 3, 3);
   }
 
   offscreen.text("Brain Waves".toUpperCase(), textXPer * movX, (textYPer + 0.05) * movY);
-  offscreen.text(trueBrainVal, (textXPer + 0.16) * movX, (textYPer + 0.05) * movY);
+  offscreen.text(trueBrainVal, (textXPer + numSpacing) * movX, (textYPer + 0.05) * movY);
 
   offscreen.text("RESPIRATION", textXPer * movX, (textYPer + 0.10) * movY);
-  offscreen.text((int)aveBR, (textXPer + 0.16) * movX, (textYPer + 0.10) * movY);
+  offscreen.text((int)aveBR, (textXPer + numSpacing) * movX, (textYPer + 0.10) * movY);
 
   offscreen.text("Heart Rate".toUpperCase(), textXPer * movX, (textYPer + 0.15) * movY);
-  offscreen.text(trueHR, (textXPer + 0.16) * movX, (textYPer + 0.15) * movY);
+  offscreen.text(trueHR, (textXPer + numSpacing) * movX, (textYPer + 0.15) * movY);
 
   return;
 }

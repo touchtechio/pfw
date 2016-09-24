@@ -1,6 +1,7 @@
 public class TargetArrow {
   color fillC;
-  int strokeW;
+  float strokeW = 2.5;
+  float thinStrokeW = 1;
   int data;
   int circlePoints = 160;
   int textPoints = 75;
@@ -23,7 +24,7 @@ public class TargetArrow {
   }
 
   void placeCrosshair() {
-
+    
     offscreen.pushMatrix();
     //offscreen.scale(0.5);
     //offscreen.translate(-crossHair.width/2, -crossHair.height/2);
@@ -50,7 +51,7 @@ public class TargetArrow {
 
     data = tempData;
     offscreen.noFill();
-    offscreen.strokeWeight(3);
+    offscreen.strokeWeight(strokeW);
     offscreen.stroke(fillC);
     offscreen.beginShape();
     offscreen.vertex(0, 0);
@@ -77,7 +78,7 @@ public class TargetArrow {
     offscreen.noFill();
 
     offscreen.pushMatrix();
-    offscreen.strokeWeight(3.5);
+    offscreen.strokeWeight(strokeW);
 
     //translate(firstValue * 1280, secondValue * 780);
     offscreen.translate(crossHair.width/2, crossHair.height/2);
@@ -102,11 +103,11 @@ public class TargetArrow {
     // left horizontal line and corner
     offscreen.line(-80, 0, -100, 0); 
     offscreen.line(-120, 0, -140, 0); 
-    offscreen.line(-140, 2, -140, -15); 
+    offscreen.line(-140, strokeW/2, -140, -15); //strokeWeight to compensate for square corners
 
     // right horizontal line and corner
     offscreen.line(80, 0, 140, 0); 
-    offscreen.line(140, 2, 140, -15); 
+    offscreen.line(140, strokeW/2, 140, -15); 
 
 
     // left column of horizontal lines
@@ -114,9 +115,12 @@ public class TargetArrow {
     offscreen.line(-180, 0, -190, 0); // line below and top of
     for (int i = 0; i < 9; i++) {
       if ((i%4) == 0) {
+        offscreen.strokeWeight(strokeW);
         offscreen.line(-180, -i*leftLineSpacing, -195, -i*leftLineSpacing); // line below and top of
         offscreen.line(-180, i*leftLineSpacing, -195, i*leftLineSpacing); // line below and top of
       } else {
+         offscreen.strokeWeight(thinStrokeW);
+
         offscreen.line(-180, -i*leftLineSpacing, -188, -i*leftLineSpacing); // line below and top of
         offscreen.line(-180, i*leftLineSpacing, -188, i*leftLineSpacing); // line below and top of
       }
@@ -158,7 +162,8 @@ public class TargetArrow {
     offscreen.vertex(r * 1.1, 0);
     offscreen.vertex(r * 1.15, 8);
     offscreen.endShape();
-
+    
+    // Draw chalayan text with little dashed lines
     offscreen.textSize(18);
     offscreen.text("Chalayan", r * 1.2, 7);
     offscreen.line(r * 1.3, -20, r * 1.3, - 30); // line below and top of
