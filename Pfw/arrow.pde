@@ -110,15 +110,15 @@ public class TargetArrow {
 
 
     // left column of horizontal lines
-    int leftLineSpacing = 12;
+    int leftLineSpacing = 8;
     offscreen.line(-180, 0, -190, 0); // line below and top of
-    for (int i = 0; i < 7; i++) {
-      if ((i%3) == 0) {
-        offscreen.line(-180, -i*leftLineSpacing, -200, -i*leftLineSpacing); // line below and top of
-        offscreen.line(-180, i*leftLineSpacing, -200, i*leftLineSpacing); // line below and top of
+    for (int i = 0; i < 9; i++) {
+      if ((i%4) == 0) {
+        offscreen.line(-180, -i*leftLineSpacing, -195, -i*leftLineSpacing); // line below and top of
+        offscreen.line(-180, i*leftLineSpacing, -195, i*leftLineSpacing); // line below and top of
       } else {
-        offscreen.line(-180, -i*leftLineSpacing, -190, -i*leftLineSpacing); // line below and top of
-        offscreen.line(-180, i*leftLineSpacing, -190, i*leftLineSpacing); // line below and top of
+        offscreen.line(-180, -i*leftLineSpacing, -188, -i*leftLineSpacing); // line below and top of
+        offscreen.line(-180, i*leftLineSpacing, -188, i*leftLineSpacing); // line below and top of
       }
     }
 
