@@ -1,4 +1,10 @@
 class Zone2 {
+  boolean enterDancingState[] = {false, false, false};
+  boolean dancingLoop[] = {false, false, false};
+  float keepDancingJumpPoints[] = {4.0, 5.0, 2.0}; 
+  float jumpPoints[] = {37.0, 36.0, 18.0};
+
+  long dancingTimer[] = {0, 0, 0};
 
   void start() {
 
@@ -8,7 +14,6 @@ class Zone2 {
   void draw() {
 
     offscreen.background(0);
-
 
     // handle all on screen   with this code
     //
@@ -21,16 +26,24 @@ class Zone2 {
       if (lastDancerCount < i) {
         movies[i].jump(0);
         movies[i].loop();
+        enterDancingState[i] = true;
+        println(i + " enter state " + enterDancingState[i]);
       }
     }
 
-    float jumpPoints[] = {37, 36, 18};
+   // loop first movie so dancer never leaves screen
+    if (movies[0].time() > jumpPoints[0]) {
+      println("reached end");
+      movies[0].jump(keepDancingJumpPoints[0]);
+    }
+
     // handle old dancers leaving screen
     //
     for (int i = 0; i <= lastDancerCount; i++) {
       if (dancers < i) {
         movies[i].jump(jumpPoints[i]);
         movies[i].noLoop();
+        enterDancingState[i] = false;
       }
     }
 
@@ -45,13 +58,13 @@ class Zone2 {
       offscreen.popMatrix();
     }
 
-    lastDancerCount = dancers;
-    // println("dancers     "+dancers);
-    // println("lastdancercount "+lastDancerCount);
+    startDancingLoop(dancers);
 
+    lastDancerCount = dancers;
+    //println("dancers     "+dancers);
+    // println("lastdancercount "+lastDancerCount);
     updatePixels();
     displayStressData();
-
   }
 
   int onScreenDancerCount() {
@@ -59,6 +72,19 @@ class Zone2 {
     int dancers = stressIntensityVal();
     // println("dancers: " +dancers);
     return dancers;
+  }
+
+  void startDancingLoop(int dancers) {
+    for (int i = 0; i <= dancers; i++) {
+      if (enterDancingState[i]) {
+        println(movies[1].time() + " end " +jumpPoints[1]);
+        if (movies[i].time() > jumpPoints[i]) {
+          println("reached end");
+          movies[i].jump(keepDancingJumpPoints[i]);
+          return;
+        }
+      }
+    }
   }
 
   /// used in Zone2
