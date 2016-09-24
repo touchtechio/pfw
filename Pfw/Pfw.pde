@@ -33,6 +33,7 @@ Zone2 zone2 = new Zone2();
 Zone3 zone3 = new Zone3();
 Zone4 zone4 = new Zone4();
 Zone5 zone5 = new Zone5();
+Blackout blackout = new Blackout();
 
 int movX = 1280;
 int movY = 720;
@@ -110,7 +111,7 @@ void setup() {
   surface = ks.createCornerPinSurface(cornerPinX, cornerPinY, 20);
   offscreen = createGraphics(cornerPinX, cornerPinY, P3D);
   offscreen.textFont(HUDFont);
-  
+
 
   ks.load();
 
@@ -210,6 +211,16 @@ void setupZone5() {
   return;
 }
 
+void setupBlackout() {
+
+  if (DEBUG) println("blackout");
+
+  blackout.start();
+
+  currentZone = 6;
+  return;
+}
+
 void setupCurrentZone() {
   setupZone(currentZone);
   return;
@@ -232,6 +243,9 @@ void setupZone(int zone) {
     return;
   case 5:
     setupZone5();
+    return;
+  case 6:
+    setupBlackout();
     return;
   }
 
@@ -262,6 +276,9 @@ void drawZone(int zone) {
   case 5:
     drawZone5();
     return;
+  case 6:
+    drawBlackout();
+    return;
   }
 
   println("ERR: setup a non-existant Zone: " + zone);
@@ -270,11 +287,11 @@ void drawZone(int zone) {
 
 void draw() {
   background(0);
-    
+
   // smoothing the stress value changes
   smoothStressVal += (stressVal - smoothStressVal) * 0.1;
 
- 
+
   // Draw the scene, offscreen
   offscreen.beginDraw();
   offscreen.background(0);
@@ -302,30 +319,29 @@ void draw() {
   return;
 }
 
-
-
-void drawZone5() {
-  zone5.draw();
+void drawZone1() {
+  zone1.draw();
 }
 
-void drawZone4() {
-  zone4.draw();
+void drawZone2() {
+  zone2.draw();
 }
 
 void drawZone3() {
   zone3.draw();
 }
 
-// start Zone 2
-
-void drawZone2() {
-  zone2.draw();
+void drawZone4() {
+  zone4.draw();
 }
 
-void drawZone1() {
-  zone1.draw();
+void drawZone5() {
+  zone5.draw();
 }
 
+void drawBlackout() {
+  blackout.draw();
+}
 
 void oscEvent(OscMessage theOscMessage) {
   print(" typetag:" + theOscMessage.typetag());
@@ -342,7 +358,7 @@ void oscEvent(OscMessage theOscMessage) {
     if (brain != 0)
       trueBrainVal = brain;
 
-    if ( breathe !=0 )
+    if (breathe !=0 )
       trueBreatheVal = breathe;
 
     println ("HR " + trueHR + ", BW " + trueBrainVal + ", BR " + trueBreatheVal);
@@ -462,6 +478,10 @@ void keyPressed() {
     tearDown();
     setupZone5();
     break;
+  case '6':
+    tearDown();
+    setupBlackout();
+    break;
 
     ///Global stress level keys
   case 'q':
@@ -484,7 +504,7 @@ void keyPressed() {
   case 't':
     stressVal = 90;
     break;
-   
+
   case 'p':
     manageGlassesStress();
     println("hasGlasses "+hasGlasses+", NoData " +noData+ ", hasCalm "+hasCalm);
