@@ -16,7 +16,7 @@ class Zone1 {
   float  st = sin(PI/9.0); 
   float crossPosX; 
   float crossPosY;
-  
+
 
   boolean roseBloom = false;
   float bloomStart;
@@ -47,7 +47,7 @@ class Zone1 {
     checkRoseBloom(); //check to see if rose has bloomed, if it has move arrow
     println(myMovie.time());
     offscreen.stroke(255);
-    
+
     for (int i = 0; i < oscillators.length; i++) {
       oscillators[i].oscillate(smoothStressVal/30); // oscillator speed changes as multiple of smoothStressVal
       oscillators[i].display(0, 0);
@@ -61,7 +61,7 @@ class Zone1 {
     /// draw the moving curved arrow to right of target;
     resetBloom();
     resetBloomCycle();
-    
+
     //popMatrix();
     displayStressData();
   }
@@ -87,21 +87,20 @@ class Zone1 {
     /// set position of crosshair to OSC Stress data but rotating around the rose;
     crossPosX = oscillators[0].rosePosX + 340 + circleX * 4; // check this out
     crossPosY = oscillators[0].rosePosY + 230 + circleY * 3; // check this out
-    
+
     //// new changes
     int arrowSpeed = (int)smoothStressVal/10;
     offscreen.pushMatrix();
-    
+
     offscreen.translate(crossPosX, crossPosY);
     offscreen.scale(crossHairScale);
-  //  arrow.placeCrosshair();
+    //  arrow.placeCrosshair();
     arrow.displayChevronArrow((int)frameRate, arrowSpeed);
     arrow.displayRadialArrow(arrowSpeed);
-    
+
     //arrow.display(updateArrowScaleUpAndDown ());
     offscreen.popMatrix();
   }
-
 
   void checkRoseBloom() {
 
@@ -111,18 +110,35 @@ class Zone1 {
       myMovie.jump(6.0); // jump to rose bloom point
       roseBloom = true;
       bloomStart = millis();
-      
+
       println(roseMovieAutoBloom);
-    
     } else if (!roseMovieAutoBloom && !roseBloom) {
       myMovie.jump(4.0); // jump to close to bloom point
       roseMovieAutoBloom = true;
       bloomCycle = millis();
     }
-    
-      return;
+    return;
   }
 
+  // using this to move arrow on left of target up and down
+
+  void resetBloom() {
+    if (roseBloom) {
+      if (millis() > bloomStart + 8000) {
+        //myMovie.jump(4.0); // jump time to rose close;
+
+        roseBloom = false;
+      }
+    }
+  }
+
+  void resetBloomCycle() {
+    if (roseMovieAutoBloom) {
+      if (millis() > bloomCycle + 4000) {
+        roseMovieAutoBloom = false;
+      }
+    }
+  }
 
   /*
     if (myMovie.time() > 20.5 && myMovie.time() < 36.0 && !roseMovieAutoBloom) {
@@ -134,24 +150,4 @@ class Zone1 {
    }
    }
    */
-   
-  // using this to move arrow on left of target up and down
- 
-  void resetBloom() {
-      if(roseBloom) {
-      if (millis() > bloomStart + 8000) {
-        //myMovie.jump(4.0); // jump time to rose close;
-        
-        roseBloom = false;
-      }
-    }
-  }
-
-  void resetBloomCycle() {
-    if (roseMovieAutoBloom) {
-      if (millis() > bloomCycle + 4000) {
-      roseMovieAutoBloom = false;
-      }
-    }
-  }
 }

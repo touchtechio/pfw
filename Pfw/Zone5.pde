@@ -12,7 +12,7 @@ class Zone5 {
 
 
   void start() {
-    //if (DEBUG) println("build zone 4");
+    //if (DEBUG) println("build zone 5");
     lastIntensity = -1;
     lastStressIntensityVal = -1;
     hasCalm = false;
@@ -28,9 +28,9 @@ class Zone5 {
 
     intensity = stressIntensityVal();
 
-    println("lastStressVal "+lastStressIntensityVal+" lastIntensity "+lastIntensity);
-    println("turningState" + turningState);
-    println("hasCAlmstate" + hasCalm + "stressCOunt " +stressCount);
+    //println("lastStressVal "+lastStressIntensityVal+" lastIntensity "+lastIntensity);
+    //println("turningState " + turningState);
+    //println("hasCAlmstate " + hasCalm + " stressCount " +stressCount);
     checkStressState();
     checkForCalm();
     stateTurn();
