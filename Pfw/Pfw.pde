@@ -19,7 +19,6 @@ PGraphics offscreen;
 int cornerPinX = 1280;
 int cornerPinY = 720;
 
-
 // video 
 Movie myMovie, myMovie2, myMovie3;
 //String movieNames[] = {"", "", "", "danger3.mp4", "rope3.mp4"};
@@ -67,7 +66,7 @@ long beginStressManagement = 0L;
 
 // zone movie jump points
 float stressMovieVal[][] =
-  { {0.0, 5.0, 10.0, 0.0}, 
+  {{4.0, 0.5}, 
   {0, 0, 0, 0}, 
   {0, 0, 0, 0}, 
   {0.2, 9.2, 19.2, 0.2}, 

@@ -20,7 +20,6 @@ class Zone1 {
   float crossPosX; 
   float crossPosY;
 
-
   boolean roseBloom = false;
   float bloomStart;
   float roseTimer;
@@ -30,9 +29,10 @@ class Zone1 {
   TargetArrow arrow;
   int arrowSpeed;
   float crossHairScale = 1.6;
+  float oscSpeed = 5.0; // smaller number means faster, it's a divisor
+  
+  //float movieSpeeds[] = {1.0, 1.5, 2.0};
 
-  
-  
   void start() {
     if (DEBUG) println("start zone 1");
     arrow = new TargetArrow(color(255));
@@ -50,12 +50,12 @@ class Zone1 {
 
     offscreen.pushMatrix();
     checkRoseBloom(); //check to see if rose has bloomed, if it has move arrow
-    
+
     offscreen.stroke(255);
 
     for (int i = 0; i < oscillators.length; i++) {
       //oscillators[i].oscillate(smoothStressVal/20); // oscillator speed changes as multiple of smoothStressVal
-      oscillators[i].oscillate(smoothStressIntensity/10); // oscillator speed changes as multiple of smoothStressVal
+      oscillators[i].oscillate(smoothStressIntensity/oscSpeed); // oscillator speed changes as multiple of smoothStressVal
       oscillators[i].display(0, 0);
     }
     offscreen.popMatrix();
@@ -67,10 +67,10 @@ class Zone1 {
     /// draw the moving curved arrow to right of target;
     resetBloom();
     resetBloomCycle();
-    
+
     // smooths the movement between the 3 zone values
-    
-    
+
+
     displayStressData();
   }
 
@@ -116,13 +116,13 @@ class Zone1 {
     if (smoothStressVal < 10 && !roseBloom) {
       println("stressed");
       //myMovie.jump(stressMovieVal[0][3]);
-      myMovie.jump(6.0); // jump to rose bloom point
+      myMovie.jump(stressMovieVal[currentZone-1][0]); // jump to rose bloom point
       roseBloom = true;
       bloomStart = millis();
 
       println(roseMovieAutoBloom);
     } else if (!roseMovieAutoBloom && !roseBloom) {
-      myMovie.jump(0.5); // jump to half bloom point to start loop
+      myMovie.jump(stressMovieVal[currentZone-1][1]); // jump to half bloom point to start loop
       roseMovieAutoBloom = true;
       bloomCycle = millis();
     }
@@ -133,7 +133,7 @@ class Zone1 {
 
   void resetBloom() {
     if (roseBloom) {
-      if (millis() > bloomStart + 6000) {
+      if (millis() > bloomStart + 6700) {
         //myMovie.jump(4.0); // jump time to rose close;
 
         roseBloom = false;
@@ -143,7 +143,7 @@ class Zone1 {
 
   void resetBloomCycle() {
     if (roseMovieAutoBloom) {
-      if (millis() > bloomCycle + 4500) {
+      if (millis() > bloomCycle + 2500) {
         roseMovieAutoBloom = false;
       }
     }
