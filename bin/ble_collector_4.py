@@ -13,6 +13,8 @@ import bluepy
 import getopt
 import threading
 
+import OSC
+
 # Define some constants
 YETI_SERVICE_UUID = "f0000000-0114-4000-b000-000000000000";
 YETI_CTRL_CH_UUID = "f0003000-0114-4000-b000-000000000000";
@@ -76,6 +78,20 @@ def notifThreadMain():
             periph.writeCharacteristic(VAL(bleCmd[BLE_CMD_CH]),
                                        bleCmd[BLE_CMD_VAL]);
 
+def reactToData(hr, bw, br):
+
+    print "DATA: {1} {2} {0}".format(hr, bw, br);
+
+    c = OSC.OSCClient();
+    c.connect(('127.0.0.1', 12000));
+    oscmsg = OSC.OSCMessage();
+    oscmsg.setAddress("/data");
+    oscmsg.append(hr);
+    oscmsg.append(bw);
+    oscmsg.append(br);
+    c.send(oscmsg);
+    return;
+
 # Define notification handling class
 class notifHandler(bluepy.btle.DefaultDelegate):
     def __init__(self):
@@ -103,22 +119,25 @@ class notifHandler(bluepy.btle.DefaultDelegate):
             if (data[0] == SEESAW_DAT_PPG):
                 t = time.time();
                 (hr, sdnn) = struct.unpack("<hh", data[1:]);
+                reactToData(hr, 0, 0);
                 if (verbosePPG):
                     print("PPG: hr = %d, sdnn = %d" % (hr, sdnn));
                 ppgData.append([t, hr, sdnn]);
             elif (data[0] == SEESAW_DAT_EEG):
                 t = time.time();
                 (asym, stress, lpf, rpf) = struct.unpack("<hhhh", data[1:]);
+                reactToData(0, stress, 0);
                 if (verboseEEG):
                     print("EEG: asym = %d, stress = %d, lpf = %d, rpf = %d" %
                           (asym, stress, lpf, rpf));
                 eegData.append([t, asym, stress, lpf, rpf]);
             elif (data[0] == SEESAW_DAT_AUD):
                 t = time.time();
-                (bi) = struct.unpack("<h", data[1:]);
+                bi = struct.unpack("<h", data[1:]);
+                reactToData(0, 0, bi[0]);
                 if (verboseAUD):
-                    print("AUD: bi = %d" % bi);
-                audData.append([t, bi]);
+                    print("AUD: bi = %d" % bi[0]);
+                audData.append([t, bi[0]]);
             else:
                 print("Got unknown data: %x" % ord(data[0]));
         else:
