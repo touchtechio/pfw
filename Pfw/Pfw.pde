@@ -83,6 +83,8 @@ int moments[][] =
   {50, 10}, 
   {10, 100}, 
   {10, 100}};
+long impactWaitDuration = 5000;
+long lastImapactTime = 0;
 
 boolean arrayCleared = true;
 
@@ -102,9 +104,7 @@ float[] storedValBR;
 int countBR = 0;
 int br = 0;
 
-long impactWaitDuration = 5000;
-long lastImapactTime = 0;
-
+boolean shouldBlackout = false;
 
 void setup() {
 
@@ -299,6 +299,8 @@ void drawZone(int zone) {
 
 void draw() {
   background(0);
+  
+  if (shouldBlackout) { return; }
 
   // smoothing the stress value changes
   smoothStressVal += (stressVal - smoothStressVal) * 0.1; // analog stress values
@@ -376,6 +378,10 @@ void oscEvent(OscMessage theOscMessage) {
     // start
     println(" START");
     lastImapactTime = millis();
+    stressVal = moments[currentZone-1][0];
+        shouldBlackout = false;
+
+    
   }
 
   if (theOscMessage.checkAddrPattern("/impact/1/2")) {
@@ -383,13 +389,18 @@ void oscEvent(OscMessage theOscMessage) {
     // impact
     println(" IMPACT");
     lastImapactTime = millis();
+    stressVal = moments[currentZone-1][1];
+            shouldBlackout = false;
 
+    
   }
 
   if (theOscMessage.checkAddrPattern("/impact/1/3")) {
 
     // blackout
     println(" BLACKOUT");
+    shouldBlackout = true;
+    
     
   }
 
@@ -400,40 +411,15 @@ void oscEvent(OscMessage theOscMessage) {
     int breathe = theOscMessage.get(2).intValue();
 
     if (hr != 0)
-    trueHR = hr;
+      trueHR = hr;
 
     if (brain != 0)
-    trueBrainVal = brain;
+      trueBrainVal = brain;
 
     if (breathe !=0 )
-    trueBreatheVal = breathe;
+      trueBreatheVal = breathe;
 
     println ("BW " + trueBrainVal + ", BR " + trueBreatheVal + ", HR " + trueHR);
-
-    float newBRFromGlass = (float)trueBreatheVal; // trueBR
-    //AddNewValue(newBRFromGlass);
-    AddTwoValue(newBRFromGlass);
-    aveBR = 0;
-    // float multiplier = 2/(countBR + 1);
-
-    //if (countBR == 10){ //calculate first ave
-    if (countBR > 0) { //calculate first ave
-      aveBR = sumBR / countBR;
-    }
-    //float EMA_BR = (newBRFromGlass - aveBR) * multiplier + aveBR;
-   // println("count: " + countBR + " new value: " +  newBRFromGlass + " proper average: " + aveBR);
-
-    // glasses on off state setting
-    /*
-    if (noData && trueHR > 0) { //trueHR should be > 0 when glasses are put on
-     manageGlassesStress();
-     }
-     
-     if (hasCalm && trueHR < 10) { //trueHR < 10 when glasses taken off
-     hasCalm = false;
-     noData = true;
-     }
-     */
 
 
     if (!needToWait()) {
@@ -490,7 +476,6 @@ void AddTwoValue(float valBR) {
     sumBR += valBR;
     arrayCleared = false;
     println("values Br" + valBR +"sum Br" + sumBR);
-    
   } else {
     //sumBR -= storedValBR[br];
     for (int i = 0; i < storedValBR.length; i++) {
@@ -504,7 +489,7 @@ void AddTwoValue(float valBR) {
 int breathStressMapping() {
 
   //int mappedStress = (int)map(trueBreatheVal, 3500, 1000, 0, 100); using raw data
-  int mappedStress = (int)map(aveBR, 3500, 1000, 0, 100);
+  int mappedStress = (int)map(trueBreatheVal, 3500, 1000, 0, 100);
   //println("breathMappedStress:" + mappedStress);
   return constrain(mappedStress, 0, 100);
 }
@@ -633,7 +618,7 @@ void displayStressData() {
   offscreen.text(trueBrainVal, (textXPer + numSpacing) * movX, (textYPer + 0.05) * movY);
 
   offscreen.text("RESPIRATION", textXPer * movX, (textYPer + 0.10) * movY);
-  offscreen.text((int)aveBR, (textXPer + numSpacing) * movX, (textYPer + 0.10) * movY);
+  offscreen.text((int)trueBreatheVal, (textXPer + numSpacing) * movX, (textYPer + 0.10) * movY);
 
   offscreen.text("HEART RATE", textXPer * movX, (textYPer + 0.15) * movY);
   offscreen.text(trueHR, (textXPer + numSpacing) * movX, (textYPer + 0.15) * movY);
