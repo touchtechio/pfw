@@ -77,6 +77,14 @@ String oscAddr[] = {"/Stress/s2/1/1", "/Stress/s2/2/1", "/Stress/s2/1/2", "/Stre
 
 String oscZoneAddr[] = {"/Zone/switch/1/1", "/Zone/switch/2/1", "/Zone/switch/3/1", "/Zone/switch/4/1", "/Zone/switch/5/1"};
 int zone[] = {1, 2, 3, 4, 5};
+int moments[][] = 
+  {{100, 10}, 
+  {10, 100}, 
+  {50, 10}, 
+  {10, 100}, 
+  {10, 100}};
+
+boolean arrayCleared = true;
 
 boolean DEBUG = true; // determines whether to data on screen
 
@@ -126,7 +134,7 @@ void setup() {
 
   setupCurrentZone();
 
-  storedValBR= new float[3]; // for counting average set
+  storedValBR= new float[2]; // for counting average set
   return;
 }
 
@@ -403,7 +411,8 @@ void oscEvent(OscMessage theOscMessage) {
     println ("BW " + trueBrainVal + ", BR " + trueBreatheVal + ", HR " + trueHR);
 
     float newBRFromGlass = (float)trueBreatheVal; // trueBR
-    AddNewValue(newBRFromGlass);
+    //AddNewValue(newBRFromGlass);
+    AddTwoValue(newBRFromGlass);
     aveBR = 0;
     // float multiplier = 2/(countBR + 1);
 
@@ -412,7 +421,7 @@ void oscEvent(OscMessage theOscMessage) {
       aveBR = sumBR / countBR;
     }
     //float EMA_BR = (newBRFromGlass - aveBR) * multiplier + aveBR;
-    println("count: " + countBR + " new value: " +  newBRFromGlass + " proper average: " + aveBR);
+   // println("count: " + countBR + " new value: " +  newBRFromGlass + " proper average: " + aveBR);
 
     // glasses on off state setting
     /*
@@ -471,6 +480,24 @@ void AddNewValue(float valBR) {
     sumBR += valBR;
     br = br+1;
     br = br % storedValBR.length;
+  }
+}
+
+void AddTwoValue(float valBR) {
+  if (countBR < storedValBR.length || arrayCleared) {
+    //array is not full yet
+    storedValBR[countBR++] = valBR;
+    sumBR += valBR;
+    arrayCleared = false;
+    println("values Br" + valBR +"sum Br" + sumBR);
+    
+  } else {
+    //sumBR -= storedValBR[br];
+    for (int i = 0; i < storedValBR.length; i++) {
+      storedValBR[i] = 0;
+      println("values Br" + storedValBR[i]);
+      arrayCleared = true;
+    }
   }
 }
 
