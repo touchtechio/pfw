@@ -31,6 +31,9 @@ class Zone1 {
   float crossHairScale = 1.6;
   float oscSpeed = 5.0; // smaller number means faster, it's a divisor
   
+  float quickBloomCycle = 2500;
+  float fullBloomCycle = 6700;
+
   //float movieSpeeds[] = {1.0, 1.5, 2.0};
 
   void start() {
@@ -133,7 +136,7 @@ class Zone1 {
 
   void resetBloom() {
     if (roseBloom) {
-      if (millis() > bloomStart + 6700) {
+      if (millis() > bloomStart + fullBloomCycle) {
         //myMovie.jump(4.0); // jump time to rose close;
 
         roseBloom = false;
@@ -143,7 +146,7 @@ class Zone1 {
 
   void resetBloomCycle() {
     if (roseMovieAutoBloom) {
-      if (millis() > bloomCycle + 2500) {
+      if (millis() > bloomCycle + quickBloomCycle) {
         roseMovieAutoBloom = false;
       }
     }

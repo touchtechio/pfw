@@ -77,7 +77,7 @@ class Zone2 {
   void startDancingLoop(int dancers) {
     for (int i = 0; i <= dancers; i++) {
       if (enterDancingState[i]) {
-        println(movies[1].time() + " end " +jumpPoints[1]);
+      //  println(movies[1].time() + " end " +jumpPoints[1]);
         if (movies[i].time() > jumpPoints[i]) {
           println("reached end");
           movies[i].jump(keepDancingJumpPoints[i]);
