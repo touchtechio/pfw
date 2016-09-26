@@ -9,7 +9,7 @@ echo "stop everything before starting"
 ./stop.sh
 
 echo "running curie ble watcher to /tmp/intel-ble.log"
-./run-curie-ble.sh > /tmp/intel-ble.log 2>&1 &
+#./run-curie-ble.sh > /tmp/intel-ble.log 2>&1 &
 
 SKETCH_DIR=/home/intel/Visuals/
 
