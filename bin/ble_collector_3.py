@@ -68,14 +68,14 @@ def NAME(h):
 # Define notification "processing" thread
 def notifThreadMain():
     while (True):
-	if (bleCmdQueue.empty()):
-		periph.waitForNotifications(1.0);
-	else:
-		bleCmd = bleCmdQueue.get();
+        if (bleCmdQueue.empty()):
+            periph.waitForNotifications(1.0);
+        else:
+            bleCmd = bleCmdQueue.get();
 
-		periph.writeCharacteristic(VAL(bleCmd[BLE_CMD_CH]),
-                                           bleCmd[BLE_CMD_VAL]);
-        
+            periph.writeCharacteristic(VAL(bleCmd[BLE_CMD_CH]),
+                                       bleCmd[BLE_CMD_VAL]);
+
 # Define notification handling class
 class notifHandler(bluepy.btle.DefaultDelegate):
     def __init__(self):
@@ -103,21 +103,21 @@ class notifHandler(bluepy.btle.DefaultDelegate):
             if (data[0] == SEESAW_DAT_PPG):
                 t = time.time();
                 (hr, sdnn) = struct.unpack("<hh", data[1:]);
-		if (verbosePPG):
-			print("PPG: hr = %d, sdnn = %d" % (hr, sdnn));
+                if (verbosePPG):
+                    print("PPG: hr = %d, sdnn = %d" % (hr, sdnn));
                 ppgData.append([t, hr, sdnn]);
             elif (data[0] == SEESAW_DAT_EEG):
                 t = time.time();
-		(asym, stress, lpf, rpf) = struct.unpack("<hhhh", data[1:]);
-		if (verboseEEG):
-			print("EEG: asym = %d, stress = %d, lpf = %d, rpf = %d" %
-			      (asym, stress, lpf, rpf));
+                (asym, stress, lpf, rpf) = struct.unpack("<hhhh", data[1:]);
+                if (verboseEEG):
+                    print("EEG: asym = %d, stress = %d, lpf = %d, rpf = %d" %
+                          (asym, stress, lpf, rpf));
                 eegData.append([t, asym, stress, lpf, rpf]);
             elif (data[0] == SEESAW_DAT_AUD):
                 t = time.time();
-		(bi) = struct.unpack("<h", data[1:]);
-		if (verboseAUD):
-			print("AUD: bi = %d" % bi);
+                (bi) = struct.unpack("<h", data[1:]);
+                if (verboseAUD):
+                    print("AUD: bi = %d" % bi);
                 audData.append([t, bi]);
             else:
                 print("Got unknown data: %x" % ord(data[0]));
@@ -189,14 +189,14 @@ while (True):
 
     if (len(cmd) == 0):
         continue;
-    
+
     if (cmd[0] == "h"):
         print("Help:");
         print("");
         print("q, e               leaves the program");
         print("s                  toggle sense mode");
         print("r                  toggle raw mode");
-	print("v [metric]         toggle verbose printing of ble packets");
+        print("v [metric]         toggle verbose printing of ble packets");
         print("d [metric] [file]  dump collected sense data to file for metric");
         print("c [metric]         clear collected sense data for metric");
         print("h                  print help");
@@ -204,11 +204,11 @@ while (True):
         print("Exiting...");
         sys.exit(0);
     elif (cmd[0] == "v"):
-	if (len(cmd) != 5):
+        if (len(cmd) != 5):
             print("Bad format: c [metric]");
             continue;
 
-	if ("aud" in cmd):
+        if ("aud" in cmd):
             verboseAUD = not(verboseAUD);
             print("Prints for AUD: " + str(verboseAUD));
         elif ("ppg" in cmd):
@@ -218,37 +218,37 @@ while (True):
             verboseEEG = not(verboseEEG);
             print("Prints for EEG: " + str(verboseEEG));
         elif ("all" in cmd):
-	    verbosePPG = not(verbosePPG);
+            verbosePPG = not(verbosePPG);
             print("Prints for PPG: " + str(verbosePPG));
-	    verboseAUD = not(verboseAUD);
+            verboseAUD = not(verboseAUD);
             print("Prints for AUD: " + str(verboseAUD));
             verboseEEG = not(verboseEEG);
             print("Prints for EEG: " + str(verboseEEG));
         else:
-            print("Unknown data metric, options are 'eeg', 'aud', 'ppg', 'all'");	
+            print("Unknown data metric, options are 'eeg', 'aud', 'ppg', 'all'");
     elif (cmd[0] == "s"):
-	bleCmd = [0, 0];
-	bleCmd[BLE_CMD_CH] = yctrlHandle;
+        bleCmd = [0, 0];
+        bleCmd[BLE_CMD_CH] = yctrlHandle;
         if (state == IDLE):
-	    bleCmd[BLE_CMD_VAL] = SEESAW_CMD_START_SENSE;
-	    bleCmdQueue.put(bleCmd);
+            bleCmd[BLE_CMD_VAL] = SEESAW_CMD_START_SENSE;
+            bleCmdQueue.put(bleCmd);
             state = SENSE;
         elif (state == SENSE):
             bleCmd[BLE_CMD_VAL] = SEESAW_CMD_STOP_SENSE;
-	    bleCmdQueue.put(bleCmd);
+            bleCmdQueue.put(bleCmd);
             state = IDLE;
         else:
             print("Not in a state where sense mode may be changed");
     elif (cmd[0] == "r"):
-	bleCmd = [0, 0];
-	bleCmd[BLE_CMD_CH] = yctrlHandle;
+        bleCmd = [0, 0];
+        bleCmd[BLE_CMD_CH] = yctrlHandle;
         if (state == IDLE):
             bleCmd[BLE_CMD_VAL] = SEESAW_CMD_START_RAW;
-	    bleCmdQueue.put(bleCmd);
+            bleCmdQueue.put(bleCmd);
             state = RAW;
         elif (state == RAW):
             bleCmd[BLE_CMD_VAL] = SEESAW_CMD_STOP_RAW;
-	    bleCmdQueue.put(bleCmd);
+            bleCmdQueue.put(bleCmd);
             state = IDLE;
         else:
             print("Not in a state where raw mode may be changed");
@@ -299,7 +299,7 @@ while (True):
                 header = "timestamp, asym, stress, left peak frequency, right peak frequency\n";
             elif (d[1] == "ppg"):
                 header = "timestamp, heartrate, sdnn\n";
-            
+
             s = str(d[0]);
             s = header + s.replace("], [", "\n").replace("[", "").replace("]", "");
 
