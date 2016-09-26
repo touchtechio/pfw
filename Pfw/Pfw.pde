@@ -106,6 +106,8 @@ int br = 0;
 long impactWaitDuration = 5000;
 long lastImapactTime = 0;
 
+int zeroBreathes = 30;
+boolean putDownGlasses = false;
 
 void setup() {
 
@@ -367,8 +369,8 @@ boolean needToWait() {
 }
 
 void oscEvent(OscMessage theOscMessage) {
-  print(" typetag:" + theOscMessage.typetag());
-  println(" addrpattern: " +theOscMessage.addrPattern());
+ // print(" typetag:" + theOscMessage.typetag());
+ // println(" addrpattern: " +theOscMessage.addrPattern());
 
 
 
@@ -401,15 +403,29 @@ void oscEvent(OscMessage theOscMessage) {
     int breathe = theOscMessage.get(2).intValue();
 
     if (hr != 0)
-    trueHR = hr;
+      trueHR = hr;
 
     if (brain != 0)
-    trueBrainVal = brain;
+      trueBrainVal = brain;
 
-    if (breathe !=0 )
-    trueBreatheVal = breathe;
+    if (breathe !=0 ) {
+      trueBreatheVal = breathe;
+      zeroBreathes = 0;
+      putDownGlasses = false;
 
-    //println ("BW " + trueBrainVal + ", BR " + trueBreatheVal + ", HR " + trueHR);
+    } else { 
+      zeroBreathes++;
+      if (zeroBreathes > 30) {
+        putDownGlasses = true;
+            println ("put down ");
+            trueBrainVal=0;
+            trueBreatheVal=0;
+            trueHR=0;
+            aveBR=0;
+      }
+    }
+    
+    println ("BW " + trueBrainVal + ", BR " + trueBreatheVal + ", HR " + trueHR);
 
     float newBRFromGlass = (float)trueBreatheVal; // trueBR
     //AddNewValue(newBRFromGlass);
@@ -514,16 +530,21 @@ void AddTwoValue(float valBR) {
 
 float AddTwoValues(float valBR) {
   storedValBR[br] = valBR;
+  /*
+  if (1500 < abs(storedValBR[0] - storedValBR[1]) ) {
+   return -1; 
+  }
+  */
   sumBR =storedValBR[0] + storedValBR[1];
   br = br+1;
   br = br % 2;
 
   if (storedValBR[0] != 0 && storedValBR[1] != 0) {
 
-    println("values Br" + valBR +"sum Br" + sumBR);
+    //println("values Br" + valBR +"sum Br" + sumBR);
     for (int i = 0; i < storedValBR.length; i++) {
       storedValBR[i] = 0;
-      println("values Br" + storedValBR[i]);
+      //println("values Br" + storedValBR[i]);
     }
     return sumBR;
   } else {
@@ -541,11 +562,17 @@ float sumOfTwoBR(float sumBR) {
 
 
 int breathStressMapping() {
-
+  if (aveBR >6000) {
+    return 15;
+  } else if (aveBR > 3000) {
+   return 50;
+} else {
+ return 80; 
+}
   //int mappedStress = (int)map(trueBreatheVal, 3500, 1000, 0, 100); using raw data
-  int mappedStress = (int)map(aveBR, 3500, 1000, 0, 100);
+ // int mappedStress = (int)map(aveBR, 3500, 1000, 0, 100);
   //println("breathMappedStress:" + mappedStress);
-  return constrain(mappedStress, 0, 100);
+ // return constrain(mappedStress, 0, 100);
 }
 
 void keyPressed() {
