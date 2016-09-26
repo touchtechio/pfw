@@ -380,12 +380,14 @@ void oscEvent(OscMessage theOscMessage) {
 
     float newBRFromGlass = (float)trueBreatheVal; // trueBR
     //AddNewValue(newBRFromGlass);
-    AddTwoValues(newBRFromGlass);
-    if (sumBR != -1) {
+    if (-1 == AddTwoValues(newBRFromGlass)) {
+      // nothing, too many zeros
+    } else {
       println("i got the sum" + sumBR);
+      aveBR = sumBR;
     }
 
-    aveBR = sumBR; // for now
+     // for now
     /*if (countBR > 0) { //calculate first ave
      aveBR = sumBR / countBR;
      }
