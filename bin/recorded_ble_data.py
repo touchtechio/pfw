@@ -21,8 +21,8 @@ def reactToData(hr, bw, br):
     print "CAPTURED-DATA: {0} {1} {2}".format(hr, bw, br);
 
     c = OSC.OSCClient();
-#    c.connect(('127.0.0.1', 12000));
-    c.connect(('10.10.11.16', 12000));
+    c.connect(('127.0.0.1', 12000));
+#    c.connect(('10.10.11.16', 12000));
     oscmsg = OSC.OSCMessage();
     oscmsg.setAddress("/data");
     oscmsg.append(int(hr));

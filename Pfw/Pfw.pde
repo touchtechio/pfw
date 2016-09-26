@@ -165,7 +165,7 @@ void setupZone1() {
 
   if (DEBUG) println("build zone 1");
 
-  myMovie = new Movie(this, "roseBloomSlow_blur.mp4");
+  myMovie = new Movie(this, "rose5.mp4");
   myMovie.loop();
 
   zone1.start();
