@@ -18,15 +18,16 @@ import OSC
 
 def reactToData(hr, bw, br):
 
-    print "CAPTURED-DATA: {1} {2} {0}".format(hr, bw, br);
+    print "CAPTURED-DATA: {0} {1} {2}".format(hr, bw, br);
 
     c = OSC.OSCClient();
-    c.connect(('127.0.0.1', 12000));
+#    c.connect(('127.0.0.1', 12000));
+    c.connect(('10.10.11.16', 12000));
     oscmsg = OSC.OSCMessage();
     oscmsg.setAddress("/data");
-    oscmsg.append(hr);
-    oscmsg.append(bw);
-    oscmsg.append(br);
+    oscmsg.append(int(hr));
+    oscmsg.append(int(bw));
+    oscmsg.append(int(br));
     c.send(oscmsg);
     return;
 
@@ -37,7 +38,7 @@ with open('bio-data.csv', 'rb') as csvfile:
     bioreader = csv.reader(csvfile, delimiter=',')
     for row in bioreader:
         reactToData(row[0], row[1], row[2]);
-        print ', '.join(row)
+        #print ', '.join(row)
         time.sleep(0.2);
 
 reactToData(99, 15, 2000);
