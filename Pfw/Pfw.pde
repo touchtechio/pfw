@@ -543,7 +543,7 @@ float sumOfTwoBR(float sumBR) {
 int breathStressMapping() {
 
   //int mappedStress = (int)map(trueBreatheVal, 3500, 1000, 0, 100); using raw data
-  int mappedStress = (int)map(aveBR, 3500, 1000, 0, 100);
+  int mappedStress = (int)map(aveBR, 6000, 1500, 0, 100);
   //println("breathMappedStress:" + mappedStress);
   return constrain(mappedStress, 0, 100);
 }
