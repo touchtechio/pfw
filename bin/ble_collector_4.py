@@ -99,7 +99,7 @@ class notifHandler(bluepy.btle.DefaultDelegate):
         return;
 
     def handleNotification(self, chHandle, data):
-        print("Got data on channel: %s" % NAME(chHandle));
+        #print("Got data on channel: %s" % NAME(chHandle));
         if (chHandle == yctrlHandle):
             if (data[0] == SEESAW_RET_START_SENSE):
                 print("Started Sensing...");
@@ -145,6 +145,7 @@ class notifHandler(bluepy.btle.DefaultDelegate):
         return;
 
 # Init some things
+start = False;
 dev = None;
 state = IDLE;
 verbosePPG = False;
@@ -162,10 +163,15 @@ except:
     print("Error getting args");
     sys.exit(-1);
 
+
 for (o, a) in op:
     if (o in ("-d", "--device")):
         print("Device: %s" % a);
         dev = a;
+
+    if (o in ("-s", "--start")):
+        print("Start Now");
+        start = True;
 
 if (dev == None):
     print("Missing device!");
@@ -201,6 +207,10 @@ print("Notifications enabled for all channels");
 notifThread = threading.Thread(target=notifThreadMain);
 notifThread.daemon = True;
 notifThread.start();
+
+if (start == True):
+    periph.writeCharacteristic(VAL(yctrlHandle), SEESAW_CMD_START_SENSE);
+    state = SENSE;
 
 # Main loop
 while (True):
