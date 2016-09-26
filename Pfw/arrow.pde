@@ -1,6 +1,6 @@
 public class TargetArrow {
   color fillC;
-  float strokeW = 3.5;
+  float strokeW = 4.5;
   float thinStrokeW = 1;
   int data;
   int circlePoints = 160;
@@ -36,6 +36,7 @@ public class TargetArrow {
 
     /// draw moving arrow left of crosshair
     offscreen.pushMatrix();
+   
     // position moving arrow in relation to cross hair
     offscreen.textFont(HUDFont);
     offscreen.textSize(15);
@@ -51,7 +52,7 @@ public class TargetArrow {
 
     data = tempData;
     offscreen.noFill();
-    offscreen.strokeWeight(strokeW);
+    offscreen.strokeWeight(2.5);
     offscreen.stroke(fillC);
     offscreen.beginShape();
     offscreen.vertex(0, 0);

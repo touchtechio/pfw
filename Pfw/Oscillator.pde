@@ -27,7 +27,7 @@ class Oscillator {
   void oscillate(float stressLevel) {
     // Increment angles   
     xtheta += dxtheta * stressLevel; 
-    ytheta += dytheta * stressLevel; 
+    ytheta += dytheta * stressLevel;
   }   
 
   void display(float roseStartX, float roseStartY) {   
@@ -48,7 +48,7 @@ class Oscillator {
     //offscreen.translate(stressVal * sin(updateRoseSpaz()),  stressVal/2 * cos(updateRoseSpaz()), updateRoseZoom ()- 400);
     //offscreen.translate(0, 0, (updateRoseZoom()- 400)* (int)stressVal/100);
     offscreen.translate(0, 0, -50);
-    
+
     //println("roseZoom "+updateRoseZoom());
     //drawMoviePixels();
 
@@ -77,8 +77,7 @@ class Oscillator {
   }
 
   float roseZoomScale() {
-  return map(stressVal, 0, 100, 1.0, 1.5);
-  
+    return map(stressVal, 0, 100, 1.0, 1.5);
   }
   int updateRoseSpaz () {
     //int scale = ((int)millis() % 21);

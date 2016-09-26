@@ -98,7 +98,8 @@ int currentZone = 1;
 //
 float aveBR=0;
 float sumBR = 0;
-float[] storedValBR;
+float storedValBR[] = {0, 0};
+float[] storedArrayBR;
 int countBR = 0;
 int br = 0;
 
@@ -134,7 +135,7 @@ void setup() {
 
   setupCurrentZone();
 
-  storedValBR= new float[2]; // for counting average set
+  storedArrayBR= new float[3]; // for counting average set
   return;
 }
 
@@ -164,7 +165,7 @@ void setupZone1() {
 
   if (DEBUG) println("build zone 1");
 
-  myMovie = new Movie(this, "rose5.mp4");
+  myMovie = new Movie(this, "roseBloomSlow_blur.mp4");
   myMovie.loop();
 
   zone1.start();
@@ -408,20 +409,27 @@ void oscEvent(OscMessage theOscMessage) {
     if (breathe !=0 )
     trueBreatheVal = breathe;
 
-    println ("BW " + trueBrainVal + ", BR " + trueBreatheVal + ", HR " + trueHR);
+    //println ("BW " + trueBrainVal + ", BR " + trueBreatheVal + ", HR " + trueHR);
 
     float newBRFromGlass = (float)trueBreatheVal; // trueBR
     //AddNewValue(newBRFromGlass);
-    AddTwoValue(newBRFromGlass);
-    aveBR = 0;
+    AddTwoValues(newBRFromGlass);
+    if (sumBR != -1) {
+      println("i got the sum" + sumBR);
+    }
+
+    aveBR = sumBR; // for now
+    /*if (countBR > 0) { //calculate first ave
+     aveBR = sumBR / countBR;
+     }
+     */
     // float multiplier = 2/(countBR + 1);
 
     //if (countBR == 10){ //calculate first ave
-    if (countBR > 0) { //calculate first ave
-      aveBR = sumBR / countBR;
-    }
+
+
     //float EMA_BR = (newBRFromGlass - aveBR) * multiplier + aveBR;
-   // println("count: " + countBR + " new value: " +  newBRFromGlass + " proper average: " + aveBR);
+    // println("count: " + countBR + " new value: " +  newBRFromGlass + " proper average: " + aveBR);
 
     // glasses on off state setting
     /*
@@ -483,23 +491,52 @@ void AddNewValue(float valBR) {
   }
 }
 
+/*
 void AddTwoValue(float valBR) {
-  if (countBR < storedValBR.length || arrayCleared) {
-    //array is not full yet
-    storedValBR[countBR++] = valBR;
-    sumBR += valBR;
-    arrayCleared = false;
+ if (countBR < storedValBR.length || arrayReset) {
+ //array is not full yet
+ storedValBR[countBR++] = valBR;
+ sumBR += valBR;
+ arrayCleared = false;
+ println("values Br" + valBR +"sum Br" + sumBR);
+ } else {
+ //sumBR -= storedValBR[br];
+ for (int i = 0; i < storedValBR.length; i++) {
+ storedValBR[i] = 0;
+ println("values Br" + storedValBR[i]);
+ arrayCleared = true;
+ }
+ }
+ }
+ */
+
+float AddTwoValues(float valBR) {
+  storedValBR[br] = valBR;
+  sumBR =storedValBR[0] + storedValBR[1];
+  br = br+1;
+  br = br % 2;
+
+  if (storedValBR[0] != 0 && storedValBR[1] != 0) {
+
     println("values Br" + valBR +"sum Br" + sumBR);
-    
-  } else {
-    //sumBR -= storedValBR[br];
     for (int i = 0; i < storedValBR.length; i++) {
       storedValBR[i] = 0;
       println("values Br" + storedValBR[i]);
-      arrayCleared = true;
     }
+    return sumBR;
+  } else {
+    return -1;
   }
 }
+
+
+float sumOfTwoBR(float sumBR) {
+  return sumBR;
+}
+
+
+
+
 
 int breathStressMapping() {
 
