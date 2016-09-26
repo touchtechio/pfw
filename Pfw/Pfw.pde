@@ -367,7 +367,7 @@ void oscEvent(OscMessage theOscMessage) {
     if (breathe !=0 )
       trueBreatheVal = breathe;
 
-    println ("HR " + trueHR + ", BW " + trueBrainVal + ", BR " + trueBreatheVal);
+    println ("BW " + trueBrainVal + ", BR " + trueBreatheVal + ", HR " + trueHR);
 
     float newBRFromGlass = (float)trueBreatheVal; // trueBR
     AddNewValue(newBRFromGlass);
@@ -565,13 +565,13 @@ void displayStressData() {
     offscreen.ellipse(textXPer * movX + i * 10, textYPer * movY, 3, 3);
   }
 
-  offscreen.text("Brain Waves".toUpperCase(), textXPer * movX, (textYPer + 0.05) * movY);
+  offscreen.text("BRAIN WAVES", textXPer * movX, (textYPer + 0.05) * movY);
   offscreen.text(trueBrainVal, (textXPer + numSpacing) * movX, (textYPer + 0.05) * movY);
 
   offscreen.text("RESPIRATION", textXPer * movX, (textYPer + 0.10) * movY);
   offscreen.text((int)aveBR, (textXPer + numSpacing) * movX, (textYPer + 0.10) * movY);
 
-  offscreen.text("Heart Rate".toUpperCase(), textXPer * movX, (textYPer + 0.15) * movY);
+  offscreen.text("HEART RATE", textXPer * movX, (textYPer + 0.15) * movY);
   offscreen.text(trueHR, (textXPer + numSpacing) * movX, (textYPer + 0.15) * movY);
 
   return;
