@@ -32,9 +32,10 @@ class Zone4 {
     //println("turningState " + turningState);
     //println("hasCAlmstate " + hasCalm + " stressCount " +stressCount);
     checkStressState();
-    checkForCalm();
-    stateTurn();
-
+    //checkForCalm();
+    //stateTurn();
+    println("time " + myMovie.time());
+    keepVideoLoopingInState();
 
     /*
     if (stressIntensityVal() > lastStressIntensityVal || hasCalm) {
@@ -75,39 +76,25 @@ class Zone4 {
     return map(stressVal, 0, 100, 0.4, 3.0);
   }
 
+  // compare against last stress value so that scene doesn't keep repeating when new value inputs
   void checkStressState() {
-    if (stressIntensityVal() > lastStressIntensityVal || turningState) {
+    if (stressIntensityVal() > lastStressIntensityVal) {
 
       myMovie.jump(stressMovieVal[currentZone-1][intensity]);
-      lastIntensity=intensity;
-      stressCount = 0;
       turningState = false;
       return;
     } else if (stressIntensityVal() < lastStressIntensityVal) {
 
       myMovie.jump(stressMovieVal[currentZone-1][intensity]);// (0, 1, 2, 3, 4) need to jump to 3 and 4
-      lastIntensity = lastIntensity + 1;
-      stressCount += 1; //begin calming down states, there are 2
       return;
     }
   }
 
-  void checkForCalm() {
-    if (stressCount == 2 && !hasCalm) {
-      startResetTimer = millis();
-      println(startResetTimer);
-      hasCalm = true; // start timer once
-      return;
-    }
-  }
+  void keepVideoLoopingInState() {
 
-  void stateTurn() {
-    if (hasCalm) { // only if the timer has been reset
-      if (millis() > startResetTimer + 4000) { // 2 seconds after timer starts
-        turningState = true;
-        hasCalm = false;
-        return;
-      }
+    if (myMovie.time() > stressMovieVal[currentZone-1][intensity+1]) {
+      println("intensity "+ intensity + "val " +stressMovieVal[currentZone-1][intensity+1]);
+      myMovie.jump (stressMovieVal[currentZone-1][intensity]);
     }
   }
 }

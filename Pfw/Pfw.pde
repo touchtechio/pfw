@@ -69,7 +69,7 @@ float stressMovieVal[][] =
   {{4.0, 0.5}, 
   {0, 0, 0, 0}, 
   {0, 0, 0, 0}, 
-  {0.2, 9.2, 19.2, 0.2}, 
+  {0.2, 9.2, 19.2, 24.5}, 
   {1.0, 18.2, 27, 42.0, 51.1, 51.0}}; // times in the movie to jump to, last jump 51.1
 float stressLow, stressHigh, stressMed, stressCrazy;
 float stressType[] = {stressLow, stressHigh, stressMed, stressCrazy};
@@ -556,10 +556,6 @@ float AddTwoValues(float valBR) {
 float sumOfTwoBR(float sumBR) {
   return sumBR;
 }
-
-
-
-
 
 int breathStressMapping() {
   if (aveBR >6000) {
