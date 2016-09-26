@@ -94,6 +94,10 @@ float[] storedValBR;
 int countBR = 0;
 int br = 0;
 
+long impactWaitDuration = 5000;
+long lastImapactTime = 0;
+
+
 void setup() {
 
   // start oscP5 first, listening for incoming messages at port 12000
@@ -349,9 +353,38 @@ void drawBlackout() {
   blackout.draw();
 }
 
+boolean needToWait() {
+  return millis() < (lastImapactTime + impactWaitDuration);
+}
+
 void oscEvent(OscMessage theOscMessage) {
   print(" typetag:" + theOscMessage.typetag());
   println(" addrpattern: " +theOscMessage.addrPattern());
+
+
+
+  if (theOscMessage.checkAddrPattern("/impact/1/1")) {
+
+    // start
+    println(" START");
+    lastImapactTime = millis();
+  }
+
+  if (theOscMessage.checkAddrPattern("/impact/1/2")) {
+
+    // impact
+    println(" IMPACT");
+    lastImapactTime = millis();
+
+  }
+
+  if (theOscMessage.checkAddrPattern("/impact/1/3")) {
+
+    // blackout
+    println(" BLACKOUT");
+    
+  }
+
 
   if (theOscMessage.checkAddrPattern("/data")) {
     int hr = theOscMessage.get(0).intValue();
@@ -359,13 +392,13 @@ void oscEvent(OscMessage theOscMessage) {
     int breathe = theOscMessage.get(2).intValue();
 
     if (hr != 0)
-      trueHR = hr;
+    trueHR = hr;
 
     if (brain != 0)
-      trueBrainVal = brain;
+    trueBrainVal = brain;
 
     if (breathe !=0 )
-      trueBreatheVal = breathe;
+    trueBreatheVal = breathe;
 
     println ("BW " + trueBrainVal + ", BR " + trueBreatheVal + ", HR " + trueHR);
 
@@ -392,7 +425,11 @@ void oscEvent(OscMessage theOscMessage) {
      noData = true;
      }
      */
-    stressVal = breathStressMapping();
+
+
+    if (!needToWait()) {
+      stressVal = breathStressMapping();
+    }
   }
 
   for (int i = 0; i < oscAddr.length; i++) {
