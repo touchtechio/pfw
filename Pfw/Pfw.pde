@@ -427,6 +427,7 @@ void oscEvent(OscMessage theOscMessage) {
     
     println ("BW " + trueBrainVal + ", BR " + trueBreatheVal + ", HR " + trueHR);
 
+    // sums pairs of breathe values
     float newBRFromGlass = (float)trueBreatheVal; // trueBR
     //AddNewValue(newBRFromGlass);
     if (-1 == AddTwoValues(newBRFromGlass)) {

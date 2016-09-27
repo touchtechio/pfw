@@ -32,9 +32,6 @@ class Zone4 {
     //println("turningState " + turningState);
     //println("hasCAlmstate " + hasCalm + " stressCount " +stressCount);
     checkStressState();
-    //checkForCalm();
-    //stateTurn();
-    println("time " + myMovie.time());
     keepVideoLoopingInState();
 
     /*
