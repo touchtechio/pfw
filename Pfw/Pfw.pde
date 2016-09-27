@@ -83,6 +83,8 @@ int moments[][] =
   {50, 10}, 
   {10, 100}, 
   {10, 100}};
+long impactWaitDuration = 5000;
+long lastImapactTime = 0;
 
 boolean arrayCleared = true;
 
@@ -103,11 +105,9 @@ float[] storedArrayBR;
 int countBR = 0;
 int br = 0;
 
-long impactWaitDuration = 5000;
-long lastImapactTime = 0;
-
 int zeroBreathes = 30;
 boolean putDownGlasses = false;
+boolean shouldBlackout = false;
 
 void setup() {
 
@@ -302,6 +302,8 @@ void drawZone(int zone) {
 
 void draw() {
   background(0);
+  
+  if (shouldBlackout) { return; }
 
   // smoothing the stress value changes
   smoothStressVal += (stressVal - smoothStressVal) * 0.1; // analog stress values
@@ -379,6 +381,10 @@ void oscEvent(OscMessage theOscMessage) {
     // start
     println(" START");
     lastImapactTime = millis();
+    stressVal = moments[currentZone-1][0];
+        shouldBlackout = false;
+
+    
   }
 
   if (theOscMessage.checkAddrPattern("/impact/1/2")) {
@@ -386,13 +392,18 @@ void oscEvent(OscMessage theOscMessage) {
     // impact
     println(" IMPACT");
     lastImapactTime = millis();
+    stressVal = moments[currentZone-1][1];
+            shouldBlackout = false;
 
+    
   }
 
   if (theOscMessage.checkAddrPattern("/impact/1/3")) {
 
     // blackout
     println(" BLACKOUT");
+    shouldBlackout = true;
+    
     
   }
 
@@ -510,24 +521,6 @@ void AddNewValue(float valBR) {
   }
 }
 
-/*
-void AddTwoValue(float valBR) {
- if (countBR < storedValBR.length || arrayReset) {
- //array is not full yet
- storedValBR[countBR++] = valBR;
- sumBR += valBR;
- arrayCleared = false;
- println("values Br" + valBR +"sum Br" + sumBR);
- } else {
- //sumBR -= storedValBR[br];
- for (int i = 0; i < storedValBR.length; i++) {
- storedValBR[i] = 0;
- println("values Br" + storedValBR[i]);
- arrayCleared = true;
- }
- }
- }
- */
 
 float AddTwoValues(float valBR) {
   storedValBR[br] = valBR;
@@ -543,6 +536,7 @@ float AddTwoValues(float valBR) {
   if (storedValBR[0] != 0 && storedValBR[1] != 0) {
 
     //println("values Br" + valBR +"sum Br" + sumBR);
+
     for (int i = 0; i < storedValBR.length; i++) {
       storedValBR[i] = 0;
       //println("values Br" + storedValBR[i]);
@@ -566,10 +560,7 @@ int breathStressMapping() {
 } else {
  return 80; 
 }
-  //int mappedStress = (int)map(trueBreatheVal, 3500, 1000, 0, 100); using raw data
- // int mappedStress = (int)map(aveBR, 3500, 1000, 0, 100);
-  //println("breathMappedStress:" + mappedStress);
- // return constrain(mappedStress, 0, 100);
+ 
 }
 
 void keyPressed() {
@@ -696,7 +687,7 @@ void displayStressData() {
   offscreen.text(trueBrainVal, (textXPer + numSpacing) * movX, (textYPer + 0.05) * movY);
 
   offscreen.text("RESPIRATION", textXPer * movX, (textYPer + 0.10) * movY);
-  offscreen.text((int)aveBR, (textXPer + numSpacing) * movX, (textYPer + 0.10) * movY);
+  offscreen.text((int)trueBreatheVal, (textXPer + numSpacing) * movX, (textYPer + 0.10) * movY);
 
   offscreen.text("HEART RATE", textXPer * movX, (textYPer + 0.15) * movY);
   offscreen.text(trueHR, (textXPer + numSpacing) * movX, (textYPer + 0.15) * movY);
