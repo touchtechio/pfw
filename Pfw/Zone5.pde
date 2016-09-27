@@ -7,7 +7,7 @@ class Zone5 {
   boolean gettingStressed = false;
   int stressCount = 0;
   float startResetTimer;
-  boolean hasCalm;
+  boolean gettingCalm;
   boolean turningState;
 
 
@@ -30,8 +30,10 @@ class Zone5 {
     //println(myMovie.time());
     //println("value of stress change " + abs(stressIntensityVal() - lastStressIntensityVal));
     checkStressState();
-    checkForCalm();
+  
+
     keepVideoLoopingInState();
+    updateVideoState(); 
 
     lastStressIntensityVal = stressIntensityVal(); // used to determine states
     displayStressData();
@@ -57,46 +59,45 @@ class Zone5 {
 
   void checkStressState() {
     if (stressIntensityVal() > lastStressIntensityVal) {
-
-      myMovie.jump(stressMovieVal[currentZone-1][intensity]);
+      lastIntensity=intensity;
       println("jumping up");
-      lastIntensity=intensity; // keeps track of intensity state
-      //gettingStressed = true;
-      //turningState = false;
-      //stressCount = 0;
+      gettingStressed = true;
+
       return;
     } else if (stressIntensityVal() < lastStressIntensityVal) {
-      if (abs(stressIntensityVal() - lastStressIntensityVal) == 1) {
-        myMovie.jump(stressMovieVal[currentZone-1][lastIntensity + 1]);// (0, 1, 2, 3) need to jump to 3 and 4
-        println("jumping down");
-        lastIntensity=lastIntensity + 1;
-      }
-    } else if (turningState) {
-      myMovie.jump(stressMovieVal[currentZone-1][intensity]);
-      lastIntensity=intensity;
-      println("state turned");
-      turningState = false;
-    }
-    //stressCount += 1;
-    //gettingStressed = false; 
 
+      if (stressIntensityVal() == 1) {
+        lastIntensity=lastIntensity + 1;
+
+        println("jumping down");
+        gettingCalm = true;
+      } 
+      else if (stressIntensityVal() == 0) {
+        lastIntensity = 0;
+        turningState = true;
+        println("state turned");
+      }
+      return;
+    } 
     return;
   }
 
-
-  // resets to the rope pulling state -> if gone from med to low or from high to low
-  void checkForCalm() { 
-    if  (-(stressIntensityVal() - lastStressIntensityVal) == 2) {
-      turningState = true;
-      println("calmed");
-      lastIntensity = lastIntensity + 1;
-      return;
+  void updateVideoState() {
+    if (gettingStressed ) {
+      myMovie.jump(stressMovieVal[currentZone-1][lastIntensity]);
+      //println("last intensity" + lastIntensity);
+      gettingStressed = false;
+    } else if (turningState) {
+      myMovie.jump(stressMovieVal[currentZone-1][lastIntensity]);
+      turningState = false;
+    } else if (gettingCalm) {
+      myMovie.jump(stressMovieVal[currentZone-1][lastIntensity]);
+      gettingCalm = false;
     }
   }
-
   void keepVideoLoopingInState() {
     // if(gettingStressed) {
-    if (lastIntensity < 4) {
+    if (lastIntensity < 4 && !turningState) {
       if (myMovie.time() > stressMovieVal[currentZone-1][lastIntensity+1]) {
         myMovie.jump (stressMovieVal[currentZone-1][lastIntensity]);
         println("looping");
@@ -104,6 +105,7 @@ class Zone5 {
         println("turningState " + turningState);
         return;
       }
+    } else {
     }
   }
 }
