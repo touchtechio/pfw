@@ -24,7 +24,7 @@ public class TargetArrow {
   }
 
   void placeCrosshair() {
-    
+
     offscreen.pushMatrix();
     //offscreen.scale(0.5);
     //offscreen.translate(-crossHair.width/2, -crossHair.height/2);
@@ -36,16 +36,26 @@ public class TargetArrow {
 
     /// draw moving arrow left of crosshair
     offscreen.pushMatrix();
-   
+
     // position moving arrow in relation to cross hair
     offscreen.textFont(HUDFont);
     offscreen.textSize(15);
     arrowPosX = - 70; // X pos fixed
-    arrowPosY = 90 + updateArrowScaleUpAndDown(arrowSpeed); // y pos moved up and down
+    arrowPosY = 165 - 40 * stressIntensityVal() + updateArrowScaleUpAndDown(arrowSpeed); // y pos moved up and down
+    //arrowPosY = 200 ;
     offscreen.translate(arrowPosX, arrowPosY);
     //offscreen.scale(1.2);
     drawChevronArrow(tempData);
     offscreen.popMatrix();
+  }
+  
+   int updateArrowScaleUpAndDown (int arrowSpeed) {
+    //int scale = ((int)millis() % 21);
+    int scale = (frameCount * arrowSpeed / 2 % 40); // changes arrow speed
+    if (scale < 20) {
+      return (20 - scale);
+    }
+    return (scale - 19);
   }
 
   void drawChevronArrow(int tempData) {
@@ -64,7 +74,7 @@ public class TargetArrow {
     offscreen.fill(255);
 
 
-    offscreen.text(data, 8, 15);
+    offscreen.text(trueHR, 8, 15);
     //offscreen.text(myMovie.time(), 8, 15);
   }
 
@@ -113,17 +123,17 @@ public class TargetArrow {
 
     // left column of horizontal lines
     int leftLineSpacing = 8;
-    offscreen.line(-180, 0, -190, 0); // line below and top of
-    for (int i = 0; i < 9; i++) {
-      if ((i%4) == 0) {
+   // offscreen.line(-180, -60, -190, -60); // line below and top of
+    for (int i = 0; i < 16; i++) {
+      if ((i%5) == 0) {
         offscreen.strokeWeight(strokeW);
-        offscreen.line(-180, -i*leftLineSpacing, -195, -i*leftLineSpacing); // line below and top of
-        offscreen.line(-180, i*leftLineSpacing, -195, i*leftLineSpacing); // line below and top of
+        // offscreen.line(-180, -i*leftLineSpacing, -195, -i*leftLineSpacing); // line below and top of
+        offscreen.line(-180, -60  + i*leftLineSpacing, -195, - 60 + i*leftLineSpacing); // line below and top of
       } else {
-         offscreen.strokeWeight(thinStrokeW);
+        offscreen.strokeWeight(thinStrokeW);
 
-        offscreen.line(-180, -i*leftLineSpacing, -188, -i*leftLineSpacing); // line below and top of
-        offscreen.line(-180, i*leftLineSpacing, -188, i*leftLineSpacing); // line below and top of
+        //  offscreen.line(-180, -i*leftLineSpacing, -188, -i*leftLineSpacing); // line below and top of
+        offscreen.line(-180, -60 + i*leftLineSpacing, -188, -60 + i*leftLineSpacing); // line below and top of
       }
     }
 
@@ -163,7 +173,7 @@ public class TargetArrow {
     offscreen.vertex(r * 1.1, 0);
     offscreen.vertex(r * 1.15, 8);
     offscreen.endShape();
-    
+
     // Draw chalayan text with little dashed lines
     offscreen.textSize(18);
     offscreen.text("Chalayan", r * 1.2, 7);
@@ -171,12 +181,5 @@ public class TargetArrow {
     offscreen.line(r * 1.3, 20, r * 1.3, 30);
     offscreen.popMatrix();
   }
-  int updateArrowScaleUpAndDown (int arrowSpeed) {
-    //int scale = ((int)millis() % 21);
-    int scale = (frameCount * arrowSpeed / 2 % 200); // changes arrow speed
-    if (scale < 100) {
-      return (100 - scale);
-    }
-    return (scale - 99);
-  }
+  
 }
