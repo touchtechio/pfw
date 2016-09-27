@@ -39,6 +39,6 @@ with open('bio-data.csv', 'rb') as csvfile:
     for row in bioreader:
         reactToData(row[0], row[1], row[2]);
         #print ', '.join(row)
-        time.sleep(0.2);
+        time.sleep(1.0);
 
-reactToData(99, 15, 2000);
+reactToData(76, 155, 3053);
