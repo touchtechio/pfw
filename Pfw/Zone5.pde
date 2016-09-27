@@ -30,7 +30,7 @@ class Zone5 {
 
     //println("lastStressVal "+lastStressIntensityVal+" lastIntensity "+lastIntensity);
     //println("turningState " + turningState);
-    //println("hasCAlmstate " + hasCalm + " stressCount " +stressCount);
+    //println("value of stress change " + abs(stressIntensityVal() - lastStressIntensityVal));
     checkStressState();
     checkForCalm();
     keepVideoLoopingInState();
@@ -75,13 +75,14 @@ class Zone5 {
       lastIntensity=lastIntensity + 1;
       stressCount += 1;
       gettingStressed = false; 
+        
       return;
     }
   }
 
-  // resets to the rope pulling state
+  // resets to the rope pulling state -> if gone from med to low or from high to low
   void checkForCalm() { 
-    if (stressCount == 2) {
+    if (stressCount == 2 || (abs(stressIntensityVal() - lastStressIntensityVal) == 2)) {
       turningState = true;
       lastIntensity = intensity;
       return;
@@ -91,7 +92,6 @@ class Zone5 {
   void keepVideoLoopingInState() {
     // if(gettingStressed) {
     if (myMovie.time() > stressMovieVal[currentZone-1][lastIntensity+1]) {
-      //println("intensity "+ intensity + "val " +stressMovieVal[currentZone-1][intensity+1]);
       myMovie.jump (stressMovieVal[currentZone-1][lastIntensity]);
     }
     return;
