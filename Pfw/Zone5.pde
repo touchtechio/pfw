@@ -101,8 +101,8 @@ class Zone5 {
       if (myMovie.time() > stressMovieVal[currentZone-1][lastIntensity+1]) {
         myMovie.jump (stressMovieVal[currentZone-1][lastIntensity]);
         println("looping");
-        println("lastStressVal "+lastStressIntensityVal+" lastIntensity "+lastIntensity);
-        println("turningState " + turningState);
+        //println("lastStressVal "+lastStressIntensityVal+" lastIntensity "+lastIntensity);
+        //println("turningState " + turningState);
         return;
       }
     } else {
