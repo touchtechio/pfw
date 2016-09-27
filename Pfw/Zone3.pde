@@ -67,9 +67,4 @@ class Zone3 {
     offscreen.rect(centerPtX - 220, centerPtY + 50, pixelW, pixelW); // left
     offscreen.rect(centerPtX + 60, centerPtY - 220, pixelW * 0.55, pixelW * 0.55); // top
   }
-
-  int stressIntensityVal() {
-    // maps number of dancers from 1-5 based on stress values
-    return (int) map(stressVal, 0, 101, 0, 3);
-  }
 }
