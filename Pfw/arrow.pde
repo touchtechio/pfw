@@ -129,8 +129,8 @@ public class TargetArrow {
 
     // inner box
     for (int i = 0; i < 4; i++ ) {
-      offscreen.line(50, 51, 50, 25); // line below and top of
-      offscreen.line(51, 50, 25, 50); // line below and top of
+      offscreen.line(50, 50+strokeW/2, 50, 25); // line below and top of
+      offscreen.line(50+strokeW/2, 50, 25, 50); // line below and top of
       offscreen.rotate(HALF_PI);
     }
 
