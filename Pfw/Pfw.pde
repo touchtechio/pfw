@@ -70,7 +70,7 @@ float stressMovieVal[][] =
   {0, 0, 0, 0}, 
   {0, 0, 0, 0}, 
   {0.2, 9.2, 19.2, 24.5}, 
-  {1.0, 18.2, 27, 42.0, 51.1, 51.0}}; // times in the movie to jump to, last jump 51.1
+  {1.0, 18.2, 26, 41.0, 66.0}}; // times in the movie to jump to, last jump 51.1
 float stressLow, stressHigh, stressMed, stressCrazy;
 float stressType[] = {stressLow, stressHigh, stressMed, stressCrazy};
 String oscAddr[] = {"/Stress/s2/1/1", "/Stress/s2/2/1", "/Stress/s2/1/2", "/Stress/s2/2/2"};

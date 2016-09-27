@@ -33,7 +33,7 @@ class Zone5 {
     //println("hasCAlmstate " + hasCalm + " stressCount " +stressCount);
     checkStressState();
     checkForCalm();
-    stateTurn();
+    keepVideoLoopingInState();
 
     lastStressIntensityVal = stressIntensityVal(); // used to determine states
     displayStressData();
@@ -65,34 +65,35 @@ class Zone5 {
     if (stressIntensityVal() > lastStressIntensityVal || turningState) {
 
       myMovie.jump(stressMovieVal[currentZone-1][intensity]);
-      lastIntensity=intensity;
-      stressCount = 0;
+      lastIntensity=intensity; // keeps track of intensity state
+      gettingStressed = true;
       turningState = false;
+      stressCount = 0;
       return;
     } else if (stressIntensityVal() < lastStressIntensityVal) {
       myMovie.jump(stressMovieVal[currentZone-1][lastIntensity + 1]);// (0, 1, 2, 3, 4) need to jump to 3 and 4
-      lastIntensity = lastIntensity + 1;
-      stressCount += 1; //begin calming down states, there are 2
+      lastIntensity=lastIntensity + 1;
+      stressCount += 1;
+      gettingStressed = false; 
       return;
     }
   }
 
-  void checkForCalm() {
-    if (stressCount == 2 && !hasCalm) {
-      startResetTimer = millis();
-      println(startResetTimer);
-      hasCalm = true; // start timer once
+  // resets to the rope pulling state
+  void checkForCalm() { 
+    if (stressCount == 2) {
+      turningState = true;
+      lastIntensity = intensity;
       return;
     }
   }
 
-  void stateTurn() {
-    if (hasCalm) { // only if the timer has been reset
-      if (millis() > startResetTimer + 4000) { // 2 seconds after timer starts
-        turningState = true;
-        hasCalm = false;
-        return;
-      }
+  void keepVideoLoopingInState() {
+    // if(gettingStressed) {
+    if (myMovie.time() > stressMovieVal[currentZone-1][lastIntensity+1]) {
+      //println("intensity "+ intensity + "val " +stressMovieVal[currentZone-1][intensity+1]);
+      myMovie.jump (stressMovieVal[currentZone-1][lastIntensity]);
     }
+    return;
   }
 }
