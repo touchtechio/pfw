@@ -116,7 +116,7 @@ class Zone1 {
 
   void checkRoseBloom() {
 
-    if (smoothStressVal < 10 && !roseBloom) {
+    if (stressIntensityVal() == 0 && !roseBloom) {
       println("stressed");
       //myMovie.jump(stressMovieVal[0][3]);
       myMovie.jump(stressMovieVal[currentZone-1][0]); // jump to rose bloom point
@@ -138,7 +138,7 @@ class Zone1 {
     if (roseBloom) {
       if (millis() > bloomStart + fullBloomCycle) {
         //myMovie.jump(4.0); // jump time to rose close;
-
+        
         roseBloom = false;
       }
     }
@@ -152,15 +152,4 @@ class Zone1 {
     }
   }
 
-
-  /*
-    if (myMovie.time() > 20.5 && myMovie.time() < 36.0 && !roseMovieAutoBloom) {
-   smoothStressVal = 8;
-   println("bloom");
-   roseMovieAutoBloom = true;
-   return;
-   } else {
-   }
-   }
-   */
 }
