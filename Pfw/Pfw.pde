@@ -105,15 +105,9 @@ float[] storedArrayBR;
 int countBR = 0;
 int br = 0;
 
-<<<<<<< HEAD
-long impactWaitDuration = 5000;
-long lastImapactTime = 0;
-
 int zeroBreathes = 30;
 boolean putDownGlasses = false;
-=======
 boolean shouldBlackout = false;
->>>>>>> safety
 
 void setup() {
 
@@ -425,7 +419,6 @@ void oscEvent(OscMessage theOscMessage) {
     if (brain != 0)
       trueBrainVal = brain;
 
-<<<<<<< HEAD
     if (breathe !=0 ) {
       trueBreatheVal = breathe;
       zeroBreathes = 0;
@@ -479,13 +472,6 @@ void oscEvent(OscMessage theOscMessage) {
      }
      */
 
-=======
-    if (breathe !=0 )
-      trueBreatheVal = breathe;
-
-    println ("BW " + trueBrainVal + ", BR " + trueBreatheVal + ", HR " + trueHR);
-
->>>>>>> safety
 
     if (!needToWait()) {
       stressVal = breathStressMapping();
@@ -534,25 +520,6 @@ void AddNewValue(float valBR) {
   }
 }
 
-/*
-void AddTwoValue(float valBR) {
-<<<<<<< HEAD
- if (countBR < storedValBR.length || arrayReset) {
- //array is not full yet
- storedValBR[countBR++] = valBR;
- sumBR += valBR;
- arrayCleared = false;
- println("values Br" + valBR +"sum Br" + sumBR);
- } else {
- //sumBR -= storedValBR[br];
- for (int i = 0; i < storedValBR.length; i++) {
- storedValBR[i] = 0;
- println("values Br" + storedValBR[i]);
- arrayCleared = true;
- }
- }
- }
- */
 
 float AddTwoValues(float valBR) {
   storedValBR[br] = valBR;
@@ -568,16 +535,7 @@ float AddTwoValues(float valBR) {
   if (storedValBR[0] != 0 && storedValBR[1] != 0) {
 
     //println("values Br" + valBR +"sum Br" + sumBR);
-=======
-  if (countBR < storedValBR.length || arrayCleared) {
-    //array is not full yet
-    storedValBR[countBR++] = valBR;
-    sumBR += valBR;
-    arrayCleared = false;
-    println("values Br" + valBR +"sum Br" + sumBR);
-  } else {
-    //sumBR -= storedValBR[br];
->>>>>>> safety
+
     for (int i = 0; i < storedValBR.length; i++) {
       storedValBR[i] = 0;
       //println("values Br" + storedValBR[i]);
@@ -601,14 +559,7 @@ int breathStressMapping() {
 } else {
  return 80; 
 }
-  //int mappedStress = (int)map(trueBreatheVal, 3500, 1000, 0, 100); using raw data
-<<<<<<< HEAD
- // int mappedStress = (int)map(aveBR, 3500, 1000, 0, 100);
-=======
-  int mappedStress = (int)map(trueBreatheVal, 3500, 1000, 0, 100);
->>>>>>> safety
-  //println("breathMappedStress:" + mappedStress);
- // return constrain(mappedStress, 0, 100);
+ 
 }
 
 void keyPressed() {
