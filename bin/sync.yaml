@@ -1,0 +1,42 @@
+---
+-
+  hosts: all
+  name: "sync"
+  tasks:
+    - name: "copy visualizations"
+      synchronize:
+        src: "/Users/pinnermx/dev/git/pfw/Pfw"
+        dest: "/home/intel/Visuals/"
+        recursive: true
+        delete: true
+        rsync_opts:
+          - "--exclude=.git"
+          - "--exclude=*.pyc"
+      # delegate to: 127.0.0.1
+    - name: "copy start script"
+      copy:
+        src: "/Users/pinnermx/dev/git/pfw/bin/start.sh"
+        dest: "/home/intel/"
+        mode: "u+xrw"
+    - name: "copy stop script"
+      copy:
+        src: "/Users/pinnermx/dev/git/pfw/bin/stop.sh"
+        dest: "/home/intel/"
+        mode: "u+xrw"
+    - name: "copy ble running"
+      copy:
+        src: "/Users/pinnermx/dev/git/pfw/bin/run-curie-ble.sh"
+        dest: "/home/intel/"
+        mode: "u+xrw"
+    - name: "copy ble connection"
+      copy:
+        src: "/Users/pinnermx/dev/git/pfw/bin/curie_ble.py"
+        dest: "/home/intel/"
+        mode: "u+xrw"
+    - name: "copy ble dev script"
+      copy:
+        src: "/Users/pinnermx/dev/git/pfw/bin/ble_collector_4.py"
+        dest: "/home/intel/"
+        mode: "u+xrw"
+
+        
