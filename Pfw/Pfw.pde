@@ -398,7 +398,6 @@ boolean needToWait() {
 
  
 void genBreatheRandom() {
-  trueHR = (int)random(70, 110);
   
 longRangeVal = (int)random(longBR1, longBR2);
 shortRangeVal = (int)random(shortBR1, shortBR2);
