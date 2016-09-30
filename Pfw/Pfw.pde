@@ -85,6 +85,7 @@ int moments[][] =
   {10, 100}}; // low, high
 
 long impactWaitDuration = 2000;
+
 long lastImapactTime = 0;
 
 /// these are for breathe
