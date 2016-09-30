@@ -67,7 +67,7 @@ class Zone5 {
     } else if (stressIntensityVal() < lastStressIntensityVal) {
 
       if (stressIntensityVal() == 1) {
-        lastIntensity=lastIntensity + 1;
+        lastIntensity=3;
 
         println("jumping down");
         gettingCalm = true;

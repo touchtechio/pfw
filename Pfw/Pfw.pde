@@ -78,13 +78,34 @@ String oscAddr[] = {"/Stress/s2/1/1", "/Stress/s2/2/1", "/Stress/s2/1/2", "/Stre
 String oscZoneAddr[] = {"/Zone/switch/1/1", "/Zone/switch/2/1", "/Zone/switch/3/1", "/Zone/switch/4/1", "/Zone/switch/5/1"};
 int zone[] = {1, 2, 3, 4, 5};
 int moments[][] = 
-  {{100, 10}, 
-  {10, 100}, 
-  {50, 10}, 
-  {10, 100}, 
-  {10, 100}};
-long impactWaitDuration = 5000;
+  {{100, 10}, //high stress, low stress
+  {10, 100}, // low, hight
+  {100, 10}, // high, low  
+  {10, 100}, // low, high
+  {10, 100}}; // low, high
+
+long impactWaitDuration = 2000;
 long lastImapactTime = 0;
+
+/// these are for breathe
+int shortBR1 = 800;
+int shortBR2 = 1400;
+
+int medBR1 = 1401;
+int medBR2 = 2300;
+
+int longBR1 = 2301;
+int longBR2 = 8000;
+
+int longRangeVal = (int)random(longBR1, longBR2);
+int shortRangeVal = (int)random(shortBR1, shortBR2);
+
+int OSCValues[][] = 
+  {{shortRangeVal, longRangeVal}, 
+  {longRangeVal, shortRangeVal}, 
+  {shortRangeVal, longRangeVal}, 
+  {longRangeVal, shortRangeVal}, 
+  {longRangeVal, shortRangeVal}};
 
 boolean arrayCleared = true;
 
@@ -100,8 +121,9 @@ int currentZone = 1;
 //
 float aveBR=0;
 float sumBR = 0;
-float storedValBR[] = {0, 0};
+float storedValBR[] = {0, 0}; // for sums
 float[] storedArrayBR;
+int storedArrayCount = 3; // number of values to average
 int countBR = 0;
 int br = 0;
 
@@ -137,7 +159,7 @@ void setup() {
 
   setupCurrentZone();
 
-  storedArrayBR= new float[3]; // for counting average set
+  storedArrayBR= new float[storedArrayCount]; // for counting average set
   return;
 }
 
@@ -303,7 +325,9 @@ void drawZone(int zone) {
 void draw() {
   background(0);
   
-  if (shouldBlackout) { return; }
+  if (shouldBlackout) { 
+    return;
+  }
 
   // smoothing the stress value changes
   smoothStressVal += (stressVal - smoothStressVal) * 0.1; // analog stress values
@@ -370,21 +394,52 @@ boolean needToWait() {
   return millis() < (lastImapactTime + impactWaitDuration);
 }
 
+
+ 
+void genBreatheRandom() {
+  trueHR = (int)random(70, 110);
+  
+longRangeVal = (int)random(longBR1, longBR2);
+shortRangeVal = (int)random(shortBR1, shortBR2);
+
+OSCValues = new int[][] 
+  {{shortRangeVal, longRangeVal}, 
+  {longRangeVal, shortRangeVal}, 
+  {shortRangeVal, longRangeVal}, 
+  {longRangeVal, shortRangeVal}, 
+  {longRangeVal, shortRangeVal}};
+  
+  
+  return;
+}
+
+void genHrRandom() {
+  trueHR = (int)random(75, 90);
+  return;
+}
+
+void genBrainRandom() {
+  trueBrainVal = (int)random(150, 300);
+  return;
+}
+
 void oscEvent(OscMessage theOscMessage) {
- // print(" typetag:" + theOscMessage.typetag());
- // println(" addrpattern: " +theOscMessage.addrPattern());
+  // print(" typetag:" + theOscMessage.typetag());
+  // println(" addrpattern: " +theOscMessage.addrPattern());
 
-
+  //trueBrainVal, trueBreatheVal, trueHR
 
   if (theOscMessage.checkAddrPattern("/impact/1/1")) {
 
     // start
     println(" START");
     lastImapactTime = millis();
+    genHrRandom();
+    genBrainRandom();
+    genBreatheRandom();
     stressVal = moments[currentZone-1][0];
-        shouldBlackout = false;
-
-    
+    trueBreatheVal = OSCValues[currentZone-1][0];
+    shouldBlackout = false;
   }
 
   if (theOscMessage.checkAddrPattern("/impact/1/2")) {
@@ -392,10 +447,12 @@ void oscEvent(OscMessage theOscMessage) {
     // impact
     println(" IMPACT");
     lastImapactTime = millis();
+    genHrRandom();
+    genBrainRandom();
+    genBreatheRandom();
     stressVal = moments[currentZone-1][1];
-            shouldBlackout = false;
-
-    
+    trueBreatheVal = OSCValues[currentZone-1][1];
+    shouldBlackout = false;
   }
 
   if (theOscMessage.checkAddrPattern("/impact/1/3")) {
@@ -403,8 +460,6 @@ void oscEvent(OscMessage theOscMessage) {
     // blackout
     println(" BLACKOUT");
     shouldBlackout = true;
-    
-    
   }
 
 
@@ -419,60 +474,54 @@ void oscEvent(OscMessage theOscMessage) {
     if (brain != 0)
       trueBrainVal = brain;
 
-    if (breathe !=0 ) {
-      trueBreatheVal = breathe;
-      zeroBreathes = 0;
+    if (breathe !=0 ) { 
+      if (breathe > shortBR1) { // only take breathe values of over 500
+        trueBreatheVal = breathe;
+      }
+      zeroBreathes = 0; // captures count of non-zero
       putDownGlasses = false;
-
     } else { 
       zeroBreathes++;
-      if (zeroBreathes > 30) {
+      if (zeroBreathes > 30 ) {
+        if (!needToWait()) {
         putDownGlasses = true;
-            println ("put down ");
-            trueBrainVal=0;
-            trueBreatheVal=0;
-            trueHR=0;
-            aveBR=0;
+        //println ("put down ");
+        trueBrainVal=0;
+        trueBreatheVal=0;
+        trueHR=0;
+        aveBR=0;
+        }
       }
     }
-    
+
     println ("BW " + trueBrainVal + ", BR " + trueBreatheVal + ", HR " + trueHR);
 
     // sums pairs of breathe values
+    /*
     float newBRFromGlass = (float)trueBreatheVal; // trueBR
-    //AddNewValue(newBRFromGlass);
-    if (-1 == AddTwoValues(newBRFromGlass)) {
-      // nothing, too many zeros
-    } else {
-      println("i got the sum" + sumBR);
-      aveBR = sumBR;
+     //AddNewValue(newBRFromGlass);
+     
+     /// takes a running average of two values coming in
+     
+     if (-1 == AddTwoValues(newBRFromGlass)) {
+     // nothing, too many zeros
+     } else {
+     println("i got the sum" + sumBR);
+     sumTwoBR = sumBR;
+     }
+     */
+
+    // to average across a fixed array collection of values
+    if (countBR > 0) { //calculate first ave
+      aveBR = sumBR / countBR;
     }
 
-     // for now
-    /*if (countBR > 0) { //calculate first ave
-     aveBR = sumBR / countBR;
-     }
-     */
+
+    /// for weighted average
+
     // float multiplier = 2/(countBR + 1);
-
-    //if (countBR == 10){ //calculate first ave
-
-
     //float EMA_BR = (newBRFromGlass - aveBR) * multiplier + aveBR;
     // println("count: " + countBR + " new value: " +  newBRFromGlass + " proper average: " + aveBR);
-
-    // glasses on off state setting
-    /*
-    if (noData && trueHR > 0) { //trueHR should be > 0 when glasses are put on
-     manageGlassesStress();
-     }
-     
-     if (hasCalm && trueHR < 10) { //trueHR < 10 when glasses taken off
-     hasCalm = false;
-     noData = true;
-     }
-     */
-
 
     if (!needToWait()) {
       stressVal = breathStressMapping();
@@ -508,16 +557,16 @@ void oscEvent(OscMessage theOscMessage) {
 }
 
 void AddNewValue(float valBR) {
-  if (countBR < storedValBR.length) {
+  if (countBR < storedArrayBR.length) {
     //array is not full yet
-    storedValBR[countBR++] = valBR;
+    storedArrayBR[countBR++] = valBR;
     sumBR += valBR;
   } else {
-    sumBR -= storedValBR[br];
-    storedValBR[br] = valBR;
+    sumBR -= storedArrayBR[br];
+    storedArrayBR[br] = valBR;
     sumBR += valBR;
     br = br+1;
-    br = br % storedValBR.length;
+    br = br % storedArrayBR.length;
   }
 }
 
@@ -527,9 +576,9 @@ float AddTwoValues(float valBR) {
   /*
   if (1500 < abs(storedValBR[0] - storedValBR[1]) ) {
    return -1; 
-  }
-  */
-  sumBR =storedValBR[0] + storedValBR[1];
+   }
+   */
+  sumBR =storedValBR[0] + storedValBR[1]; // takes the running sum
   br = br+1;
   br = br % 2;
 
@@ -538,6 +587,7 @@ float AddTwoValues(float valBR) {
     //println("values Br" + valBR +"sum Br" + sumBR);
 
     for (int i = 0; i < storedValBR.length; i++) {
+      //sumBR =storedValBR[0] + storedValBR[1]; // takes a sum in new pairs
       storedValBR[i] = 0;
       //println("values Br" + storedValBR[i]);
     }
@@ -547,21 +597,27 @@ float AddTwoValues(float valBR) {
   }
 }
 
-
-float sumOfTwoBR(float sumBR) {
-  return sumBR;
-}
-
 int breathStressMapping() {
-  if (aveBR >6000) {
+  if (trueBreatheVal > longBR1) { // low stress val, meaning long breath
     return 15;
-  } else if (aveBR > 3000) {
-   return 50;
-} else {
- return 80; 
+  } else if (trueBreatheVal > medBR1) {
+    return 50;
+  } else {
+    return 80;
+  }
 }
- 
-}
+/*
+int breathStressMapping() {
+ if (sumTwoBR >6000) {
+ return 15;
+ } else if (sumTwoBR > 3000) {
+ return 50;
+ } else {
+ return 80;
+ }
+ }
+ */
+
 
 void keyPressed() {
   switch(key) {
