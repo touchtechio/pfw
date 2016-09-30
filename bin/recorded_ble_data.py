@@ -31,7 +31,6 @@ def reactToData(hr, bw, br):
     c.send(oscmsg);
     return;
 
-
 reactToData(0, 0, 0);
 
 with open('bio-data.csv', 'rb') as csvfile:

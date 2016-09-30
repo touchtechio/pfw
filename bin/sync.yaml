@@ -32,11 +32,22 @@
       copy:
         src: "/Users/pinnermx/dev/git/pfw/bin/curie_ble.py"
         dest: "/home/intel/"
-        mode: "u+xrw"
     - name: "copy ble dev script"
       copy:
         src: "/Users/pinnermx/dev/git/pfw/bin/ble_collector_4.py"
         dest: "/home/intel/"
-        mode: "u+xrw"
 
-        
+    - name: "copy ble recorded data script"
+      copy:
+        src: "/Users/pinnermx/dev/git/pfw/bin/ble_autostart_collector.py"
+        dest: "/home/intel/"
+
+    - name: "copy ble recorded data script"
+      copy:
+        src: "/Users/pinnermx/dev/git/pfw/bin/recorded_ble_data.py"
+        dest: "/home/intel/"
+
+    - name: "copy recorded data"
+      copy:
+        src: "/Users/pinnermx/dev/git/pfw/bin/bio-data.csv"
+        dest: "/home/intel/"
