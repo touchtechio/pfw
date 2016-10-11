@@ -1,6 +1,6 @@
 public class TargetArrow {
   color fillC;
-  float strokeW = 4.5;
+  float strokeW = 4.0;
   float thinStrokeW = 1;
   int data;
   int circlePoints = 160;

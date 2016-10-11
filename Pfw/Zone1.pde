@@ -28,9 +28,9 @@ class Zone1 {
 
   TargetArrow arrow;
   int arrowSpeed;
-  float crossHairScale = 1.6;
+  float crossHairScale = 2;
   float oscSpeed = 5.0; // smaller number means faster, it's a divisor
-  
+
   float quickBloomCycle = 2500;
   float fullBloomCycle = 6700;
 
@@ -97,8 +97,8 @@ class Zone1 {
     //println("theta " + theta);
 
     /// set position of crosshair to OSC Stress data but rotating around the rose;
-    crossPosX = oscillators[0].rosePosX + 160 + circleX * 4; // check this out
-    crossPosY = oscillators[0].rosePosY + 140 + circleY * 3; // check this out
+    crossPosX = oscillators[0].rosePosX + 100 + circleX * 4; // check this out
+    crossPosY = oscillators[0].rosePosY + 60 + circleY * 3; // check this out
 
     //// new changes
     int arrowSpeed = (int)smoothStressVal/5;
@@ -138,7 +138,7 @@ class Zone1 {
     if (roseBloom) {
       if (millis() > bloomStart + fullBloomCycle) {
         //myMovie.jump(4.0); // jump time to rose close;
-        
+
         roseBloom = false;
       }
     }
@@ -151,5 +151,4 @@ class Zone1 {
       }
     }
   }
-
 }

@@ -40,9 +40,9 @@ int movY = 720;
 float textXPer = 0.01; // distance off the left side of screen
 float textYPer = 0.09; // distance off top of screen
 float numSpacing = 0.18;
-int textDotNumber = 28;
+int textDotNumber = 31;
 
-int HUDtextSize = 28;
+int HUDtextSize = 30;
 PFont HUDFont;
 PFont HUDArrowFont;
 
@@ -220,6 +220,7 @@ void setupZone2() {
 
 void setupZone3() {
   if (DEBUG) println("build zone 3");
+
   myMovie = new Movie(this, "rose_3a.mp4");
   myMovie.loop();
   currentZone = 3;
@@ -325,7 +326,7 @@ void drawZone(int zone) {
 
 void draw() {
   background(0);
-  
+
   if (shouldBlackout) { 
     return;
   }
@@ -376,6 +377,7 @@ void drawZone2() {
 }
 
 void drawZone3() {
+
   zone3.draw();
 }
 
@@ -396,20 +398,20 @@ boolean needToWait() {
 }
 
 
- 
-void genBreatheRandom() {
-  
-longRangeVal = (int)random(longBR1, longBR2);
-shortRangeVal = (int)random(shortBR1, shortBR2);
 
-OSCValues = new int[][] 
-  {{shortRangeVal, longRangeVal}, 
-  {longRangeVal, shortRangeVal}, 
-  {shortRangeVal, longRangeVal}, 
-  {longRangeVal, shortRangeVal}, 
-  {longRangeVal, shortRangeVal}};
-  
-  
+void genBreatheRandom() {
+
+  longRangeVal = (int)random(longBR1, longBR2);
+  shortRangeVal = (int)random(shortBR1, shortBR2);
+
+  OSCValues = new int[][] 
+    {{shortRangeVal, longRangeVal}, 
+    {longRangeVal, shortRangeVal}, 
+    {shortRangeVal, longRangeVal}, 
+    {longRangeVal, shortRangeVal}, 
+    {longRangeVal, shortRangeVal}};
+
+
   return;
 }
 
@@ -484,12 +486,12 @@ void oscEvent(OscMessage theOscMessage) {
       zeroBreathes++;
       if (zeroBreathes > 30 ) {
         if (!needToWait()) {
-        putDownGlasses = true;
-        //println ("put down ");
-        trueBrainVal=0;
-        trueBreatheVal=0;
-        trueHR=0;
-        aveBR=0;
+          putDownGlasses = true;
+          //println ("put down ");
+          trueBrainVal=0;
+          trueBreatheVal=0;
+          trueHR=0;
+          aveBR=0;
         }
       }
     }
