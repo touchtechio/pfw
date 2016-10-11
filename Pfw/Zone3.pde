@@ -17,7 +17,7 @@ class Zone3 {
   void draw() {
     //// for fixed starting point (center), the square scales up and down
 
-    greenPixel = (int) map(smoothStressIntensity, 0, 120, 0, 500);
+    greenPixel = (int) map(smoothStressIntensity, 0, 120, 0, 900);
     //greenPixel = (int) map(smoothStressVal, 0, 100, 0, 350);
     pixelW = updateScatterScaleUpAndDown() + greenPixel;
 
@@ -63,8 +63,8 @@ class Zone3 {
     }
     offscreen.rectMode(CENTER);
 
-    offscreen.rect(centerPtX + 250, centerPtY + 70, pixelW * 0.7, pixelW * 0.7); // right
-    offscreen.rect(centerPtX - 220, centerPtY + 50, pixelW, pixelW); // left
-    offscreen.rect(centerPtX + 60, centerPtY - 220, pixelW * 0.55, pixelW * 0.55); // top
+    //offscreen.rect(centerPtX + 250, centerPtY + 70, pixelW * 0.7, pixelW * 0.7); // right
+    offscreen.rect(centerPtX + 100, centerPtY - 50, pixelW, pixelW); // left
+    //offscreen.rect(centerPtX + 60, centerPtY - 220, pixelW * 0.55, pixelW * 0.55); // top
   }
 }

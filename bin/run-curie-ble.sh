@@ -10,7 +10,7 @@ while true; do
   echo "Running '$EXEC $DEVICE_ID_0' ..."
   $EXEC $DEVICE_ID_0
   echo "Running '$EXEC $DEVICE_ID_0' ..."
-  sleep 1
+  sleep 10
   $EXEC $DEVICE_ID_0
   echo "Server '$EXEC $DEVICE_ID_0' exited with exit code $?."
     while true; do
