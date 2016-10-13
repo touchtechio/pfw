@@ -15,6 +15,8 @@ class Zone3 {
   }
 
   void draw() {
+    offscreen.background(0);
+    offscreen.image(myMovie, 0, 50);
     //// for fixed starting point (center), the square scales up and down
 
     greenPixel = (int) map(smoothStressIntensity, 0, 120, 0, 900);
@@ -64,7 +66,7 @@ class Zone3 {
     offscreen.rectMode(CENTER);
 
     //offscreen.rect(centerPtX + 250, centerPtY + 70, pixelW * 0.7, pixelW * 0.7); // right
-    offscreen.rect(centerPtX + 100, centerPtY - 50, pixelW, pixelW); // left
+    offscreen.rect(centerPtX + 100, centerPtY, pixelW, pixelW); // left
     //offscreen.rect(centerPtX + 60, centerPtY - 220, pixelW * 0.55, pixelW * 0.55); // top
   }
 }

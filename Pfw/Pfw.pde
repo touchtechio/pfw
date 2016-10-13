@@ -37,7 +37,7 @@ Blackout blackout = new Blackout();
 int movX = 1280;
 int movY = 720;
 
-float textXPer = 0.01; // distance off the left side of screen
+float textXPer = 0.025; // distance off the left side of screen
 float textYPer = 0.09; // distance off top of screen
 float numSpacing = 0.18;
 int textDotNumber = 31;
@@ -70,7 +70,7 @@ float stressMovieVal[][] =
   {0, 0, 0, 0}, 
   {0, 0, 0, 0}, 
   {0.2, 9.2, 19.2, 24.5}, 
-  {1.0, 18.2, 26, 41.0, 66.0}}; // times in the movie to jump to, last jump 51.1
+  {1.0, 17.2, 26, 41.0, 66.0}}; // times in the movie to jump to, last jump 51.1
 float stressLow, stressHigh, stressMed, stressCrazy;
 float stressType[] = {stressLow, stressHigh, stressMed, stressCrazy};
 String oscAddr[] = {"/Stress/s2/1/1", "/Stress/s2/2/1", "/Stress/s2/1/2", "/Stress/s2/2/2"};
@@ -220,9 +220,11 @@ void setupZone2() {
 
 void setupZone3() {
   if (DEBUG) println("build zone 3");
-
+ 
   myMovie = new Movie(this, "rose_3a.mp4");
   myMovie.loop();
+  
+  
   currentZone = 3;
   videoScale = 13;
   return;
@@ -377,7 +379,6 @@ void drawZone2() {
 }
 
 void drawZone3() {
-
   zone3.draw();
 }
 
